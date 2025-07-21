@@ -6,14 +6,13 @@ const Hero = () => {
     <div className={`${styles.hero} page__horizontal-spacing-3xl`}>
       <div className='page__inner'>
         <div className={styles.content}>
-          <h1 className='page-title'>This Is The Hero</h1>
-          <p className='section-paragraph'>
-            This is the description for the hero Lorem ipsum dolor sit amet
-            consectetur adipisicing elit. Illo, commodi.
-          </p>
-          <div className={styles.buttons}>
-            <ButtonLink text='Get Started' link='/contact' color='primary' />
-            <ButtonLink text='About Us' link='/about' color='secondary' />
+          <div className='never_final'>never final</div>
+          <div className={styles.overlapping_logo}>
+            <img
+              src='/images/jesselind_overlapping.png'
+              alt='Jesse Lind Logo'
+              className={styles.logo}
+            />
           </div>
         </div>
       </div>

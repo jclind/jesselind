@@ -10,5 +10,14 @@
       gap: $gap-large;
       margin: 0 auto;
     }
+
+    .overlapping_logo {
+      height: 100px;
+      img {
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+      }
+    }
   }
 }

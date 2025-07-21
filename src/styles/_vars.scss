@@ -1,10 +1,13 @@
+@import 'fonts';
+
 // =============================================
 // Colors
 // =============================================
-$primary-text: #212a33; // Primary text color
-$secondary-text: #444444; // Secondary text color
+$primary-text: #fff; // Primary text color
+$secondary-text: #b3b3b3; // Secondary text color
+$tertiary-text: #444444;
 $secondary-header: #484f56; // Secondary header color
-$primary-background: #ffffff; // Primary background color
+$primary-background: #000; // Primary background color
 $secondary-background: #eaeaea; // Secondary background color
 $primary-accent: #276aed; // Primary accent color
 $secondary-accent: #973000; // Secondary accent color
@@ -15,7 +18,7 @@ $secondary-border-color: #575757; // Secondary border color
 // =============================================
 // Typography
 // =============================================
-$font-family-base: 'Montserrat', Arial; // Base font family
+$font-family-base: 'Aspekta', Arial; // Base font family
 $font-size-base: 16px; // Base font size
 $line-height-base: 1.5; // Base line height
 
