@@ -1,0 +1,62 @@
+---
+import Navbar from '../components/Layout/Navbar';
+import Footer from '../components/Layout/Footer';
+import '@fontsource-variable/montserrat';
+
+import { LEGAL_NAME, WEBSITE_DESCRIPTION } from '../assets/data/legalInfo';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+const { title = LEGAL_NAME, description = WEBSITE_DESCRIPTION } = Astro.props;
+const siteName = LEGAL_NAME
+const GOOGLE_ANALYTICS_ID = 'G-XXXXXXXXXX'
+---
+
+
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Google tag (gtag.js) -->
+		<script type="text/partytown" async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}`></script>
+		<script type="text/partytown">
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', GOOGLE_ANALYTICS_ID);
+		</script>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={Astro.url.href} />
+		<meta property="og:image" content="/images/og_image.webp" />
+		<meta property="og:site_name" content={siteName} />
+
+		<link rel="canonical" href={Astro.url.href} />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+	</head>
+	<body>
+		<Navbar currentPath={Astro.url.pathname} client:load />
+		<main>
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>

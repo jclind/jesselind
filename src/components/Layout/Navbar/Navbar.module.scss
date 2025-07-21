@@ -1,0 +1,124 @@
+@use '../../../styles/vars' as *;
+
+@use '../../../styles/vars' as *;
+
+$navbar-height-desktop: 90px;
+$navbar-height-mobile: 70px;
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  height: $navbar-height-desktop;
+  min-height: $navbar-height-desktop;
+  max-height: $navbar-height-desktop;
+  height: 100px;
+  background: $primary-background;
+  width: 100%;
+  border-bottom: 1px solid $border-color;
+  position: relative;
+  .inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    max-width: $max-width-container;
+    width: $max-width-percentage;
+
+    .logo {
+      height: 60px;
+      width: 185px;
+      img {
+        object-fit: contain;
+        height: 60px;
+        width: 185px;
+      }
+      @media (max-width: $breakpoint-lg) {
+        height: 50px;
+        width: 155px;
+        img {
+          height: 50px;
+          width: 155px;
+        }
+      }
+    }
+    .links {
+      z-index: $z-index-dropdown;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $gap-large;
+      background: $primary-background;
+
+      @media (max-width: $breakpoint-lg) {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        gap: $gap-medium;
+        width: 100%;
+        // background: red;
+        padding: $gap-medium 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        list-style: none;
+        opacity: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        max-height: 0;
+        transition: all 0.5s ease-in-out;
+        padding: $gap-medium 0;
+
+        &.open {
+          max-height: 500px;
+          opacity: 1;
+        }
+      }
+    }
+    .link {
+      color: $primary-text;
+      text-transform: uppercase;
+      font-size: $fs-regular;
+      font-weight: 700;
+
+      @media (max-width: $breakpoint-lg) {
+        opacity: 0;
+        transform: translateX(-20px);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        margin-left: calc((100% - $max-width-percentage) / 2);
+        font-size: $fs-small;
+      }
+    }
+    .active {
+      color: $primary-accent;
+    }
+    .open {
+      display: flex;
+      .link {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  }
+  .hamburger {
+    display: none;
+    background: $primary-accent;
+    border-radius: 10px;
+    padding: 2px;
+    color: $primary-background;
+    @media (max-width: $breakpoint-lg) {
+      display: block;
+    }
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    height: $navbar-height-mobile;
+    min-height: $navbar-height-mobile;
+    max-height: $navbar-height-mobile;
+  }
+}

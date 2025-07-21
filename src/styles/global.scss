@@ -1,0 +1,199 @@
+@use 'vars' as *;
+
+/* Reset & Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: $font-family-base;
+}
+
+html {
+  font-size: $font-size-base;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: $font-family-base;
+  color: $primary-text;
+  background-color: $primary-background;
+  width: 100%;
+  margin: 0 auto;
+}
+
+p,
+li {
+  line-height: 1.3;
+  max-width: $max-width-paragraph;
+  letter-spacing: -0.5px;
+  width: 100%;
+}
+
+a {
+  color: $primary-text;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Form Elements */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  background: none;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+:focus {
+  outline: 2px solid $primary-text;
+  outline-offset: 2px;
+}
+
+// Page
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.page__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  max-width: $max-width-container;
+  width: $max-width-percentage;
+}
+.padding-xlarge {
+  padding: $gap-xl 0;
+}
+.page__horizontal-spacing-xl {
+  padding: $gap-xl 0;
+}
+.page__horizontal-spacing-2xl {
+  padding: $gap-2xl 0;
+}
+.page__horizontal-spacing-3xl {
+  padding: $gap-3xl 0;
+}
+
+// Sections
+.page-title {
+  font-size: $fs-xlarge;
+  font-weight: 700;
+  text-align: center;
+}
+.page-paragraph {
+  font-size: $fs-regular;
+  font-weight: 400;
+  text-align: center;
+}
+.section-title {
+  font-size: $fs-large;
+  font-weight: 800;
+  text-align: center;
+
+  @media (min-width: $breakpoint-md) {
+    font-size: $fs-xlarge;
+  }
+}
+.section-subtitle {
+  font-size: $fs-regular;
+  font-weight: 700;
+  text-align: center;
+  color: $secondary-text;
+  @media (min-width: $breakpoint-md) {
+    font-size: $fs-large;
+  }
+}
+.section-paragraph {
+  font-size: $fs-regular;
+
+  font-weight: 500;
+  text-align: center;
+  color: $secondary-text;
+
+  letter-spacing: -0.5px;
+}
+.text-inverted {
+  color: $primary-background;
+}
+
+.secondary-header {
+  font-size: $fs-medium;
+  font-weight: 700;
+  color: $secondary-text;
+}
+
+// Card Styles
+.card {
+  background-color: $card-background;
+  border-radius: $border-radius-card;
+  padding: $gap-medium;
+  box-shadow: $box-shadow-card;
+  max-width: 320px;
+  width: 100%;
+  .card-title {
+    font-size: $fs-medium;
+  }
+
+  p {
+    font-size: $fs-card-text;
+    text-align: center;
+  }
+}
+
+// Hero Styling
+.hero-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: $gap-2xl 0;
+}
+.hero-title {
+  font-size: $fs-xlarge;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: $gap-medium;
+}
+.hero-description {
+  font-size: $fs-regular;
+  text-align: center;
+}
+
+.spacer {
+  display: flex;
+  width: 100%;
+  padding-bottom: 200px;
+}
+
+a[href^='tel'] {
+  color: $primary-text; /* Or any color that contrasts with the background */
+  text-decoration: none; /* Optional: removes underline */
+}

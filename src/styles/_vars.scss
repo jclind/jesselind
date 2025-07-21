@@ -1,0 +1,94 @@
+// =============================================
+// Colors
+// =============================================
+$primary-text: #212a33; // Primary text color
+$secondary-text: #444444; // Secondary text color
+$secondary-header: #484f56; // Secondary header color
+$primary-background: #ffffff; // Primary background color
+$secondary-background: #eaeaea; // Secondary background color
+$primary-accent: #276aed; // Primary accent color
+$secondary-accent: #973000; // Secondary accent color
+
+$border-color: #d9d9d9; // Default border color
+$secondary-border-color: #575757; // Secondary border color
+
+// =============================================
+// Typography
+// =============================================
+$font-family-base: 'Montserrat', Arial; // Base font family
+$font-size-base: 16px; // Base font size
+$line-height-base: 1.5; // Base line height
+
+$max-width-paragraph: 600px; // Max width for paragraphs
+
+// Font sizes
+$fs-small: 14px; // Small font size
+$fs-regular: 16px; // Regular font size
+$fs-medium: 20px; // Medium font size
+$fs-large: 24px; // Large font size
+$fs-xlarge: 32px; // Extra large font size
+$fs-xxlarge: 40px; // Double extra large font size
+$fs-header: 36px; // Header font size
+
+// =============================================
+// Spacing
+// =============================================
+$spacing-unit: 8px; // Base spacing unit
+$spacing-small: $spacing-unit; // Small spacing
+$spacing-medium: $spacing-unit * 2; // Medium spacing
+$spacing-large: $spacing-unit * 3; // Large spacing
+
+// =============================================
+// Gaps
+// =============================================
+$gap-tiny: 8px; // Tiny gap
+$gap-small: 12px; // Small gap
+$gap-regular: 16px; // Regular gap
+$gap-medium: 24px; // Medium gap
+$gap-large: 36px; // Large gap
+$gap-xl: 60px; // Extra large gap
+$gap-2xl: 100px; // Double extra large gap
+$gap-3xl: 120px; // Triple extra large gap
+$gap-4xl: 200px;
+
+// =============================================
+// Breakpoints
+// =============================================
+$breakpoint-sm: 576px; // Small breakpoint
+$breakpoint-md: 768px; // Medium breakpoint
+$breakpoint-lg: 992px; // Large breakpoint
+$breakpoint-xl: 1200px; // Extra large breakpoint
+
+// =============================================
+// Borders
+// =============================================
+$border-radius: 12px; // Default border radius
+$border-radius-button: 12px; // Button border radius
+$border-width: 1px; // Default border width
+
+// =============================================
+// Z-index
+// =============================================
+$z-index-dropdown: 1000; // Dropdown z-index
+$z-index-modal: 2000; // Modal z-index
+$z-index-tooltip: 3000; // Tooltip z-index
+
+// =============================================
+// Widths
+// =============================================
+$max-width-container: 1100px; // Max width for containers
+$max-width-percentage: 90%; // Max width as a percentage
+
+// =============================================
+// Card
+// =============================================
+$card-background: #fafafa; // Card background color
+$border-radius-card: 15px; // Card border radius
+$box-shadow-card: rgba(0, 0, 0, 0.16) 0px 3px 6px,
+  rgba(0, 0, 0, 0.23) 0px 3px 6px; // Card box shadow
+$fs-card-text: $fs-small; // Card text font size
+
+// =============================================
+// Icons
+// =============================================
+$icon-stroke-width: 0.3; // Icon stroke width

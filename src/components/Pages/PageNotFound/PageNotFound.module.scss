@@ -1,0 +1,72 @@
+@use '../../../styles/_vars.scss' as *;
+
+.page_not_found {
+  margin: $gap-xl 0;
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-xl;
+    @media (min-width: $breakpoint-md) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $gap-2xl;
+      margin: 0 auto;
+    }
+
+    width: fit-content;
+    align-items: center;
+
+    .image {
+      height: 225px;
+      width: 225px;
+      img {
+        object-fit: contain;
+        height: 225px;
+        width: 225px;
+      }
+    }
+    @media (min-width: $breakpoint-md) {
+      .image {
+        height: 300px;
+        width: 300px;
+        img {
+          object-fit: contain;
+          height: 300px;
+          width: 300px;
+        }
+      }
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $gap-medium;
+      margin: auto 0;
+      h1,
+      p {
+        text-align: center;
+      }
+      h1 {
+        margin: 0;
+        padding: 0;
+      }
+      p {
+        font-size: $fs-medium;
+        color: $secondary-text;
+        max-width: 300px;
+        padding-bottom: $gap-small;
+      }
+      @media (min-width: $breakpoint-md) {
+        align-items: flex-start;
+        h1,
+        p {
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  @media (min-width: $breakpoint-md) {
+    margin: $gap-2xl 0;
+  }
+}

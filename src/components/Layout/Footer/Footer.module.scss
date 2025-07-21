@@ -1,0 +1,118 @@
+@use '../../../styles/vars' as *;
+
+.footer {
+  background: $primary-background;
+  color: $primary-text;
+  padding: $gap-large 0;
+  border-top: 1px solid $border-color;
+  .top_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .divider_container {
+      width: 100%;
+    }
+    .links__container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      .image {
+        height: 60px;
+        margin-bottom: $gap-large;
+
+        img {
+          height: 100%;
+          width: 100%;
+          object-fit: contain;
+        }
+      }
+      .links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        width: 100%;
+        gap: $gap-medium;
+        .link {
+          a {
+            color: $primary-text;
+            font-size: $fs-regular;
+          }
+        }
+      }
+    }
+    .contact_info {
+      display: flex;
+      flex-direction: column;
+      gap: $gap-medium;
+      width: 100%;
+      .item {
+        display: flex;
+        font-size: $fs-regular;
+        gap: $gap-regular;
+        .icon__container {
+          height: 24px;
+          width: 24px;
+          .icon {
+            height: 24px;
+            width: 24px;
+          }
+        }
+        span {
+          align-self: self-end;
+          color: $primary-text;
+        }
+      }
+    }
+
+    @media (min-width: $breakpoint-md) {
+      flex-direction: row;
+      justify-content: space-between;
+      margin: $gap-large 0;
+      .links__container {
+        .links {
+          display: flex;
+          flex-wrap: wrap;
+          .link {
+          }
+        }
+      }
+      .contact_info {
+        width: fit-content;
+        align-self: flex-end;
+        gap: $gap-regular;
+      }
+
+      .divider_container {
+        display: none;
+      }
+    }
+  }
+
+  .copyright {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: $gap-regular;
+
+    font-size: $fs-small;
+    color: $secondary-text;
+    .legal {
+      display: flex;
+      justify-content: center;
+      gap: $gap-regular;
+      a {
+        color: $secondary-text;
+      }
+    }
+    @media (min-width: $breakpoint-md) {
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+    }
+  }
+
+  a[href^='tel'] {
+    color: $primary-text;
+  }
+}
