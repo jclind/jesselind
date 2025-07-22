@@ -19,7 +19,7 @@ const Projects = () => {
         className={`${isTitle ? styles.letterTitle : styles.letterTagline}`}
         style={
           {
-            animationDelay: `${index * 0.03 + initialDelay}s`,
+            animationDelay: `${index * 0.02 + initialDelay}s`,
             '--index': index,
           } as React.CSSProperties // Type assertion to allow --index
         }
@@ -39,13 +39,13 @@ const Projects = () => {
           if (entry.isIntersecting) {
             entry.target.classList.add(styles.visible)
           } else {
-            entry.target.classList.remove(styles.visible)
+            // entry.target.classList.remove(styles.visible)
           }
         })
       },
       {
         threshold: 0.1,
-        rootMargin: '-10% 0px -20% 0px', // Text: 30% from top, 50% from bottom
+        rootMargin: '-10% 0px -10% 0px', // Text: 30% from top, 50% from bottom
       }
     )
 
@@ -105,22 +105,29 @@ const Projects = () => {
                   {splitTextToSpans(project.tagline, false, 0.5)}
                 </p>
               </div>
-              <div
-                className={styles.images}
-                ref={el => {
-                  imageRefs.current[index] = el
-                }}
+              <a
+                href={project.link || '#'}
+                className={styles.imageLink}
+                target='_blank'
+                rel='noopener noreferrer'
               >
-                {project.images.map((image, imgIndex) => (
-                  <div className={styles.image} key={imgIndex}>
-                    <img
-                      key={imgIndex}
-                      src={image}
-                      alt={`${project.title} image ${imgIndex + 1}`}
-                    />
-                  </div>
-                ))}
-              </div>
+                <div
+                  className={styles.images}
+                  ref={el => {
+                    imageRefs.current[index] = el
+                  }}
+                >
+                  {project.images.map((image, imgIndex) => (
+                    <div className={styles.image} key={imgIndex}>
+                      <img
+                        key={imgIndex}
+                        src={image}
+                        alt={`${project.title} image ${imgIndex + 1}`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </a>
             </div>
           ))}
         </div>

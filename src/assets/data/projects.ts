@@ -9,6 +9,7 @@ export const projects = [
       '/images/prepify/3.png',
       '/images/prepify/3.png',
     ],
+    link: '/portfolio/prepify',
   },
   {
     title: 'Pump Track',
@@ -20,6 +21,7 @@ export const projects = [
       '/images/pumptrack/3.png',
       '/images/pumptrack/3.png',
     ],
+    link: '/portfolio/pumptrack',
   },
   // {
   //   title: '',

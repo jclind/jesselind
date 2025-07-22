@@ -1,7 +1,9 @@
 ---
 import Navbar from '../components/Layout/Navbar';
+import SmoothScroll from '../components/Util/SmoothScroll';
 import Footer from '../components/Layout/Footer';
 import '@fontsource-variable/montserrat';
+import '../components/Util/SmoothScroll'
 
 import { LEGAL_NAME, WEBSITE_DESCRIPTION } from '../assets/data/legalInfo';
 
@@ -44,6 +46,7 @@ const GOOGLE_ANALYTICS_ID = 'G-XXXXXXXXXX'
 		<link rel="sitemap" href="/sitemap-index.xml" />
 	</head>
 	<body>
+		<SmoothScroll client:load />
 		<main>
 			<slot />
 		</main>
