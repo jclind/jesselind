@@ -17,6 +17,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  overflow-y: hidden;
   max-width: 100vw;
 }
 
@@ -197,4 +198,12 @@ button,
 a[href^='tel'] {
   color: $primary-text; /* Or any color that contrasts with the background */
   text-decoration: none; /* Optional: removes underline */
+}
+
+// * New Styles
+
+.nav_link {
+  font-size: $fs-regular;
+  font-weight: 200;
+  color: $secondary-text;
 }

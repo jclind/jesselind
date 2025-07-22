@@ -1,23 +1,145 @@
 @use '../../../../styles/vars' as *;
+@use 'sass:math';
 
 .hero {
+  position: relative;
+  padding: $page-padding;
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+
   .content {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: $gap-large;
-    .buttons {
-      display: flex;
-      gap: $gap-large;
-      margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+    h1 {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: fit-content;
+      transform: translateX(-50%);
     }
 
     .overlapping_logo {
       height: 100px;
+      margin-bottom: $gap-xl;
       img {
         object-fit: contain;
         height: 100%;
         width: 100%;
+        user-select: none;
+        pointer-events: none;
       }
     }
+  }
+  $top-lines-gap: 185px;
+  $left-side: 16.66666%;
+  .lines {
+    span {
+      position: absolute;
+      background: $tertiary-text;
+    }
+    .line1 {
+      top: $top-lines-gap;
+      height: 1px;
+      left: 66.66666%;
+      width: 33.33334%;
+    }
+    .line2 {
+      top: $top-lines-gap;
+      height: 1px;
+      left: $left-side;
+      width: 16.66667%;
+    }
+    .line3 {
+      top: $top-lines-gap;
+      width: 1px;
+      height: 16%;
+      left: $left-side;
+    }
+    .line4 {
+      top: 62.5%;
+      width: 1px;
+      height: 10000px;
+      left: $left-side;
+    }
+    .arrows {
+      $arrow-width: 12px;
+      span {
+        width: $arrow-width;
+        height: 1px;
+        bottom: $gap-large;
+      }
+      $left-arrow: calc($left-side - 11px);
+      $right-arrow: calc($left-side);
+      .v1,
+      .v3,
+      .v5 {
+        left: $left-arrow;
+        transform: rotate(45deg);
+        transform-origin: right center;
+      }
+      .v2,
+      .v4,
+      .v6 {
+        left: $right-arrow;
+        transform: rotate(-45deg);
+        transform-origin: left center;
+      }
+      .v3,
+      .v4 {
+        bottom: $gap-large - $gap-tiny;
+      }
+      .v5,
+      .v6 {
+        bottom: $gap-large - ($gap-tiny * 2);
+      }
+    }
+  }
+  .links {
+    .notes,
+    .projects {
+      position: absolute;
+      left: calc($left-side - 24px);
+      text-align: center;
+    }
+    a {
+      cursor: pointer;
+    }
+    .notes {
+      top: calc($top-lines-gap + 2%);
+    }
+    .projects {
+      bottom: $gap-large + 12px + 10px;
+      // bottom: 12.5%;
+    }
+    .logo {
+      position: absolute;
+      left: $page-padding;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 30px;
+      img {
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+        user-select: none;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .mid_line {
+    position: absolute;
+    top: 50%;
+    height: 1px;
+    width: 100%;
+    transform: translateX(-50%);
+    transform: translateY(-50%);
+    background: red;
   }
 }

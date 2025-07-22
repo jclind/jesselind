@@ -1,4 +1,4 @@
-$aspekta-font-path: '/fonts/aspekta';
+$aspekta-font-path: '/fonts/Aspekta';
 
 @mixin aspekta-font($weight, $filename) {
   @font-face {
@@ -9,9 +9,11 @@ $aspekta-font-path: '/fonts/aspekta';
   }
 }
 
-@include aspekta-font(100, 'Aspekta-Thin');
-@include aspekta-font(300, 'Aspekta-Light');
-@include aspekta-font(400, 'Aspekta-Regular');
-@include aspekta-font(500, 'Aspekta-Medium');
-@include aspekta-font(700, 'Aspekta-Bold');
-@include aspekta-font(900, 'Aspekta-Black');
+@include aspekta-font(200, 'Aspekta-200');
+@include aspekta-font(300, 'Aspekta-300');
+@include aspekta-font(400, 'Aspekta-400');
+@include aspekta-font(500, 'Aspekta-500');
+@include aspekta-font(600, 'Aspekta-600');
+@include aspekta-font(700, 'Aspekta-700');
+@include aspekta-font(800, 'Aspekta-800');
+@include aspekta-font(900, 'Aspekta-900');

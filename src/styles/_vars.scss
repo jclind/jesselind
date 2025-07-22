@@ -18,7 +18,7 @@ $secondary-border-color: #575757; // Secondary border color
 // =============================================
 // Typography
 // =============================================
-$font-family-base: 'Aspekta', Arial; // Base font family
+$font-family-base: 'Aspekta', Arial;
 $font-size-base: 16px; // Base font size
 $line-height-base: 1.5; // Base line height
 
@@ -81,6 +81,7 @@ $z-index-tooltip: 3000; // Tooltip z-index
 // =============================================
 $max-width-container: 1100px; // Max width for containers
 $max-width-percentage: 90%; // Max width as a percentage
+$page-padding: $gap-large;
 
 // =============================================
 // Card
