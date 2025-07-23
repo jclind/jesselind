@@ -64,6 +64,13 @@
           }
         }
 
+        a {
+          &:hover {
+            .images {
+              transform: scale(1.015);
+            }
+          }
+        }
         .images {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
@@ -74,7 +81,7 @@
           border-radius: 36px;
           opacity: 0;
           // transform: translateY(20px);
-          transition: opacity 0.3s linear, transform 0.3s linear;
+          transition: opacity 0.3s linear, transform 0.15s linear;
           .image {
             width: 100%;
             overflow: hidden;

@@ -63,7 +63,8 @@ const Projects = () => {
       },
       {
         threshold: 0.1,
-        rootMargin: '-50% 0px -40% 0px', // Images: 50% from top, 50% from bottom
+        // rootMargin: '-50% 0px -40% 0px', // Images: 50% from top, 50% from bottom
+        rootMargin: '-30% 0px -30% 0px', // Images: 50% from top, 50% from bottom
       }
     )
 
