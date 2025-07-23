@@ -1,0 +1,17 @@
+@use '../../../../styles/vars' as *;
+
+.Contact {
+  width: 100%;
+  .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: $gap-3xl;
+
+    h1 {
+      font-size: $fs-large;
+      font-weight: 200;
+    }
+  }
+}
