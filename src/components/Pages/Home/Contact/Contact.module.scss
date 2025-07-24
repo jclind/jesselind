@@ -4,14 +4,55 @@
   width: 100%;
   .content {
     display: flex;
+    flex-direction: column;
+    gap: $gap-large;
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin-top: $gap-3xl;
+    margin-top: $gap-3xl * 2;
 
     h1 {
       font-size: $fs-large;
       font-weight: 200;
+    }
+    .contact_btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: $gap-small $gap-large;
+      font-size: $fs-regular;
+      color: $primary-text;
+
+      font-weight: 200;
+      background: linear-gradient($primary-background, $primary-background)
+          padding-box,
+        linear-gradient(
+            155deg,
+            #ff00ff,
+            #ff00ff76,
+            #ff00ff2b,
+            #ff00ff27,
+            #ff00ff3e,
+            $tertiary-text
+          )
+          border-box;
+      border-radius: 50em;
+      border: 1px solid transparent;
+
+      // border-image: linear-gradient(
+      //     145deg,
+      //     #ff00ff76,
+      //     #ff00ff,
+      //     #ff00ff3e,
+      //     #ffffff1a,
+      //     #000000
+      //   )
+      //   1;
+      // border-width: 4px;
+      // border-style: solid;
+      // padding: 5px;
+
+      // border-radius: 36px;
     }
   }
 }

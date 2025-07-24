@@ -1,0 +1,23 @@
+// src/styles/textAnimation.module.scss
+.letterTitle {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.letterTagline {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.visible {
+  .letterTitle,
+  .letterTagline {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(var(--index) * 0.02s);
+  }
+}
