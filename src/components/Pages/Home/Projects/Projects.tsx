@@ -5,6 +5,8 @@ import {
   splitTextToSpans,
   useTextAnimation,
 } from '../../../Util/useTextAnimation'
+import { useFadeInAnimation } from '../../../Util/useFadeInAnimation'
+import fadeInAnimationStyles from '../../../Util/fadeInAnimation.module.scss'
 
 const Projects = () => {
   // Use custom hook for text animations
@@ -18,35 +20,40 @@ const Projects = () => {
 
   console.log('Projects data:', projects)
 
-  useEffect(() => {
-    // Observer for images only
-    const imageObserver = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          console.log('Image Intersection:', entry.target, entry.isIntersecting)
-          if (entry.isIntersecting) {
-            entry.target.classList.add(styles.visibleImages)
-          } else {
-            entry.target.classList.remove(styles.visibleImages)
-          }
-        })
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '-30% 0px -30% 0px',
-      }
-    )
+  const { setRef: setImageRef } = useFadeInAnimation({
+    threshold: 0.1,
+    rootMargin: '-30% 0px -30% 0px',
+  })
 
-    imageRefs.current.forEach(element => {
-      if (element) imageObserver.observe(element)
-    })
+  // useEffect(() => {
+  //   // Observer for images only
+  //   const imageObserver = new IntersectionObserver(
+  //     entries => {
+  //       entries.forEach(entry => {
+  //         console.log('Image Intersection:', entry.target, entry.isIntersecting)
+  //         if (entry.isIntersecting) {
+  //           entry.target.classList.add(styles.visibleImages)
+  //         } else {
+  //           entry.target.classList.remove(styles.visibleImages)
+  //         }
+  //       })
+  //     },
+  //     {
+  //       threshold: 0.1,
+  //       rootMargin: '-30% 0px -30% 0px',
+  //     }
+  //   )
 
-    return () => {
-      imageRefs.current.forEach(element => {
-        if (element) imageObserver.unobserve(element)
-      })
-    }
-  }, [])
+  //   imageRefs.current.forEach(element => {
+  //     if (element) imageObserver.observe(element)
+  //   })
+
+  //   return () => {
+  //     imageRefs.current.forEach(element => {
+  //       if (element) imageObserver.unobserve(element)
+  //     })
+  //   }
+  // }, [])
 
   return (
     <div className={styles.Projects}>
@@ -65,10 +72,11 @@ const Projects = () => {
                 rel='noopener noreferrer'
               >
                 <div
-                  className={styles.images}
-                  ref={el => {
-                    imageRefs.current[index] = el
-                  }}
+                  className={`${styles.images} ${fadeInAnimationStyles.fadeInElement}`}
+                  // ref={el => {
+                  //   imageRefs.current[index] = el
+                  // }}
+                  ref={setImageRef(index)}
                 >
                   {project.images.map((image, imgIndex) => (
                     <div className={styles.image} key={imgIndex}>

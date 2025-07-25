@@ -1,14 +1,14 @@
 import { useRef, useEffect, type JSX } from 'react'
-import styles from './textAnimation.module.scss'
+import styles from './fadeInAnimation.module.scss'
 
-interface UseTextAnimationOptions {
+interface UseFadeInAnimationOptions {
   threshold?: number
   rootMargin?: string
   removeOnExit?: boolean
   visibleClass?: string
 }
 
-export const useTextAnimation = (options: UseTextAnimationOptions = {}) => {
+export const useFadeInAnimation = (options: UseFadeInAnimationOptions = {}) => {
   const {
     threshold = 0.1,
     rootMargin = '-10% 0px -10% 0px',
@@ -54,31 +54,4 @@ export const useTextAnimation = (options: UseTextAnimationOptions = {}) => {
   }
 
   return { setRef }
-}
-
-// utils/textAnimationHelpers.ts
-export const splitTextToSpans = (
-  text: string,
-  className: string = '',
-  Tag: keyof JSX.IntrinsicElements = 'p',
-  initialDelay: number = 0
-) => {
-  return (
-    <Tag className={`${styles.animated_text} ${className}`}>
-      {text.split('').map((char, index) => (
-        <span
-          key={index}
-          className={styles.letter}
-          style={
-            {
-              animationDelay: `${index * 0.02 + initialDelay}s`,
-              '--index': index,
-            } as React.CSSProperties
-          }
-        >
-          {char === ' ' ? '\u00A0' : char}
-        </span>
-      ))}
-    </Tag>
-  )
 }

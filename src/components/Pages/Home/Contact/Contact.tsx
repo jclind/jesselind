@@ -6,11 +6,19 @@ import {
   splitTextToSpans,
   useTextAnimation,
 } from '../../../Util/useTextAnimation'
+import fadeStyles from '../../../Util/fadeInAnimation.module.scss'
+import { useFadeInAnimation } from '../../../Util/useFadeInAnimation'
 
 const Contact = () => {
   const { setRef: setTextRef } = useTextAnimation({
     threshold: 0.1,
-    rootMargin: '-25% 0px -40% 0px',
+    rootMargin: '-30% 0px -35% 0px',
+    removeOnExit: true,
+  })
+
+  const { setRef: setFadeRef } = useFadeInAnimation({
+    threshold: 0.2,
+    rootMargin: '-25% 0px -30% 0px',
     removeOnExit: true,
   })
 
@@ -20,7 +28,10 @@ const Contact = () => {
         <div ref={setTextRef(0)}>
           {splitTextToSpans("let's make something", 'project-title', 'h1')}
         </div>
-        <div className={styles.contact_btn}>
+        <div
+          ref={setFadeRef(0)}
+          className={`${styles.contact_btn} ${fadeStyles.fadeInElement}`}
+        >
           <span>contact</span> <ArrowUpRight strokeWidth={1} />
         </div>
       </div>
