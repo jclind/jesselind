@@ -7,6 +7,7 @@ import {
 } from '../../../Util/useTextAnimation'
 import { useFadeInAnimation } from '../../../Util/useFadeInAnimation'
 import fadeInAnimationStyles from '../../../Util/fadeInAnimation.module.scss'
+import fadeStyles from '../../../Util/fadeInAnimation.module.scss'
 
 const Projects = () => {
   // Use custom hook for text animations
@@ -20,9 +21,9 @@ const Projects = () => {
 
   console.log('Projects data:', projects)
 
-  const { setRef: setImageRef } = useFadeInAnimation({
+  const { setRef: setFadeRef } = useFadeInAnimation({
     threshold: 0.1,
-    rootMargin: '-30% 0px -30% 0px',
+    // rootMargin: '-30% 0px -30% 0px',
   })
 
   // useEffect(() => {
@@ -72,11 +73,11 @@ const Projects = () => {
                 rel='noopener noreferrer'
               >
                 <div
-                  className={`${styles.images} ${fadeInAnimationStyles.fadeInElement}`}
+                  className={`${styles.images} ${fadeStyles.fadeInElement}`}
                   // ref={el => {
                   //   imageRefs.current[index] = el
                   // }}
-                  ref={setImageRef(index)}
+                  ref={setFadeRef(index)}
                 >
                   {project.images.map((image, imgIndex) => (
                     <div className={styles.image} key={imgIndex}>
