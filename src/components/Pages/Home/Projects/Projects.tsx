@@ -23,7 +23,8 @@ const Projects = () => {
 
   const { setRef: setFadeRef } = useFadeInAnimation({
     threshold: 0.1,
-    // rootMargin: '-30% 0px -30% 0px',
+    removeOnExit: true,
+    rootMargin: '-30% 0px -30% 0px',
   })
 
   // useEffect(() => {

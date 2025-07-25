@@ -12,13 +12,13 @@ import { useFadeInAnimation } from '../../../Util/useFadeInAnimation'
 const Contact = () => {
   const { setRef: setTextRef } = useTextAnimation({
     threshold: 0.1,
-    rootMargin: '-30% 0px -35% 0px',
+    rootMargin: '-30% 0px -30% 0px',
     removeOnExit: true,
   })
 
   const { setRef: setFadeRef } = useFadeInAnimation({
     threshold: 0.2,
-    rootMargin: '-25% 0px -30% 0px',
+    rootMargin: '-30% 0px -30% 0px',
     removeOnExit: true,
   })
 
