@@ -26,42 +26,6 @@
           align-items: flex-end;
           width: 100%;
           padding: $gap-medium $gap-large;
-
-          p {
-            width: fit-content;
-          }
-
-          .title,
-          .tagline {
-            overflow: hidden; /* Hide letters before animation */
-            display: inline-block;
-
-            .letterTitle,
-            .letterTagline {
-              opacity: 0;
-              display: inline-block;
-              transition: opacity 0.5s ease, transform 0.5s ease;
-            }
-
-            .letterTitle {
-              transition-delay: calc(0.02s * var(--index));
-            }
-
-            .letterTagline {
-              transition-delay: calc(0.02s * var(--index) + 0.5s);
-            }
-          }
-        }
-
-        &.visible {
-          .title,
-          .tagline {
-            .letterTitle,
-            .letterTagline {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
         }
 
         a {

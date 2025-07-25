@@ -4,14 +4,13 @@ import { projects } from '../../../../assets/data/projects'
 import {
   splitTextToSpans,
   useTextAnimation,
-} from '../../../Util/useTextAnimations'
+} from '../../../Util/useTextAnimation'
 
 const Projects = () => {
   // Use custom hook for text animations
   const { setRef: setTextRef } = useTextAnimation({
     threshold: 0.1,
     rootMargin: '-10% 0px -10% 0px',
-    visibleClass: styles.visible,
   })
 
   // Keep separate observer for images (since they have different behavior)
@@ -56,12 +55,8 @@ const Projects = () => {
           {projects.map((project, index) => (
             <div key={index} className={styles.project} ref={setTextRef(index)}>
               <div className={styles.head}>
-                <p className={`${styles.title} project-title`}>
-                  {splitTextToSpans(project.title, styles.letterTitle)}
-                </p>
-                <p className={`${styles.tagline} project-tagline`}>
-                  {splitTextToSpans(project.tagline, styles.letterTagline, 0.5)}
-                </p>
+                {splitTextToSpans(project.title, 'project-title')}
+                {splitTextToSpans(project.tagline, 'project-tagline')}
               </div>
               <a
                 href={project.link || '#'}

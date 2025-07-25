@@ -1,9 +1,11 @@
 // hooks/useTextAnimation.ts
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, type JSX } from 'react'
+import styles from './textAnimation.module.scss'
 
 interface UseTextAnimationOptions {
   threshold?: number
   rootMargin?: string
+  removeOnExit?: boolean
   visibleClass?: string
 }
 
@@ -11,7 +13,8 @@ export const useTextAnimation = (options: UseTextAnimationOptions = {}) => {
   const {
     threshold = 0.1,
     rootMargin = '-10% 0px -10% 0px',
-    visibleClass = 'visible',
+    removeOnExit = false,
+    visibleClass = styles.visible,
   } = options
 
   const elementRefs = useRef<(HTMLElement | null)[]>([])
@@ -23,10 +26,11 @@ export const useTextAnimation = (options: UseTextAnimationOptions = {}) => {
           if (entry.isIntersecting) {
             entry.target.classList.add(visibleClass)
           }
-          // Uncomment if you want to remove class when out of view
-          // else {
-          //   entry.target.classList.remove(visibleClass)
-          // }
+
+          // Remove class when out of view
+          else if (removeOnExit) {
+            entry.target.classList.remove(visibleClass)
+          }
         })
       },
       {
@@ -56,21 +60,26 @@ export const useTextAnimation = (options: UseTextAnimationOptions = {}) => {
 // utils/textAnimationHelpers.ts
 export const splitTextToSpans = (
   text: string,
-  className: string,
+  className: string = '',
+  Tag: keyof JSX.IntrinsicElements = 'p',
   initialDelay: number = 0
 ) => {
-  return text.split('').map((char, index) => (
-    <span
-      key={index}
-      className={className}
-      style={
-        {
-          animationDelay: `${index * 0.02 + initialDelay}s`,
-          '--index': index,
-        } as React.CSSProperties
-      }
-    >
-      {char === ' ' ? '\u00A0' : char}
-    </span>
-  ))
+  return (
+    <Tag className={`${styles.animated_text} ${className}`}>
+      {text.split('').map((char, index) => (
+        <span
+          key={index}
+          className={styles.letter}
+          style={
+            {
+              animationDelay: `${index * 0.02 + initialDelay}s`,
+              '--index': index,
+            } as React.CSSProperties
+          }
+        >
+          {char === ' ' ? '\u00A0' : char}
+        </span>
+      ))}
+    </Tag>
+  )
 }

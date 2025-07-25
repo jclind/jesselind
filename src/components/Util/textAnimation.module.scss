@@ -1,21 +1,22 @@
-// src/styles/textAnimation.module.scss
-.letterTitle {
-  display: inline-block;
+.letter {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: inline-block;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition-delay: calc(0.02s * var(--index));
 }
-
-.letterTagline {
+.animated_text {
+  overflow: hidden; /* Hide letters before animation */
   display: inline-block;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  @for $i from 1 through 10 {
+    &:nth-of-type(#{$i}) {
+      animation-delay: #{($i - 10) * 10}s;
+    }
+  }
 }
 
 .visible {
-  .letterTitle,
-  .letterTagline {
+  .letter {
     opacity: 1;
     transform: translateY(0);
     transition-delay: calc(var(--index) * 0.02s);

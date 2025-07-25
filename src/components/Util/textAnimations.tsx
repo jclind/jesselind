@@ -1,14 +1,15 @@
+import styles from './Contact.module.scss'
+
 // src/utils/textAnimation.ts
 export const splitTextToSpans = (
   text: string,
   isTitle: boolean,
-  classNames: { letterTitle: string; letterTagline: string },
   initialDelay: number = 0
 ) => {
   return text.split('').map((char, index) => (
     <span
       key={index}
-      className={isTitle ? classNames.letterTitle : classNames.letterTagline}
+      className={styles.letter}
       style={
         {
           animationDelay: `${index * 0.02 + initialDelay}s`,

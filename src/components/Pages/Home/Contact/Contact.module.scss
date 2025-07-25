@@ -11,9 +11,17 @@
     width: 100%;
     margin-top: $gap-3xl * 2;
 
+    .head {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
     h1 {
       font-size: $fs-large;
       font-weight: 200;
+      color: $primary-text;
     }
     .contact_btn {
       display: flex;
