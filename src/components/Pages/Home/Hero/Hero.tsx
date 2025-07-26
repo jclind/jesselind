@@ -1,18 +1,30 @@
 import React, { useEffect } from 'react'
 import styles from './Hero.module.scss'
 import { ButtonLink } from '../../../Common/ButtonLink'
+import scssVars from '../../../../styles/_exports.module.scss'
 const Hero = () => {
   // React/JS (in a useEffect)
   useEffect(() => {
     const pageHeight = document.documentElement.scrollHeight
+    const heroHeight = document.getElementById('hero')?.clientHeight || 0
     const el = document.querySelector('.page-height-line') as HTMLElement
+    const displacement =
+      (parseFloat(scssVars.pageLineTopDisplacement) / 100) * heroHeight
+    console.log(
+      'Page height:',
+      pageHeight,
+      'Hero height:',
+      heroHeight,
+      'Displacement:',
+      displacement
+    )
     if (el) {
-      el.style.height = `${pageHeight}px`
+      el.style.height = `${pageHeight - displacement}px`
     }
   }, [])
 
   return (
-    <div className={`${styles.hero}`}>
+    <div className={`${styles.hero}`} id='hero'>
       <div className={styles.content}>
         <h1 className={`${styles.nav_link} nav_link`}>never final</h1>
 

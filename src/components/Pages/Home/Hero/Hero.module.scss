@@ -37,7 +37,6 @@
       }
     }
   }
-  $top-lines-gap: 185px;
   $left-side: $left-line-displacement;
   .lines {
     span {
@@ -63,7 +62,7 @@
       left: $left-side;
     }
     .line4 {
-      top: 62.5%;
+      top: $page-line-top-displacement;
       width: 1px;
       // height: 10000px;
       left: $left-side;
