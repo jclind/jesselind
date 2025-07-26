@@ -10,11 +10,16 @@
   .top_line {
     position: absolute;
     top: 0;
-    left: $left-line-displacement;
+    left: $left-line-displacement-lg;
     height: 1px;
-    width: calc(100% - $left-line-displacement);
+    width: calc(100% - $left-line-displacement-lg);
     background: $tertiary-text;
     z-index: 2;
+
+    @media (max-width: 1200px) {
+      left: $left-line-displacement-md;
+      width: calc(100% - $left-line-displacement-md);
+    }
   }
   .background_image {
     position: absolute;
@@ -71,6 +76,11 @@
         color: $secondary-text;
         font-size: $fs-small;
         cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: $primary-text;
+        }
       }
     }
     .bottom {
@@ -84,9 +94,9 @@
           &:focus {
             display: flex;
             outline: 1px solid $primary-text;
+            border-radius: 4px;
           }
           height: 28px;
-          border-radius: 4px;
         }
         .logo {
           height: 28px;

@@ -52,11 +52,11 @@ const Hero = () => {
         </div>
       </div>
       <div className={styles.links}>
-        <a className={`${styles.notes} nav_link`}>
+        <a href='/notes' className={`${styles.notes} nav_link`}>
           n<br />
           o<br /> t<br /> e<br />s
         </a>
-        <a className={`${styles.projects} nav_link`}>
+        <a href='#projects' className={`${styles.projects} nav_link`}>
           p<br />
           r<br /> o<br /> j<br /> e<br /> c<br /> t<br /> s
         </a>

@@ -6,7 +6,7 @@ const Footer = () => {
   const footerRef = useRef<HTMLDivElement>(null)
   const bgImageRef = useRef<HTMLDivElement>(null)
 
-  const handleClick = () => {
+  const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -51,7 +51,7 @@ const Footer = () => {
         <div className={styles.box_top}></div>
         <div className={styles.box_bottom}></div>
         <div className={styles.top}>
-          <button className={styles.return_to_top}>
+          <button className={styles.return_to_top} onClick={handleScrollToTop}>
             <span>return to top</span>
             <MoveUp size={16} strokeWidth={1.5} />
           </button>

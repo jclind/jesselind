@@ -1,6 +1,16 @@
 @use '../../../../styles/vars' as *;
 @use 'sass:math';
 
+:root {
+  --left-side: #{$left-line-displacement-lg}; // default
+}
+
+@media (max-width: $page-break-lg) {
+  :root {
+    --left-side: #{$left-line-displacement-md};
+  }
+}
+
 .hero {
   position: relative;
   padding: $page-padding;
@@ -37,7 +47,7 @@
       }
     }
   }
-  $left-side: $left-line-displacement;
+
   .lines {
     span {
       position: absolute;
@@ -52,20 +62,20 @@
     .line2 {
       top: $top-lines-gap;
       height: 1px;
-      left: $left-side;
+      left: var(--left-side);
       width: 16.66667%;
     }
     .line3 {
       top: $top-lines-gap;
       width: 1px;
       height: 16%;
-      left: $left-side;
+      left: var(--left-side);
     }
     .line4 {
       top: $page-line-top-displacement;
       width: 1px;
       // height: 10000px;
-      left: $left-side;
+      left: var(--left-side);
       z-index: -1;
       pointer-events: none;
     }
@@ -76,8 +86,8 @@
         height: 1px;
         bottom: $gap-large;
       }
-      $left-arrow: calc($left-side - 11px);
-      $right-arrow: calc($left-side);
+      $left-arrow: calc(var(--left-side) - 11px);
+      $right-arrow: calc(var(--left-side));
       .v1,
       .v3,
       .v5 {
@@ -106,12 +116,20 @@
     .notes,
     .projects {
       position: absolute;
-      left: calc($left-side - 24px);
+      left: calc(var(--left-side) - 24px);
       text-align: center;
     }
+
     a {
       cursor: pointer;
+      text-decoration: none;
+      line-height: 1.3;
+
+      &:hover {
+        color: $primary-text;
+      }
     }
+
     .notes {
       top: calc($top-lines-gap + 2%);
     }
@@ -123,7 +141,6 @@
       position: absolute;
       left: $page-padding;
       top: 50%;
-      transform: translateY(-50%);
       height: 30px;
       img {
         object-fit: contain;
@@ -131,6 +148,25 @@
         width: 100%;
         user-select: none;
         pointer-events: none;
+      }
+    }
+
+    @media (max-width: $page-break-lg) {
+      a {
+        line-height: 1.2;
+      }
+      .logo {
+        left: var(--left-side);
+        transform: translateX(-50%);
+      }
+    }
+    @media (max-width: $page-break-sm) {
+      .notes,
+      .projects {
+        left: calc(var(--left-side) - 16px);
+      }
+      .notes {
+        top: calc($top-lines-gap + 1%);
       }
     }
   }

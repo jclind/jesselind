@@ -58,7 +58,7 @@ const Projects = () => {
   // }, [])
 
   return (
-    <div className={styles.Projects}>
+    <div className={styles.Projects} id='projects'>
       <div className={styles.content}>
         <div className={styles.projects_list}>
           {projects.map((project, index) => (
