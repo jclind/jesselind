@@ -38,16 +38,25 @@
       padding: $gap-small $gap-large;
       font-size: $fs-regular;
       color: $primary-text;
-      background: $primary-background;
+      background: transparent;
       cursor: pointer;
       border-radius: 36px;
 
-      &::before,
+      // Solid background
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: $primary-background;
+        border-radius: inherit;
+        z-index: -1;
+      }
+
+      // Sharp gradient border
       &::after {
         content: '';
         position: absolute;
         inset: -1px;
-        z-index: -1;
         border-radius: inherit;
         background: conic-gradient(
           from var(--gradient-angle),
@@ -65,22 +74,160 @@
           #ff00ff
         );
         animation: rotation 20s linear infinite;
-        animation-play-state: paused; // Start paused
-      }
-      &:hover::before,
-      &:hover::after {
-        animation-play-state: running; // Play on hover
-      }
-      &::before {
-        z-index: -1;
+        animation-play-state: paused;
+        z-index: -2;
+        opacity: inherit;
       }
 
-      &:hover::after {
-        z-index: -2;
-        filter: blur(1rem);
+      // Blur glow effect
+      .btn_glow {
+        position: absolute;
+        inset: -1px; // Slightly larger for glow effect
+        border-radius: inherit;
+        background: conic-gradient(
+          from var(--gradient-angle),
+          #ff00ff,
+          #ff00ff76,
+          #ff00ff2b,
+          #ff00ff27,
+          #ff00ff3e,
+          $tertiary-text,
+          $tertiary-text,
+          #ff00ff3e,
+          #ff00ff27,
+          #ff00ff2b,
+          #ff00ff76,
+          #ff00ff
+        );
+        animation: rotation 20s linear infinite;
+        animation-play-state: paused;
+        z-index: -3;
+        filter: blur(0);
         transition: filter 0.5s linear;
+        opacity: inherit;
+      }
+
+      &:hover::after,
+      &:hover .btn_glow {
+        animation-play-state: running;
+      }
+
+      &:hover .btn_glow {
+        filter: blur(0.5rem);
       }
     }
+
+    // .contact_btn {
+    //   position: relative;
+    //   display: flex;
+    //   justify-content: center;
+    //   align-items: center;
+    //   padding: $gap-small $gap-large;
+    //   font-size: $fs-regular;
+    //   color: $primary-text;
+    //   background: transparent; // Remove this background
+    //   cursor: pointer;
+    //   border-radius: 36px;
+
+    //   // Add a solid background pseudo-element
+    //   &::before {
+    //     content: '';
+    //     position: absolute;
+    //     inset: 0; // Exactly the button size, not -1px
+    //     background: $primary-background;
+    //     border-radius: inherit;
+    //     z-index: -1; // Behind text, but above gradient borders
+    //   }
+
+    //   // Gradient borders
+    //   &::after {
+    //     content: '';
+    //     position: absolute;
+    //     inset: -1px; // This creates the border effect
+    //     border-radius: inherit;
+    //     background: conic-gradient(
+    //       from var(--gradient-angle),
+    //       #ff00ff,
+    //       #ff00ff76,
+    //       #ff00ff2b,
+    //       #ff00ff27,
+    //       #ff00ff3e,
+    //       $tertiary-text,
+    //       $tertiary-text,
+    //       #ff00ff3e,
+    //       #ff00ff27,
+    //       #ff00ff2b,
+    //       #ff00ff76,
+    //       #ff00ff
+    //     );
+    //     animation: rotation 20s linear infinite;
+    //     animation-play-state: paused;
+    //     z-index: -2; // Behind the solid background
+    //     opacity: inherit;
+    //   }
+
+    //   &:hover::after {
+    //     animation-play-state: running;
+    //   }
+
+    //   &:hover::after {
+    //     filter: blur(0.05rem);
+    //     transition: filter 0.5s linear;
+    //   }
+    // }
+
+    // .contact_btn {
+    //   position: relative;
+    //   display: flex;
+    //   justify-content: center;
+    //   align-items: center;
+    //   padding: $gap-small $gap-large;
+    //   font-size: $fs-regular;
+    //   color: $primary-text;
+    //   background: $primary-background !important;
+    //   cursor: pointer;
+    //   border-radius: 36px;
+
+    //   &::before,
+    //   &::after {
+    //     content: '';
+    //     position: absolute;
+    //     inset: -1px;
+    //     z-index: -1;
+    //     border-radius: inherit;
+    //     background: conic-gradient(
+    //       from var(--gradient-angle),
+    //       #ff00ff,
+    //       #ff00ff76,
+    //       #ff00ff2b,
+    //       #ff00ff27,
+    //       #ff00ff3e,
+    //       $tertiary-text,
+    //       $tertiary-text,
+    //       #ff00ff3e,
+    //       #ff00ff27,
+    //       #ff00ff2b,
+    //       #ff00ff76,
+    //       #ff00ff
+    //     );
+    //     opacity: inherit;
+    //     animation: rotation 20s linear infinite;
+    //     animation-play-state: paused; // Start paused
+    //   }
+    //   &:hover::before,
+    //   &:hover::after {
+    //     animation-play-state: running; // Play on hover
+    //   }
+    //   &::before {
+    //     z-index: -1;
+    //   }
+
+    //   &:hover::after {
+    //     z-index: -2;
+    //     filter: blur(1rem);
+    //     transition: filter 0.5s linear;
+    //   }
+    // }
   }
 }
 

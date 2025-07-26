@@ -1,6 +1,9 @@
+@use '../../styles/vars' as *;
+
 .fadeInElement {
   opacity: 0;
   transition: opacity var(--fade-duration, 0.6s) ease;
+  background: $primary-background;
 }
 
 .visible {
