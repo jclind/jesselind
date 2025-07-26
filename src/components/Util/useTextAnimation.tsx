@@ -64,14 +64,21 @@ export const splitTextToSpans = (
   initialDelay: number = 0
 ) => {
   return (
-    <Tag className={`${styles.animated_text} ${className}`}>
+    <Tag
+      className={`${styles.animated_text} ${className}`}
+      style={
+        {
+          '--element-delay': `${initialDelay}s`,
+        } as React.CSSProperties
+      }
+    >
       {text.split('').map((char, index) => (
         <span
           key={index}
           className={styles.letter}
           style={
             {
-              animationDelay: `${index * 0.02 + initialDelay}s`,
+              animationDelay: `${index * 0.03 + initialDelay}s`,
               '--index': index,
             } as React.CSSProperties
           }

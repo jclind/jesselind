@@ -65,7 +65,7 @@ const Projects = () => {
             <div key={index} className={styles.project} ref={setTextRef(index)}>
               <div className={styles.head}>
                 {splitTextToSpans(project.title, 'project-title')}
-                {splitTextToSpans(project.tagline, 'project-tagline')}
+                {splitTextToSpans(project.tagline, 'project-tagline', 'p', 0.5)}
               </div>
               <a
                 href={project.link || '#'}

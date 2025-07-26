@@ -52,7 +52,7 @@ export const projects = [
   },
   {
     title: 'Tridle',
-    tagline: 'Three letter Wordle clone ',
+    tagline: 'Three letter Wordle clone.',
     description: '',
     images: genProjectImgs('tridle'),
     link: '/portfolio/tridle',

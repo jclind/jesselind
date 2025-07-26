@@ -1,24 +1,24 @@
-.letter {
-  opacity: 0;
-  display: inline-block;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  transition-delay: calc(0.02s * var(--index));
-}
-.animated_text {
-  overflow: hidden; /* Hide letters before animation */
-  display: inline-block;
+// textAnimation.module.scss
 
-  @for $i from 1 through 10 {
-    &:nth-of-type(#{$i}) {
-      animation-delay: #{($i - 10) * 10}s;
-    }
+.animated_text {
+  overflow: hidden;
+  display: inline-block;
+  text-align: end;
+  width: fit-content;
+
+  .letter {
+    opacity: 0;
+    display: inline-block;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    // Use the combined delay calculation
+    transition-delay: calc((var(--index) * 0.03s) + var(--element-delay, 0s));
   }
 }
 
 .visible {
   .letter {
     opacity: 1;
-    transform: translateY(0);
-    transition-delay: calc(var(--index) * 0.02s);
+    // Keep the same delay calculation - don't override it!
+    transition-delay: calc((var(--index) * 0.03s) + var(--element-delay, 0s));
   }
 }
