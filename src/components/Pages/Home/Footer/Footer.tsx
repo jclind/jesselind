@@ -43,6 +43,30 @@ const Footer = () => {
         <div className={styles.background_image} ref={bgImageRef}>
           <img src='/images/home_footer.png' alt='' />
         </div>
+        <div className={styles.box_top}></div>
+        <div className={styles.box_bottom}></div>
+        <div className='top'></div>
+        <div className={styles.bottom}>
+          <div className={styles.left}>
+            <a href='/mirai'>
+              <div className={styles.logo}>
+                <img
+                  src='/images/jesselind_kanji_logo.png'
+                  alt='Jesse Lind Logo'
+                  draggable='false'
+                />
+              </div>
+            </a>
+          </div>
+          <div className={styles.right}>
+            <div className={styles.links}>
+              <a href='/privacy'>Privacy</a> | <a href='/terms'>Terms</a>
+            </div>
+            <p
+              className={styles.copyright}
+            >{`©2021 - ${new Date().getUTCFullYear()} All Rights Reserved`}</p>
+          </div>
+        </div>
       </div>
     </div>
   )
