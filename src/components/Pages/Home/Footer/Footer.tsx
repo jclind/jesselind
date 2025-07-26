@@ -1,9 +1,14 @@
 import React, { useEffect, useRef } from 'react'
 import styles from './Footer.module.scss'
+import { ArrowUp, MoveUp } from 'lucide-react'
 
 const Footer = () => {
   const footerRef = useRef<HTMLDivElement>(null)
   const bgImageRef = useRef<HTMLDivElement>(null)
+
+  const handleClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,7 +50,12 @@ const Footer = () => {
         </div>
         <div className={styles.box_top}></div>
         <div className={styles.box_bottom}></div>
-        <div className='top'></div>
+        <div className={styles.top}>
+          <button className={styles.return_to_top}>
+            <span>return to top</span>
+            <MoveUp size={16} strokeWidth={1.5} />
+          </button>
+        </div>
         <div className={styles.bottom}>
           <div className={styles.left}>
             <a href='/mirai'>
@@ -60,11 +70,11 @@ const Footer = () => {
           </div>
           <div className={styles.right}>
             <div className={styles.links}>
-              <a href='/privacy'>Privacy</a> | <a href='/terms'>Terms</a>
+              <a href='/privacy'>privacy</a> | <a href='/terms'>terms</a>
             </div>
             <p
               className={styles.copyright}
-            >{`©2021 - ${new Date().getUTCFullYear()} All Rights Reserved`}</p>
+            >{`©2021 - ${new Date().getUTCFullYear()} all rights reserved`}</p>
           </div>
         </div>
       </div>
