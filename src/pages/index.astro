@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Pages/Home/Hero';
 import Projects from '../components/Pages/Home/Projects';
 import Contact from '../components/Pages/Home/Contact';
+import Footer from '../components/Pages/Home/Footer';
 import '../styles/global.scss';
 
 
@@ -11,7 +12,8 @@ import '../styles/global.scss';
 ---
 
 <Layout>
-  <Hero />
+  <Hero client:load />
   <Projects client:load />
   <Contact client:load />
+  <Footer client:load />
 </Layout>

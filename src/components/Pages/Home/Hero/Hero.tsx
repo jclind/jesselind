@@ -1,7 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from './Hero.module.scss'
 import { ButtonLink } from '../../../Common/ButtonLink'
 const Hero = () => {
+  // React/JS (in a useEffect)
+  useEffect(() => {
+    const pageHeight = document.documentElement.scrollHeight
+    const el = document.querySelector('.page-height-line') as HTMLElement
+    if (el) {
+      el.style.height = `${pageHeight}px`
+    }
+  }, [])
+
   return (
     <div className={`${styles.hero}`}>
       <div className={styles.content}>
@@ -20,7 +29,7 @@ const Hero = () => {
         <span className={styles.line1}></span>
         <span className={styles.line2}></span>
         <span className={styles.line3}></span>
-        <span className={styles.line4}></span>
+        <span className={`${styles.line4} page-height-line`}></span>
         <div className={styles.arrows}>
           <span className={styles.v1}></span>
           <span className={styles.v2}></span>

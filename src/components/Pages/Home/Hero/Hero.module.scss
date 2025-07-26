@@ -38,7 +38,7 @@
     }
   }
   $top-lines-gap: 185px;
-  $left-side: 16.66666%;
+  $left-side: $left-line-displacement;
   .lines {
     span {
       position: absolute;
@@ -65,8 +65,10 @@
     .line4 {
       top: 62.5%;
       width: 1px;
-      height: 10000px;
+      // height: 10000px;
       left: $left-side;
+      z-index: -1;
+      pointer-events: none;
     }
     .arrows {
       $arrow-width: 12px;

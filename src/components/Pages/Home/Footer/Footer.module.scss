@@ -1,0 +1,30 @@
+@use '../../../../styles/vars' as *;
+
+.Footer {
+  margin-top: $gap-2xl * 2;
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  background: $primary-background;
+
+  .top_line {
+    position: absolute;
+    top: 0;
+    left: $left-line-displacement;
+    height: 1px;
+    width: calc(100% - $left-line-displacement);
+    background: $tertiary-text;
+  }
+  .background_image {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    will-change: transform;
+    pointer-events: none;
+
+    img {
+      height: 100vh;
+      object-fit: cover;
+    }
+  }
+}
