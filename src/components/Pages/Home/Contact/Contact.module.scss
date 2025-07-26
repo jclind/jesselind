@@ -1,5 +1,11 @@
 @use '../../../../styles/vars' as *;
 
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: -60deg;
+  inherits: false;
+}
+
 .Contact {
   width: 100%;
   .content {
@@ -23,44 +29,66 @@
       font-weight: 200;
       color: $primary-text;
     }
+
     .contact_btn {
+      position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: $gap-small $gap-large;
       font-size: $fs-regular;
       color: $primary-text;
+      background: $primary-background;
+      cursor: pointer;
+      border-radius: 36px;
 
-      font-weight: 200;
-      background: linear-gradient($primary-background, $primary-background)
-          padding-box,
-        linear-gradient(
-            155deg,
-            #ff00ff,
-            #ff00ff76,
-            #ff00ff2b,
-            #ff00ff27,
-            #ff00ff3e,
-            $tertiary-text
-          )
-          border-box;
-      border-radius: 50em;
-      border: 1px solid transparent;
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        z-index: -1;
+        border-radius: inherit;
+        background: conic-gradient(
+          from var(--gradient-angle),
+          #ff00ff,
+          #ff00ff76,
+          #ff00ff2b,
+          #ff00ff27,
+          #ff00ff3e,
+          $tertiary-text,
+          $tertiary-text,
+          #ff00ff3e,
+          #ff00ff27,
+          #ff00ff2b,
+          #ff00ff76,
+          #ff00ff
+        );
+        animation: rotation 20s linear infinite;
+        animation-play-state: paused; // Start paused
+      }
+      &:hover::before,
+      &:hover::after {
+        animation-play-state: running; // Play on hover
+      }
+      &::before {
+        z-index: -1;
+      }
 
-      // border-image: linear-gradient(
-      //     145deg,
-      //     #ff00ff76,
-      //     #ff00ff,
-      //     #ff00ff3e,
-      //     #ffffff1a,
-      //     #000000
-      //   )
-      //   1;
-      // border-width: 4px;
-      // border-style: solid;
-      // padding: 5px;
-
-      // border-radius: 36px;
+      &:hover::after {
+        z-index: -2;
+        filter: blur(1rem);
+        transition: filter 0.5s linear;
+      }
     }
+  }
+}
+
+@keyframes rotation {
+  0% {
+    --gradient-angle: -60deg;
+  }
+  100% {
+    --gradient-angle: 300deg;
   }
 }
