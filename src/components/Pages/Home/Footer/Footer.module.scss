@@ -10,15 +10,15 @@
   .top_line {
     position: absolute;
     top: 0;
-    left: $left-line-displacement-xl;
+    left: var(--left-line-displacement);
     height: 1px;
-    width: calc(100% - $left-line-displacement-xl);
+    width: calc(100% - var(--left-line-displacement));
     background: $tertiary-text;
     z-index: 2;
 
-    @media (max-width: 1200px) {
-      left: $left-line-displacement-lg;
-      width: calc(100% - $left-line-displacement-lg);
+    @media (max-width: $page-break-lg) {
+      // left: $left-line-displacement-lg;
+      // width: calc(100%);
     }
   }
   .background_image {
@@ -47,7 +47,7 @@
     );
   }
   .box_top {
-    top: 1px;
+    top: 0;
   }
   .box_bottom {
     bottom: 0;

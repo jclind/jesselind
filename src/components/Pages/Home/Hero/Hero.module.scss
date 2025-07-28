@@ -2,22 +2,22 @@
 @use 'sass:math';
 
 :root {
-  --left-side: #{$left-line-displacement-xl}; // default
+  --left-line-displacement: #{$left-line-displacement-xl}; // default
 }
 
 @media (max-width: $page-break-lg) {
   :root {
-    --left-side: #{$left-line-displacement-lg};
+    --left-line-displacement: #{$left-line-displacement-lg};
   }
 }
 @media (max-width: $page-break-md) {
   :root {
-    --left-side: #{$left-line-displacement-md};
+    --left-line-displacement: #{$left-line-displacement-md};
   }
 }
 @media (max-width: $page-break-sm) {
   :root {
-    --left-side: #{$left-line-displacement-sm};
+    --left-line-displacement: #{$left-line-displacement-sm};
   }
 }
 
@@ -72,20 +72,20 @@
     .line2 {
       top: $top-lines-gap;
       height: 1px;
-      left: var(--left-side);
+      left: var(--left-line-displacement);
       width: 16.66667%;
     }
     .line3 {
       top: $top-lines-gap;
       width: 1px;
       height: 16%;
-      left: var(--left-side);
+      left: var(--left-line-displacement);
     }
     .line4 {
       top: $page-line-top-displacement;
       width: 1px;
       // height: 10000px;
-      left: var(--left-side);
+      left: var(--left-line-displacement);
       z-index: -1;
       pointer-events: none;
     }
@@ -96,8 +96,8 @@
         height: 1px;
         bottom: $gap-large;
       }
-      $left-arrow: calc(var(--left-side) - 11px);
-      $right-arrow: calc(var(--left-side));
+      $left-arrow: calc(var(--left-line-displacement) - 11px);
+      $right-arrow: calc(var(--left-line-displacement));
       .v1,
       .v3,
       .v5 {
@@ -126,7 +126,7 @@
     .notes,
     .projects {
       position: absolute;
-      left: calc(var(--left-side) - 24px);
+      left: calc(var(--left-line-displacement) - 24px);
       text-align: center;
     }
 
@@ -166,14 +166,14 @@
         line-height: 1.2;
       }
       .logo {
-        left: var(--left-side);
+        left: var(--left-line-displacement);
         transform: translateX(-50%);
       }
     }
     @media (max-width: $page-break-sm) {
       .notes,
       .projects {
-        left: calc(var(--left-side) + 16px);
+        left: calc(var(--left-line-displacement) + 16px);
       }
       .notes {
         top: calc($top-lines-gap + 1%);
