@@ -78,7 +78,9 @@
       top: var(--top-lines-gap);
       height: 1px;
       left: var(--left-line-displacement);
-      width: 16.66667%;
+      width: calc(
+        16.66667% + ($left-line-displacement-lg - var(--left-line-displacement))
+      );
     }
     .line3 {
       top: var(--top-lines-gap);
@@ -203,7 +205,15 @@
         transform: translateY(50%);
       }
     }
+    .lines {
+      .line3 {
+        height: 20%;
+      }
+    }
     .links {
+      .notes {
+        top: calc(var(--top-lines-gap) + 4%);
+      }
       .logo {
         // top: calc(50% - 10px);
         // transform: translateY(-50%);

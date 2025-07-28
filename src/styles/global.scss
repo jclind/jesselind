@@ -216,6 +216,10 @@ a[href^='tel'] {
   font-size: $fs-regular;
   font-weight: 200;
   color: $primary-text;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: $fs-small;
+  }
 }
 .project-tagline {
   font-size: $fs-small;

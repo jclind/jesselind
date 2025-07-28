@@ -50,6 +50,7 @@
 
         @media (max-width: $breakpoint-md) {
           flex-direction: column;
+          row-gap: $gap-small;
 
           .title_text {
             order: 1;
