@@ -25,40 +25,43 @@
 
 .hero {
   position: relative;
-  padding: $page-padding;
   min-height: 100vh;
   max-height: 100vh;
   height: 100%;
   width: 100%;
 
-  .content {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
+  // .content {
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  // height: 100%;
+  // width: 100%;
 
-    h1 {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: fit-content;
-      transform: translateX(-50%);
-    }
+  h1 {
+    position: absolute;
+    top: $page-padding;
+    left: 50%;
+    width: fit-content;
+    transform: translateX(-50%);
+  }
 
-    .overlapping_logo {
-      height: 100px;
-      margin-bottom: var(--top-lines-gap);
-      img {
-        object-fit: contain;
-        height: 100%;
-        width: 100%;
-        user-select: none;
-        pointer-events: none;
-      }
+  .overlapping_logo {
+    position: absolute;
+    // top: calc(50% - 40px);
+    top: calc(50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 100px;
+    // margin-bottom: $gap-xl;
+    img {
+      object-fit: contain;
+      height: 100%;
+      width: 100%;
+      user-select: none;
+      pointer-events: none;
     }
   }
+  // }
 
   .lines {
     span {
@@ -152,7 +155,7 @@
     .logo {
       position: absolute;
       left: $page-padding;
-      top: calc(50% - (var(--top-lines-gap) - 50px));
+      top: calc(50%);
       height: 30px;
       img {
         object-fit: contain;
@@ -188,6 +191,24 @@
       }
       .logo {
         left: 24px;
+      }
+    }
+  }
+
+  @media (max-width: $page-break-sm) {
+    .content {
+      .overlapping_logo {
+        // margin-bottom: 40px;
+        margin: 0;
+        transform: translateY(50%);
+      }
+    }
+    .links {
+      .logo {
+        // top: calc(50% - 10px);
+        // transform: translateY(-50%);
+
+        // transform: translateY(-50%);
       }
     }
   }
