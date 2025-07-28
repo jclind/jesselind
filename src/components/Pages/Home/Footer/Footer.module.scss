@@ -10,15 +10,15 @@
   .top_line {
     position: absolute;
     top: 0;
-    left: $left-line-displacement-lg;
+    left: $left-line-displacement-xl;
     height: 1px;
-    width: calc(100% - $left-line-displacement-lg);
+    width: calc(100% - $left-line-displacement-xl);
     background: $tertiary-text;
     z-index: 2;
 
     @media (max-width: 1200px) {
-      left: $left-line-displacement-md;
-      width: calc(100% - $left-line-displacement-md);
+      left: $left-line-displacement-lg;
+      width: calc(100% - $left-line-displacement-lg);
     }
   }
   .background_image {

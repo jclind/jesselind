@@ -63,8 +63,10 @@ const Projects = () => {
         <div className={styles.projects_list}>
           {projects.map((project, index) => (
             <div key={index} className={styles.project} ref={setTextRef(index)}>
-              <div className={styles.head}>
+              <div className={styles.title_text}>
                 {splitTextToSpans(project.title, 'project-title')}
+              </div>
+              <div className={styles.tagline_text}>
                 {splitTextToSpans(project.tagline, 'project-tagline', 'p', 0.5)}
               </div>
               <a

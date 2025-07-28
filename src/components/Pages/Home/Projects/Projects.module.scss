@@ -1,8 +1,25 @@
 @use '../../../../styles/vars' as *;
 
+:root {
+  --horizontal-padding: #{$gap-large}; // default
+}
+
+@media (max-width: $page-break-md) {
+  :root {
+    --horizontal-padding: #{$gap-medium};
+  }
+}
+@media (max-width: $page-break-sm) {
+  :root {
+    --horizontal-padding: #{$gap-small};
+  }
+}
+
 .Projects {
   margin-top: $gap-xl;
   width: 100%;
+
+  $left-padding: $gap-small;
 
   .content {
     width: 100%;
@@ -19,13 +36,41 @@
 
       .project {
         max-width: 800px;
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: $gap-regular;
+        justify-content: space-between;
+
+        .title_text {
+          padding-left: var(--horizontal-padding);
+        }
+        .tagline_text {
+          padding-right: var(--horizontal-padding);
+        }
+
+        @media (max-width: $breakpoint-md) {
+          flex-direction: column;
+
+          .title_text {
+            order: 1;
+          }
+          .tagline_text {
+            order: 3;
+            padding-left: var(--horizontal-padding);
+            text-align: start;
+            align-items: flex-start;
+          }
+          .imageLink {
+            order: 2;
+          }
+        }
 
         .head {
           display: flex;
           justify-content: space-between;
           align-items: flex-end;
           width: 100%;
-          padding: $gap-medium $gap-large;
+          padding: $gap-medium var(--horizontal-padding);
         }
 
         a {
@@ -40,7 +85,7 @@
           grid-template-columns: repeat(2, 1fr);
           grid-template-rows: repeat(2, 1fr);
           gap: $gap-regular;
-          padding: $gap-large;
+          padding: var(--horizontal-padding);
           border: 1px solid $tertiary-text;
           border-radius: 36px;
           // transform: translateY(20px);
@@ -65,9 +110,31 @@
           }
         }
       }
-
+      @media (max-width: $breakpoint-lg) {
+        max-width: 70%;
+        .project {
+          .images {
+          }
+        }
+      }
+      @media (max-width: $breakpoint-md) {
+        max-width: 80%;
+        .project {
+          .images {
+            // padding: $gap-medium;
+            border-radius: 24px;
+          }
+        }
+      }
       @media (max-width: $breakpoint-sm) {
-        max-width: 75%;
+        max-width: 85%;
+        .project {
+          .images {
+            // padding: $gap-small;
+            border-radius: 16px;
+            gap: $gap-tiny;
+          }
+        }
       }
     }
   }

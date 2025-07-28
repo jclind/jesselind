@@ -31,14 +31,14 @@ export const projects = [
   },
   {
     title: 'DoorDash Driver Recap',
-    tagline: 'A recap of your dashing year, inspired by Spotify Wrapped.',
+    tagline: 'A recap of your dashing year.',
     description: '',
     images: genProjectImgs('doordash-recap'),
     link: '/portfolio/doordash-recap',
   },
   {
     title: 'BitWorkout',
-    tagline: 'Gamify your workouts. Collect items and treasure for motivation.',
+    tagline: 'Gamify your workouts and collect treasure.',
     description: '',
     images: genProjectImgs('bitworkout'),
     link: '/portfolio/bitworkout',

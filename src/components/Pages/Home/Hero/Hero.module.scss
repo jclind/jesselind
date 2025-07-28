@@ -2,12 +2,22 @@
 @use 'sass:math';
 
 :root {
-  --left-side: #{$left-line-displacement-lg}; // default
+  --left-side: #{$left-line-displacement-xl}; // default
 }
 
 @media (max-width: $page-break-lg) {
   :root {
+    --left-side: #{$left-line-displacement-lg};
+  }
+}
+@media (max-width: $page-break-md) {
+  :root {
     --left-side: #{$left-line-displacement-md};
+  }
+}
+@media (max-width: $page-break-sm) {
+  :root {
+    --left-side: #{$left-line-displacement-sm};
   }
 }
 
@@ -163,10 +173,13 @@
     @media (max-width: $page-break-sm) {
       .notes,
       .projects {
-        left: calc(var(--left-side) - 16px);
+        left: calc(var(--left-side) + 16px);
       }
       .notes {
         top: calc($top-lines-gap + 1%);
+      }
+      .logo {
+        left: 24px;
       }
     }
   }
