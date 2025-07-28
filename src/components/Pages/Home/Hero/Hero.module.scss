@@ -3,6 +3,7 @@
 
 :root {
   --left-line-displacement: #{$left-line-displacement-xl}; // default
+  --top-lines-gap: #{$top-lines-gap-lg}; // default
 }
 
 @media (max-width: $page-break-lg) {
@@ -18,6 +19,7 @@
 @media (max-width: $page-break-sm) {
   :root {
     --left-line-displacement: #{$left-line-displacement-sm};
+    --top-lines-gap: #{$top-lines-gap-sm};
   }
 }
 
@@ -47,7 +49,7 @@
 
     .overlapping_logo {
       height: 100px;
-      margin-bottom: $gap-xl;
+      margin-bottom: var(--top-lines-gap);
       img {
         object-fit: contain;
         height: 100%;
@@ -64,19 +66,19 @@
       background: $tertiary-text;
     }
     .line1 {
-      top: $top-lines-gap;
+      top: var(--top-lines-gap);
       height: 1px;
       left: 66.66666%;
       width: 33.33334%;
     }
     .line2 {
-      top: $top-lines-gap;
+      top: var(--top-lines-gap);
       height: 1px;
       left: var(--left-line-displacement);
       width: 16.66667%;
     }
     .line3 {
-      top: $top-lines-gap;
+      top: var(--top-lines-gap);
       width: 1px;
       height: 16%;
       left: var(--left-line-displacement);
@@ -141,7 +143,7 @@
     }
 
     .notes {
-      top: calc($top-lines-gap + 2%);
+      top: calc(var(--top-lines-gap) + 2%);
     }
     .projects {
       bottom: $gap-large + 12px + 10px;
@@ -150,7 +152,7 @@
     .logo {
       position: absolute;
       left: $page-padding;
-      top: 50%;
+      top: calc(50% - (var(--top-lines-gap) - 50px));
       height: 30px;
       img {
         object-fit: contain;
@@ -170,13 +172,19 @@
         transform: translateX(-50%);
       }
     }
+    @media (max-width: $page-break-md) {
+      .notes,
+      .projects {
+        left: calc(var(--left-line-displacement) - 16px);
+      }
+    }
     @media (max-width: $page-break-sm) {
       .notes,
       .projects {
         left: calc(var(--left-line-displacement) + 16px);
       }
       .notes {
-        top: calc($top-lines-gap + 1%);
+        top: calc(var(--top-lines-gap) + 1%);
       }
       .logo {
         left: 24px;
