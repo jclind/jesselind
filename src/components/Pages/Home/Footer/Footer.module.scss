@@ -19,11 +19,6 @@
     width: calc(100% - var(--left-line-displacement));
     background: $border-color;
     z-index: 2;
-
-    @media (max-width: $breakpoint-lg) {
-      // left: $left-line-displacement-lg;
-      // width: calc(100%);
-    }
   }
   .background_image {
     position: absolute;

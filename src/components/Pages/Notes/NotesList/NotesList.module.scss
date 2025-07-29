@@ -1,0 +1,53 @@
+@use '../../../../styles/vars' as *;
+
+.NotesList {
+  position: relative;
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+
+  .divider {
+    font-size: $fs-small;
+    font-weight: 200;
+  }
+  .content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    gap: $gap-regular;
+    max-width: 250px;
+    width: 100%;
+
+    .header {
+      display: flex;
+      gap: $gap-tiny;
+      font-size: $fs-small;
+      font-weight: 200;
+      h1 {
+        font-size: $fs-small;
+        font-weight: 200;
+      }
+    }
+    .notes {
+      display: flex;
+      flex-direction: column;
+      gap: $gap-regular;
+      font-size: $fs-small;
+      font-weight: 200;
+      .note {
+        display: flex;
+        .note_id {
+          font-weight: 400;
+          color: $secondary-text;
+          width: 3ch;
+        }
+        span {
+          color: $tertiary-text;
+        }
+      }
+    }
+  }
+}
