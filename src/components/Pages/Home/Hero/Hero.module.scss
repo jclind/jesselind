@@ -2,8 +2,8 @@
 @use 'sass:math';
 
 :root {
-  --left-line-displacement: #{$left-line-displacement-xl}; // default
-  --top-lines-gap: #{$top-lines-gap-lg}; // default
+  --left-line-displacement: #{$left-line-displacement-xl};
+  --top-lines-gap: #{$top-lines-gap-lg};
 }
 
 @media (max-width: $page-break-lg) {
@@ -23,24 +23,20 @@
   }
 }
 
+$notes-line-length: 25%;
+$arrow-width: 12px;
+
 .hero {
   position: relative;
   min-height: 100vh;
   max-height: 100vh;
   height: 100%;
   width: 100%;
+
   @media (max-width: $page-break-sm) {
     min-height: 90vh;
     max-height: 90vh;
-    // padding-bottom: 10%;
   }
-
-  // .content {
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
-  // height: 100%;
-  // width: 100%;
 
   h1 {
     position: absolute;
@@ -52,12 +48,10 @@
 
   .overlapping_logo {
     position: absolute;
-    // top: calc(50% - 40px);
     top: calc(50%);
     left: 50%;
     transform: translate(-50%, -50%);
     height: 100px;
-    // margin-bottom: $gap-xl;
     img {
       object-fit: contain;
       height: 100%;
@@ -66,7 +60,6 @@
       pointer-events: none;
     }
   }
-  // }
 
   .lines {
     span {
@@ -90,19 +83,17 @@
     .line3 {
       top: var(--top-lines-gap);
       width: 1px;
-      height: 16%;
+      height: $notes-line-length;
       left: var(--left-line-displacement);
     }
     .line4 {
       top: $page-line-top-displacement;
       width: 1px;
-      // height: 10000px;
       left: var(--left-line-displacement);
       z-index: -1;
       pointer-events: none;
     }
     .arrows {
-      $arrow-width: 12px;
       span {
         width: $arrow-width;
         height: 1px;
@@ -153,17 +144,17 @@
     }
 
     .notes {
-      top: calc(var(--top-lines-gap) + 2%);
+      top: calc(var(--top-lines-gap) + ($notes-line-length / 2));
+      transform: translateY(-50%);
     }
     .projects {
       bottom: $gap-large + 12px + 10px;
-      // bottom: 12.5%;
     }
     .logo {
       position: absolute;
       left: $page-padding;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translate(-50%, -50%);
 
       height: 30px;
       img {
@@ -207,7 +198,6 @@
   @media (max-width: $page-break-sm) {
     .content {
       .overlapping_logo {
-        // margin-bottom: 40px;
         margin: 0;
         transform: translateY(50%);
       }
@@ -228,11 +218,6 @@
       .logo {
         top: 50%;
         left: 24px;
-        transform: translate(-50%, -50%);
-        // top: calc(50% - 10px);
-        // transform: translate(0, -50%);
-
-        // transform: translateY(-50%);
       }
     }
   }

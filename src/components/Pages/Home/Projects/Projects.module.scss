@@ -132,12 +132,14 @@
         }
       }
       @media (max-width: $breakpoint-sm) {
-        max-width: 85%;
+        max-width: 90%;
+        gap: calc($gap-3xl * 2);
         .project {
           .images {
-            // padding: $gap-small;
-            border-radius: 16px;
+            padding: $gap-tiny;
+            border-radius: 12px;
             gap: $gap-tiny;
+            border-color: $secondary-background;
           }
         }
       }
