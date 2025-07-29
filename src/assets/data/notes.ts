@@ -1,3 +1,9 @@
+export type NotesType = {
+  id: number
+  title: string
+  text: string[]
+}
+
 export const notes = [
   {
     id: 0,

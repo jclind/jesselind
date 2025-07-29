@@ -47,6 +47,9 @@
         span {
           color: $tertiary-text;
         }
+        a {
+          text-transform: lowercase;
+        }
       }
     }
   }

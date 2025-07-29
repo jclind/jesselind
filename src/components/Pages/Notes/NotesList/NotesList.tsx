@@ -1,8 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './NotesList.module.scss'
-import { notes } from '../../../../assets/data/notes'
+import { notes as originalNotes } from '../../../../assets/data/notes'
+import type { NotesType } from '../../../../assets/data/notes'
 
 const NotesList = () => {
+  const [notesList, setNotesList] = useState<NotesType[]>(
+    [...originalNotes].reverse()
+  )
+
+  useEffect(() => {
+    const notesList = [...originalNotes]
+    const notesListReversed = notesList.reverse()
+    setNotesList(notesListReversed)
+  }, [])
+
   return (
     <div className={styles.NotesList}>
       <div className={styles.content}>
@@ -14,13 +25,13 @@ const NotesList = () => {
         </div>
         <div className={styles.divider}>—</div>
         <div className={styles.notes}>
-          {notes.reverse().map(note => (
+          {notesList.map(note => (
             <div className={styles.note}>
               <div className={styles.note_id}>{note.id}.</div>
               <a href={`/notes/${note.id}`} key={note.id}>
-                <span>{'{'}</span>
+                <span>{'['}</span>
                 {note.title}
-                <span>{'}'}</span>
+                <span>{']'}</span>
               </a>
             </div>
           ))}
