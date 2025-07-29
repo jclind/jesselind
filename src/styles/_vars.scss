@@ -58,7 +58,7 @@ $gap-4xl: 200px;
 // =============================================
 // Breakpoints
 // =============================================
-$breakpoint-sm: 576px; // Small breakpoint
+$breakpoint-sm: 500px; // Small breakpoint
 $breakpoint-md: 768px; // Medium breakpoint
 $breakpoint-lg: 992px; // Large breakpoint
 $breakpoint-xl: 1200px; // Extra large breakpoint
@@ -106,6 +106,6 @@ $top-lines-gap-lg: 12.5%; // Gap for top lines in Hero section
 $top-lines-gap-sm: 12.5%;
 $page-line-top-displacement: 62.5%; // Top displacement for page lines
 
-$page-break-lg: 1000px;
-$page-break-md: 750px;
-$page-break-sm: 500px;
+// $breakpoint-lg: 1000px;
+// $breakpoint-md: 750px;
+// $breakpoint-sm: 500px;

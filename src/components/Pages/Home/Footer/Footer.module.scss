@@ -16,7 +16,7 @@
     background: $tertiary-text;
     z-index: 2;
 
-    @media (max-width: $page-break-lg) {
+    @media (max-width: $breakpoint-lg) {
       // left: $left-line-displacement-lg;
       // width: calc(100%);
     }

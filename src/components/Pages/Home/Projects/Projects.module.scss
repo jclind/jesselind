@@ -4,12 +4,12 @@
   --horizontal-padding: #{$gap-large}; // default
 }
 
-@media (max-width: $page-break-md) {
+@media (max-width: $breakpoint-md) {
   :root {
     --horizontal-padding: #{$gap-medium};
   }
 }
-@media (max-width: $page-break-sm) {
+@media (max-width: $breakpoint-sm) {
   :root {
     --horizontal-padding: #{$gap-small};
   }
@@ -21,7 +21,7 @@
 
   $left-padding: $gap-small;
 
-  @media (max-width: $page-break-sm) {
+  @media (max-width: $breakpoint-sm) {
     margin-top: $gap-3xl;
   }
 
@@ -126,8 +126,9 @@
         max-width: 80%;
         .project {
           .images {
-            // padding: $gap-medium;
-            border-radius: 24px;
+            padding: $gap-small;
+            border-radius: 16px;
+            gap: $gap-small;
           }
         }
       }
