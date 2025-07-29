@@ -29,6 +29,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
+
     .projects_list {
       width: 100%;
       display: flex;
@@ -133,8 +134,10 @@
         }
       }
       @media (max-width: $breakpoint-sm) {
-        max-width: 90%;
+        max-width: 100%;
         gap: calc($gap-3xl * 2);
+        padding-left: calc(var(--left-line-displacement) + $gap-tiny);
+        padding-right: $gap-tiny;
         .project {
           .images {
             padding: $gap-tiny;
