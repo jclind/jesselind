@@ -17,7 +17,7 @@
     left: var(--left-line-displacement);
     height: 1px;
     width: calc(100% - var(--left-line-displacement));
-    background: $tertiary-text;
+    background: $border-color;
     z-index: 2;
 
     @media (max-width: $breakpoint-lg) {

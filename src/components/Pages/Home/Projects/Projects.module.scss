@@ -36,7 +36,7 @@
       justify-content: center;
       align-items: center;
       gap: $gap-3xl;
-      max-width: 60%;
+      max-width: 65%;
 
       .project {
         max-width: 800px;
@@ -91,7 +91,7 @@
           grid-template-rows: repeat(2, 1fr);
           gap: $gap-regular;
           padding: var(--horizontal-padding);
-          border: 1px solid $tertiary-text;
+          border: 1px solid $border-color;
           border-radius: 36px;
           // transform: translateY(20px);
           .image {
@@ -140,7 +140,6 @@
             padding: $gap-tiny;
             border-radius: 12px;
             gap: $gap-tiny;
-            border-color: $secondary-background;
           }
         }
       }

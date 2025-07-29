@@ -12,7 +12,7 @@ $secondary-background: #282828; // Secondary background color
 $primary-accent: #276aed; // Primary accent color
 $secondary-accent: #973000; // Secondary accent color
 
-$border-color: #d9d9d9; // Default border color
+$border-color: #313131; // Default border color
 $secondary-border-color: #575757; // Secondary border color
 
 // =============================================
@@ -98,7 +98,9 @@ $fs-card-text: $fs-small; // Card text font size
 // =============================================
 $icon-stroke-width: 0.3; // Icon stroke width
 
-$left-line-displacement-xl: 16.66666%;
+// $left-line-displacement-xl: 16.66666%;
+$left-line-displacement-xl: 10%;
+
 $left-line-displacement-lg: 10%;
 $left-line-displacement-md: 6%;
 $left-line-displacement-sm: 2%;
