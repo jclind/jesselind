@@ -21,6 +21,10 @@
 
   $left-padding: $gap-small;
 
+  @media (max-width: $page-break-sm) {
+    margin-top: $gap-3xl;
+  }
+
   .content {
     width: 100%;
     display: flex;
