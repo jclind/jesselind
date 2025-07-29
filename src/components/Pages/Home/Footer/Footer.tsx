@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import styles from './Footer.module.scss'
+import scssVars from '../../../../styles/_exports.module.scss'
 import { ArrowUp, MoveUp } from 'lucide-react'
 
 const Footer = () => {
@@ -24,8 +25,14 @@ const Footer = () => {
       const visibleBottom = Math.min(rect.height, viewportHeight - rect.top)
       const visibleHeight = Math.max(0, visibleBottom - visibleTop)
 
+      const viewportWidth = window.innerWidth
+
       // Center of visible area relative to the footer
-      const centerY = visibleTop + visibleHeight / 2
+      const visibleHeightMod =
+        viewportWidth <= Number(scssVars.breakpointSM.replace(/\D/g, ''))
+          ? visibleHeight * 0.8
+          : visibleHeight
+      const centerY = visibleTop + visibleHeightMod / 2
 
       // Move image so its center lines up with centerY
       bg.style.transform = `translate(-50%, ${centerY - rect.height / 2}px)`
@@ -46,7 +53,18 @@ const Footer = () => {
       <div className={styles.top_line}></div>
       <div className={styles.content}>
         <div className={styles.background_image} ref={bgImageRef}>
-          <img src='/images/home_footer.png' alt='' />
+          {/* <img src='/images/home_footer_large.png' alt='' /> */}
+          <picture>
+            <source
+              media={`(max-width: ${scssVars.breakpointSM})`}
+              srcSet='/images/home_footer_mobile.png'
+            />
+            <source
+              media={`(min-width: ${scssVars.breakpointSM})`}
+              srcSet='/images/home_footer_large.png'
+            />
+            <img src='/images/home_footer_large.png' alt='' />
+          </picture>
         </div>
         <div className={styles.box_top}></div>
         <div className={styles.box_bottom}></div>

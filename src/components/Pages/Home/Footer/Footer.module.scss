@@ -7,6 +7,10 @@
   height: calc(100vh + 2px);
   background: $primary-background;
 
+  @media (max-width: $breakpoint-sm) {
+    height: 90vh;
+  }
+
   .top_line {
     position: absolute;
     top: 0;
@@ -25,12 +29,18 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+
     will-change: transform;
     pointer-events: none;
 
     img {
       height: 100vh;
       object-fit: cover;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      img {
+      }
     }
   }
 
@@ -97,9 +107,11 @@
             border-radius: 4px;
           }
           height: 28px;
+          width: fit-content;
         }
         .logo {
           height: 28px;
+          width: 34px;
           img {
             height: 100%;
             width: 100%;
@@ -124,7 +136,14 @@
           font-weight: 400;
           color: $secondary-text;
         }
+        @media (max-width: $breakpoint-sm) {
+          color: $tertiary-text;
+        }
       }
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $gap-small;
     }
   }
 }
