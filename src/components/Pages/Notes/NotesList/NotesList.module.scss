@@ -21,6 +21,10 @@
     max-width: 500px;
     width: 100%;
 
+    @media (max-width: $breakpoint-sm) {
+      top: 10%;
+    }
+
     .notes {
       display: flex;
       flex-direction: column;
