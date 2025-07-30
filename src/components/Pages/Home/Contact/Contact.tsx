@@ -28,13 +28,14 @@ const Contact = () => {
         <div ref={setTextRef(0)}>
           {splitTextToSpans("let's make something", 'project-title', 'h1')}
         </div>
-        <button
+        <a
           ref={setFadeRef(0)}
+          href={'/contact'}
           className={`${styles.contact_btn} ${fadeStyles.fadeInElement}`}
         >
           <span className={styles.btn_glow}></span>
           <span>contact</span> <ArrowUpRight strokeWidth={1} />
-        </button>
+        </a>
       </div>
     </div>
   )
