@@ -11,8 +11,7 @@ export const notes = [
     id: 0,
     title: 'Hello World',
     text: [
-      'Nostrud occaecat pariatur laboris minim voluptate ea adipisicing quis occaecat. Deserunt officia sunt qui ad incididunt. Eiusmod cillum aute quis irure ullamco. Duis labore amet commodo reprehenderit consectetur qui consequat do ad et ut do cupidatat aliquip. Dolor occaecat cupidatat dolore id eiusmod labore non proident eiusmod dolore occaecat. Labore sunt consequat amet labore. Nisi tempor ipsum esse ea amet sint Lorem magna minim nulla labore qui cillum qui.',
-      'Laboris reprehenderit nisi tempor tempor eiusmod ea magna sint aliqua velit ea. Commodo in nulla aliquip reprehenderit excepteur duis. Fugiat non qui nulla qui aute sit culpa labore reprehenderit pariatur id fugiat. Nisi officia eu et consectetur occaecat ad sint. Elit in sunt tempor quis mollit. Est non occaecat dolore labore. In incididunt magna aute aliqua sit voluptate eu occaecat consequat do sit veniam eiusmod. Consectetur quis ex eu in excepteur tempor tempor amet elit incididunt.',
+      'Hello, these are a collections of my thoughts, ideas, likes, dislikes, life events or really anything on my mind. Enjoy :)',
     ],
     date: '2021-10-01T12:00:00.000Z',
   },

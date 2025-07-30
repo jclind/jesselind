@@ -218,22 +218,51 @@ a[href^='tel'] {
   color: $primary-text;
 
   @media (max-width: $breakpoint-sm) {
-    font-size: $fs-small;
+    font-size: $fs-xs;
   }
 }
 .project-tagline {
-  font-size: $fs-small;
+  font-size: $fs-xs;
   font-weight: 200;
   color: $secondary-text;
 }
 
+.notes-style-page {
+  background: $primary-background;
+  width: 100%;
+}
+
+.notes-content {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: $gap-regular;
+  max-width: 500px;
+  width: 90%;
+  padding-bottom: $gap-xl;
+  @media (max-width: $breakpoint-sm) {
+    top: 15%;
+  }
+}
 .nav-header {
   display: flex;
   gap: $gap-tiny;
-  font-size: $fs-small;
+  font-size: $fs-xs;
   font-weight: 200;
+  margin-bottom: $gap-xl;
+
   h1 {
-    font-size: $fs-small;
+    font-size: $fs-xs;
     font-weight: 200;
   }
+}
+
+.notes-back-btn {
+  font-weight: 200;
+  letter-spacing: 3px;
+  font-size: $fs-xs;
+  margin-top: $gap-medium;
 }

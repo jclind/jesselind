@@ -16,15 +16,15 @@ const NotesList = () => {
   }, [])
 
   return (
-    <div className={styles.NotesList}>
-      <div className={styles.content}>
+    <div className={`${styles.NotesList} notes-style-page`}>
+      <div className={`${styles.content} notes-content`}>
         <div className='nav-header'>
           <a href={'/'}>jesselind</a> /{' '}
           <a href={'/notes'}>
             <i>notes</i>
           </a>
         </div>
-        <div className={styles.divider}>—</div>
+        {/* <div className={styles.divider}>—</div> */}
         <div className={styles.notes}>
           {notesList.map(note => (
             <div className={styles.note}>

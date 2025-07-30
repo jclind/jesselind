@@ -79,7 +79,7 @@
         gap: 4px;
         font-weight: 200;
         color: $secondary-text;
-        font-size: $fs-small;
+        font-size: $fs-xs;
         cursor: pointer;
         transition: color 0.2s ease;
 
@@ -120,7 +120,7 @@
         align-items: flex-end;
         justify-content: flex-end;
         gap: $gap-small;
-        font-size: $fs-tiny;
+        font-size: $fs-xxs;
         font-weight: 200;
         color: $secondary-text;
         .links {

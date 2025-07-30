@@ -5,8 +5,8 @@ import { formatNotesDate } from '../../../../util/formatNotesDate'
 
 const SingleNote = ({ note }: { note: NoteType }) => {
   return (
-    <div className={styles.SingleNote}>
-      <div className={styles.content}>
+    <div className={`${styles.SingleNote} notes-style-page`}>
+      <div className={`${styles.content} notes-content`}>
         <div className='nav-header'>
           <a href='/'>jesselind</a> / <a href='/notes'>notes</a> /{' '}
           <i>
@@ -20,6 +20,9 @@ const SingleNote = ({ note }: { note: NoteType }) => {
           })}
         </div>
         <div className={styles.date}>{formatNotesDate(note.date)}</div>
+        <a href='/notes' className='notes-back-btn'>
+          ../
+        </a>
       </div>
     </div>
   )
