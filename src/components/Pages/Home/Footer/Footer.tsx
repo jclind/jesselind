@@ -76,7 +76,7 @@ const Footer = () => {
         </div>
         <div className={styles.bottom}>
           <div className={styles.left}>
-            <a href='/mirai'>
+            <a href='/notes/mirai'>
               <div className={styles.logo}>
                 <img
                   src='/images/jesselind_kanji_logo.png'

@@ -28,14 +28,14 @@ const Hero = () => {
       {/* <div className={styles.content}> */}
       <h1 className={`${styles.nav_link} nav_link`}>never final</h1>
 
-      <div className={styles.overlapping_logo}>
+      <a href='/contact' className={styles.overlapping_logo}>
         <img
           src='/images/jesselind_overlapping.png'
           alt='Jesse Lind Logo'
           draggable='false'
           className={styles.logo}
         />
-      </div>
+      </a>
       {/* </div> */}
       <div className={styles.lines}>
         <span className={styles.line1}></span>

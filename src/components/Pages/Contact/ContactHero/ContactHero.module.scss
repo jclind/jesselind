@@ -1,0 +1,93 @@
+@use '../../../../styles/vars' as *;
+
+.ContactHero {
+  width: 100%;
+  .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    width: 100%;
+  }
+
+  .diagonal_links {
+    position: relative;
+    display: block;
+    height: 40%;
+    width: 50%;
+    // background: red;
+  }
+
+  .diagonal_links a {
+    position: absolute;
+    color: primary-text;
+    text-decoration: underline;
+    font-family: monospace;
+    font-size: $fs-xs;
+    font-weight: 200;
+    width: max-content;
+    text-align: left;
+  }
+
+  // Dynamically distribute across the diagonal
+  $total-links: 7;
+
+  @for $i from 1 through $total-links {
+    .diagonal_links a:nth-child(#{$i}) {
+      top: calc((#{$i - 1} / (#{$total-links - 1})) * 100%);
+      left: calc((#{$i - 1} / (#{$total-links - 1})) * 100%);
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+// .ContactHero {
+//   height: 100vh;
+//   width: 100%;
+
+//   .content {
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     height: 100%;
+//     width: 100%;
+//   }
+
+//   .diagonal_links {
+//     position: relative;
+//     width: 70%;
+//     height: 60%;
+//   }
+
+//   .diagonal_links a {
+//     position: absolute;
+//     color: primary-text;
+//     text-decoration: underline;
+//     font-family: monospace;
+//   }
+
+//   .diagonal_links a:nth-child(1) {
+//     top: 12%;
+//     left: 18%;
+//   }
+//   .diagonal_links a:nth-child(2) {
+//     top: 42%;
+//     left: 5%;
+//   }
+//   .diagonal_links a:nth-child(3) {
+//     top: 66%;
+//     left: 30%;
+//   }
+//   .diagonal_links a:nth-child(4) {
+//     top: 20%;
+//     left: 65%;
+//   }
+//   .diagonal_links a:nth-child(5) {
+//     top: 78%;
+//     left: 50%;
+//   }
+//   .diagonal_links a:nth-child(6) {
+//     top: 33%;
+//     left: 85%;
+//   }
+// }
