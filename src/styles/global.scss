@@ -226,3 +226,14 @@ a[href^='tel'] {
   font-weight: 200;
   color: $secondary-text;
 }
+
+.nav-header {
+  display: flex;
+  gap: $gap-tiny;
+  font-size: $fs-small;
+  font-weight: 200;
+  h1 {
+    font-size: $fs-small;
+    font-weight: 200;
+  }
+}

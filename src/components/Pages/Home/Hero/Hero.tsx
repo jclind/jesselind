@@ -60,7 +60,7 @@ const Hero = () => {
           p<br />
           r<br /> o<br /> j<br /> e<br /> c<br /> t<br /> s
         </a>
-        <a className={`${styles.logo} nav_link`}>
+        <a href='/notes/mirai' className={`${styles.logo} nav_link`}>
           <img
             src='/images/jesselind_kanji_logo.png'
             alt='jesse lind kanji logo'
