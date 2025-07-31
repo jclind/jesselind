@@ -246,6 +246,33 @@ a[href^='tel'] {
   @media (max-width: $breakpoint-sm) {
     top: 15%;
   }
+
+  .note-title {
+    margin-bottom: $gap-regular;
+    font-size: $fs-medium;
+    font-weight: 500;
+  }
+  .note-last-updated {
+    color: $secondary-text;
+    font-weight: 500;
+    font-size: $fs-xxs;
+    margin-bottom: $gap-large;
+  }
+  .note-text {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-large;
+    padding-bottom: $gap-medium;
+
+    a {
+      text-decoration: underline;
+    }
+    p {
+      font-size: $fs-small;
+      font-weight: 200;
+      line-height: 1.75;
+    }
+  }
 }
 .nav-header {
   display: flex;

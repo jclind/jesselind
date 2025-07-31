@@ -13,8 +13,8 @@ const SingleNote = ({ note }: { note: NoteType }) => {
             <a href='#'>{note.title}</a>
           </i>
         </div>
-        <h1>{note.title}</h1>
-        <div className={styles.text}>
+        <h1 className={'note-title'}>{note.title}</h1>
+        <div className={'note-text'}>
           {note.text.map(paragraph => {
             return <p>{paragraph}</p>
           })}

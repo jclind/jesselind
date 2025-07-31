@@ -2,22 +2,6 @@
 
 .SingleNote {
   .content {
-    h1 {
-      margin-bottom: $gap-regular;
-      font-size: $fs-medium;
-      font-weight: 500;
-    }
-    .text {
-      display: flex;
-      flex-direction: column;
-      gap: $gap-large;
-      padding-bottom: $gap-medium;
-      p {
-        font-size: $fs-small;
-        font-weight: 200;
-        line-height: 1.75;
-      }
-    }
     .date {
       font-size: $fs-xs;
       font-weight: 500;
