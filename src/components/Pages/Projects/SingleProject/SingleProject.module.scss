@@ -1,0 +1,42 @@
+@use '../../../../styles/vars' as *;
+
+.SingleProject {
+  width: 100%;
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 600px;
+    margin-top: $gap-xl;
+    margin-bottom: $gap-xl;
+
+    h1 a {
+      display: flex;
+      align-items: center;
+      gap: $gap-tiny;
+      width: fit-content;
+    }
+
+    .images {
+      padding: $gap-large;
+      margin-bottom: $gap-xl;
+    }
+    .text_content {
+      display: flex;
+      flex-direction: column;
+      max-width: $max-note-width;
+      width: $note-width;
+      text-align: start;
+    }
+
+    .links {
+      display: flex;
+      gap: $gap-small;
+      font-size: $fs-xs;
+      text-decoration: underline;
+      margin: $gap-regular 0;
+    }
+  }
+}

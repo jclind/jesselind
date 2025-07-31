@@ -240,38 +240,43 @@ a[href^='tel'] {
   display: flex;
   flex-direction: column;
   gap: $gap-regular;
-  max-width: 500px;
-  width: 90%;
+  max-width: $max-note-width;
+  width: $note-width;
   padding-bottom: $gap-xl;
   @media (max-width: $breakpoint-sm) {
     top: 15%;
   }
+}
+.note-title {
+  margin-bottom: $gap-regular;
+  font-size: $fs-medium;
+  font-weight: 500;
+}
+.note-subtitle {
+  margin-bottom: $gap-large;
+  font-size: $fs-small;
+  font-weight: 500;
+  color: $secondary-text;
+}
+.note-last-updated {
+  color: $secondary-text;
+  font-weight: 500;
+  font-size: $fs-xxs;
+  margin-bottom: $gap-large;
+}
+.note-text {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-large;
+  padding-bottom: $gap-medium;
 
-  .note-title {
-    margin-bottom: $gap-regular;
-    font-size: $fs-medium;
-    font-weight: 500;
+  a {
+    text-decoration: underline;
   }
-  .note-last-updated {
-    color: $secondary-text;
-    font-weight: 500;
-    font-size: $fs-xxs;
-    margin-bottom: $gap-large;
-  }
-  .note-text {
-    display: flex;
-    flex-direction: column;
-    gap: $gap-large;
-    padding-bottom: $gap-medium;
-
-    a {
-      text-decoration: underline;
-    }
-    p {
-      font-size: $fs-small;
-      font-weight: 200;
-      line-height: 1.75;
-    }
+  p {
+    font-size: $fs-small;
+    font-weight: 200;
+    line-height: 1.75;
   }
 }
 .nav-header {
@@ -293,4 +298,26 @@ a[href^='tel'] {
   font-size: $fs-xs;
   margin-top: $gap-medium;
   width: fit-content;
+}
+
+.project-images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: $gap-regular;
+  padding: var(--horizontal-padding);
+  border: 1px solid $border-color;
+  border-radius: 36px;
+
+  .image {
+    width: 100%;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+
+    img {
+      width: 100%;
+      display: block;
+      object-fit: contain;
+    }
+  }
 }
