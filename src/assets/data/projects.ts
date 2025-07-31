@@ -1,6 +1,7 @@
 import { links } from '../../components/Layout/Footer/links'
 
 export type ProjectType = {
+  id: number
   title: string
   tagline: string
   description: string[]
@@ -26,6 +27,7 @@ const genProjectImgs = (
 
 export const projects: ProjectType[] = [
   {
+    id: 0,
     title: 'Prepify',
     tagline: 'Prep meals. Track costs. Eat better.',
     description: [
@@ -38,6 +40,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/prepify',
   },
   {
+    id: 1,
     title: 'Pump Track',
     tagline: 'Simple yet functional workout tracking.',
     description: [],
@@ -47,6 +50,7 @@ export const projects: ProjectType[] = [
     github: '',
   },
   {
+    id: 2,
     title: 'DoorDash Driver Recap',
     tagline: 'A recap of your dashing year.',
     description: [],
@@ -56,6 +60,7 @@ export const projects: ProjectType[] = [
     github: '',
   },
   {
+    id: 3,
     title: 'BitWorkout',
     tagline: 'Gamify your workouts and collect treasure.',
     description: [],
@@ -65,6 +70,7 @@ export const projects: ProjectType[] = [
     github: '',
   },
   {
+    id: 4,
     title: 'Jesse Lind Photography',
     tagline: 'My personal photography portfolio.',
     description: [],
@@ -74,6 +80,7 @@ export const projects: ProjectType[] = [
     github: '',
   },
   {
+    id: 5,
     title: 'Tridle',
     tagline: 'Three letter Wordle clone.',
     description: [],

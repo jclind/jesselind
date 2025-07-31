@@ -9,6 +9,7 @@
     align-items: center;
     margin: 0 auto;
     max-width: 600px;
+    width: $note-width;
     margin-top: $gap-xl;
     margin-bottom: $gap-xl;
 
@@ -22,21 +23,49 @@
     .images {
       padding: $gap-large;
       margin-bottom: $gap-xl;
+
+      @media (max-width: $breakpoint-md) {
+        padding: $gap-small;
+        border-radius: 16px;
+        gap: $gap-small;
+      }
+      @media (max-width: $breakpoint-sm) {
+        padding: $gap-tiny;
+        border-radius: 12px;
+        gap: $gap-tiny;
+      }
     }
     .text_content {
       display: flex;
       flex-direction: column;
       max-width: $max-note-width;
-      width: $note-width;
       text-align: start;
+      width: 100%;
     }
 
     .links {
       display: flex;
       gap: $gap-small;
-      font-size: $fs-xs;
-      text-decoration: underline;
       margin: $gap-regular 0;
+      text-decoration: underline;
+    }
+    .links a,
+    .next_project_btn {
+      font-size: $fs-xs;
+      font-weight: 300;
+    }
+    .navigation_links {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+      .next_project_btn {
+        display: flex;
+        align-items: center;
+        gap: $gap-tiny;
+        color: $secondary-text;
+        // vertical-align: middle;
+      }
     }
   }
 }

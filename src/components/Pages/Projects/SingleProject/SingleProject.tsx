@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './SingleProject.module.scss'
 import type { ProjectType } from '../../../../assets/data/projects'
-import { SquareArrowOutUpRight } from 'lucide-react'
+import { MoveRight, SquareArrowOutUpRight } from 'lucide-react'
+import { getNextProjectLink } from '../../../../util/getNextProjectLink'
 
 const SingleProject = ({ project }: { project: ProjectType }) => {
+  const [nextProjectLink, setNextProjectLink] = useState(
+    getNextProjectLink(project.id)
+  )
+
   return (
     <div className={styles.SingleProject}>
       <div className={styles.content}>
@@ -39,9 +44,16 @@ const SingleProject = ({ project }: { project: ProjectType }) => {
               github
             </a>
           </div>
-          <a href='/#projects' className='notes-back-btn'>
-            ../
-          </a>
+          <div className={styles.navigation_links}>
+            <a href='/#projects' className='notes-back-btn'>
+              ../
+            </a>
+            {nextProjectLink && (
+              <a href={nextProjectLink} className={styles.next_project_btn}>
+                next project <MoveRight size={16} strokeWidth={1} />
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>
