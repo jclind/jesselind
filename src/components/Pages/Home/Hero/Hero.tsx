@@ -28,14 +28,14 @@ const Hero = () => {
       {/* <div className={styles.content}> */}
       <h1 className={`${styles.nav_link} nav_link`}>never final</h1>
 
-      <div className={styles.overlapping_logo}>
+      <a href='/contact' className={styles.overlapping_logo}>
         <img
           src='/images/jesselind_overlapping.png'
           alt='Jesse Lind Logo'
           draggable='false'
           className={styles.logo}
         />
-      </div>
+      </a>
       {/* </div> */}
       <div className={styles.lines}>
         <span className={styles.line1}></span>
@@ -52,7 +52,7 @@ const Hero = () => {
         </div>
       </div>
       <div className={styles.links}>
-        <a href='/notes' className={`${styles.notes} nav_link`}>
+        <a href='/files/notes' className={`${styles.notes} nav_link`}>
           n<br />
           o<br /> t<br /> e<br />s
         </a>
@@ -60,7 +60,7 @@ const Hero = () => {
           p<br />
           r<br /> o<br /> j<br /> e<br /> c<br /> t<br /> s
         </a>
-        <a className={`${styles.logo} nav_link`}>
+        <a href='/notes/mirai' className={`${styles.logo} nav_link`}>
           <img
             src='/images/jesselind_kanji_logo.png'
             alt='jesse lind kanji logo'

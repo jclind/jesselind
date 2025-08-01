@@ -76,7 +76,7 @@ const Footer = () => {
         </div>
         <div className={styles.bottom}>
           <div className={styles.left}>
-            <a href='/mirai'>
+            <a href='/notes/mirai'>
               <div className={styles.logo}>
                 <img
                   src='/images/jesselind_kanji_logo.png'
@@ -88,7 +88,8 @@ const Footer = () => {
           </div>
           <div className={styles.right}>
             <div className={styles.links}>
-              <a href='/privacy'>privacy</a> | <a href='/terms'>terms</a>
+              <a href='/files/legal/privacy'>privacy</a> |{' '}
+              <a href='/files/legal/terms'>terms</a>
             </div>
             <p
               className={styles.copyright}

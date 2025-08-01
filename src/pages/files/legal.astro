@@ -1,0 +1,17 @@
+---
+import DefaultFileList from '../../components/Common/DefaultFileList';
+import type { NavLinkType } from '../../components/Common/NavHeader/NavHeader';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/global.scss';
+
+const navLinks = [{name: 'jesselind', src:'/'}, {name: 'files', src:'/files'}, {name:'legal', src:'/files/legal'}]
+
+const fileLinks = [
+  {name: 'privacy_policy', src: '/files/legal/privacy', type: '.txt'},
+  {name: 'terms_of_service', src:'/files/legal/terms', type: '.txt'}
+]
+---
+
+<Layout>
+  <DefaultFileList navLinks={navLinks} fileLinks={fileLinks} client:load />
+</Layout>

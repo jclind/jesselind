@@ -1,0 +1,33 @@
+---
+import { fetchNotesFromFirebase } from '../../../api/firebase';
+import { type NoteType } from '../../../assets/data/notes';
+import SingleNote from '../../../components/Pages/Notes/SingleNote';
+import Layout from '../../../layouts/Layout.astro';
+import {generateSlug} from '../../../util/pathFunctions'
+import '../../../styles/global.scss';
+
+export function getStaticPaths() {
+
+  // Fetch your notes from Firebase
+  const notes: NoteType[] = fetchNotesFromFirebase(); // Your Firebase fetch function
+
+  const paths = notes.map((note) => ({
+    params: { 
+      slug: generateSlug(note.title)
+    },
+    props: {
+      note 
+    }
+  }));
+  return paths
+}
+
+
+
+const { note } = Astro.props;
+console.log(note)
+---
+
+<Layout>
+  <SingleNote note={note} client:load />
+</Layout>

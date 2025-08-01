@@ -1,0 +1,28 @@
+---
+import { projects } from '../../assets/data/projects';
+import SingleProject from '../../components/Pages/Projects/SingleProject';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/global.scss';
+
+
+export function getStaticPaths() {
+
+  // Fetch your notes from Firebase
+
+  const paths = projects.map((project) => ({
+    params: { 
+      slug: project.slug
+    },
+    props: {
+      project 
+    }
+  }));
+  return paths
+}
+
+const { project } = Astro.props;
+---
+
+<Layout>
+  <SingleProject project={project} />
+</Layout>

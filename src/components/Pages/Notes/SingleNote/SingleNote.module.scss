@@ -1,0 +1,11 @@
+@use '../../../../styles/vars' as *;
+
+.SingleNote {
+  .content {
+    .date {
+      font-size: $fs-xs;
+      font-weight: 500;
+      color: $tertiary-text;
+    }
+  }
+}

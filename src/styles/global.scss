@@ -218,11 +218,132 @@ a[href^='tel'] {
   color: $primary-text;
 
   @media (max-width: $breakpoint-sm) {
-    font-size: $fs-small;
+    font-size: $fs-xs;
   }
 }
 .project-tagline {
-  font-size: $fs-small;
+  font-size: $fs-xs;
   font-weight: 200;
   color: $secondary-text;
+}
+
+.notes-style-page {
+  background: $primary-background;
+  width: 100%;
+}
+
+.notes-content {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: $gap-regular;
+  max-width: $max-note-width;
+  width: $note-width;
+  padding-bottom: $gap-xl;
+  @media (max-width: $breakpoint-sm) {
+    top: 15%;
+  }
+}
+.note-title {
+  margin-bottom: $gap-regular;
+  font-size: $fs-medium;
+  font-weight: 500;
+}
+.note-subtitle {
+  margin-bottom: $gap-large;
+  font-size: $fs-small;
+  font-weight: 500;
+  color: $secondary-text;
+}
+.note-last-updated {
+  color: $secondary-text;
+  font-weight: 500;
+  font-size: $fs-xxs;
+  margin-bottom: $gap-large;
+}
+.note-text {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-large;
+  padding-bottom: $gap-medium;
+
+  a {
+    text-decoration: underline;
+  }
+  p {
+    font-size: $fs-small;
+    font-weight: 200;
+    line-height: 1.75;
+  }
+}
+.nav-header {
+  display: flex;
+  gap: $gap-tiny;
+  font-size: $fs-xs;
+  font-weight: 200;
+  margin-bottom: $gap-xl;
+
+  h1 {
+    font-size: $fs-xs;
+    font-weight: 200;
+  }
+}
+
+.notes-back-btn {
+  font-weight: 200;
+  letter-spacing: 1.5px;
+  font-size: $fs-xs;
+  margin-top: $gap-medium;
+  width: fit-content;
+}
+
+.files-list {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-regular;
+  font-size: $fs-xs;
+  font-weight: 200;
+  .file {
+    display: flex;
+    .file_index {
+      font-weight: 400;
+      color: $secondary-text;
+      width: 3ch;
+    }
+    span {
+    }
+    a {
+      text-transform: lowercase;
+    }
+  }
+  a {
+    font-size: $fs-xs;
+    font-weight: 200;
+    width: fit-content;
+  }
+}
+
+.project-images {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: $gap-regular;
+  padding: var(--horizontal-padding);
+  border: 1px solid $border-color;
+  border-radius: 36px;
+
+  .image {
+    width: 100%;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+
+    img {
+      width: 100%;
+      display: block;
+      object-fit: contain;
+    }
+  }
 }

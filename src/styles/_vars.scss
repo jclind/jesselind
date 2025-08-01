@@ -25,8 +25,9 @@ $line-height-base: 1.5; // Base line height
 $max-width-paragraph: 600px; // Max width for paragraphs
 
 // Font sizes
-$fs-tiny: 12px; // Tiny font size
-$fs-small: 14px; // Small font size
+$fs-xxs: 12px; // Tiny font size
+$fs-xs: 14px; // Small font size
+$fs-small: 15px;
 $fs-regular: 16px; // Regular font size
 $fs-medium: 20px; // Medium font size
 $fs-large: 24px; // Large font size
@@ -91,7 +92,7 @@ $card-background: #fafafa; // Card background color
 $border-radius-card: 15px; // Card border radius
 $box-shadow-card: rgba(0, 0, 0, 0.16) 0px 3px 6px,
   rgba(0, 0, 0, 0.23) 0px 3px 6px; // Card box shadow
-$fs-card-text: $fs-small; // Card text font size
+$fs-card-text: $fs-xs; // Card text font size
 
 // =============================================
 // Icons
@@ -111,3 +112,10 @@ $page-line-top-displacement: 62.5%; // Top displacement for page lines
 // $breakpoint-lg: 1000px;
 // $breakpoint-md: 750px;
 // $breakpoint-sm: 500px;
+
+// Notes Page
+// $notes-top-displacement: 30%;
+// $notes-nav-
+
+$max-note-width: 500px;
+$note-width: 90%;

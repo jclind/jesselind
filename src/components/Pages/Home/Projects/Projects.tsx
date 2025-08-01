@@ -27,42 +27,16 @@ const Projects = () => {
     rootMargin: '-30% 0px -30% 0px',
   })
 
-  // useEffect(() => {
-  //   // Observer for images only
-  //   const imageObserver = new IntersectionObserver(
-  //     entries => {
-  //       entries.forEach(entry => {
-  //         console.log('Image Intersection:', entry.target, entry.isIntersecting)
-  //         if (entry.isIntersecting) {
-  //           entry.target.classList.add(styles.visibleImages)
-  //         } else {
-  //           entry.target.classList.remove(styles.visibleImages)
-  //         }
-  //       })
-  //     },
-  //     {
-  //       threshold: 0.1,
-  //       rootMargin: '-30% 0px -30% 0px',
-  //     }
-  //   )
-
-  //   imageRefs.current.forEach(element => {
-  //     if (element) imageObserver.observe(element)
-  //   })
-
-  //   return () => {
-  //     imageRefs.current.forEach(element => {
-  //       if (element) imageObserver.unobserve(element)
-  //     })
-  //   }
-  // }, [])
-
   return (
     <div className={styles.Projects} id='projects'>
       <div className={styles.content}>
         <div className={styles.projects_list}>
           {projects.map((project, index) => (
-            <div key={index} className={styles.project} ref={setTextRef(index)}>
+            <div
+              key={index}
+              className={`${styles.project} project-container`}
+              ref={setTextRef(index)}
+            >
               <div className={styles.title_text}>
                 {splitTextToSpans(project.title, 'project-title')}
               </div>
@@ -70,20 +44,18 @@ const Projects = () => {
                 {splitTextToSpans(project.tagline, 'project-tagline', 'p', 0.5)}
               </div>
               <a
-                href={project.link || '#'}
+                href={project.slug ? `/projects/${project.slug}` : '#'}
                 className={styles.imageLink}
-                target='_blank'
-                rel='noopener noreferrer'
               >
                 <div
-                  className={`${styles.images} ${fadeStyles.fadeInElement}`}
+                  className={`${styles.images} project-images ${fadeStyles.fadeInElement}`}
                   // ref={el => {
                   //   imageRefs.current[index] = el
                   // }}
                   ref={setFadeRef(index)}
                 >
                   {project.images.map((image, imgIndex) => (
-                    <div className={styles.image} key={imgIndex}>
+                    <div className={`${styles.image} image`} key={imgIndex}>
                       <img
                         key={imgIndex}
                         src={image}

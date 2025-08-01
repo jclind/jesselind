@@ -1,7 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Pages/Home/Hero';
-import '../styles/global.scss';
+import NotesList from '../../components/Pages/Notes/NotesList';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/global.scss';
 
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
@@ -9,6 +9,5 @@ import '../styles/global.scss';
 ---
 
 <Layout>
-  <Hero />
-  
+  <NotesList client:load />
 </Layout>
