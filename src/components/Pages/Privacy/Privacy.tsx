@@ -1,18 +1,17 @@
 import React from 'react'
 import styles from './Privacy.module.scss'
+import NavHeader from '../../Common/NavHeader'
+import { NAV_LINKS_LEGAL } from '../../../util/NAV_VARS'
 
 const Privacy = () => {
   const lastUpdated = 'July 31, 2025'
 
+  const navLinks = [...NAV_LINKS_LEGAL, { name: 'privacy', src: '#' }]
+
   return (
     <div className={`${styles.Privacy} notes-style-page`}>
       <div className={`${styles.content} notes-content`}>
-        <div className='nav-header'>
-          <a href='/'>jesselind</a> /{' '}
-          <i>
-            <a href='/privacy'>privacy</a>
-          </i>
-        </div>
+        <NavHeader links={navLinks} />
         <div className='note-title'>Privacy Policy</div>
         <p className='note-last-updated'>Last updated: [{lastUpdated}]</p>
 

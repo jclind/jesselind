@@ -52,7 +52,7 @@ const Hero = () => {
         </div>
       </div>
       <div className={styles.links}>
-        <a href='/notes' className={`${styles.notes} nav_link`}>
+        <a href='/files/notes' className={`${styles.notes} nav_link`}>
           n<br />
           o<br /> t<br /> e<br />s
         </a>

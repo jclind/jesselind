@@ -7,23 +7,8 @@
   }
   .content {
     .notes {
-      display: flex;
-      flex-direction: column;
-      gap: $gap-regular;
-      font-size: $fs-xs;
-      font-weight: 200;
       .note {
-        display: flex;
         .note_id {
-          font-weight: 400;
-          color: $secondary-text;
-          width: 3ch;
-        }
-        span {
-          color: $tertiary-text;
-        }
-        a {
-          text-transform: lowercase;
         }
       }
     }

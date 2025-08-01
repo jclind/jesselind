@@ -1,6 +1,6 @@
 ---
-import NotesList from '../components/Pages/Notes/NotesList';
 import Layout from '../layouts/Layout.astro';
+import {default as FilesPage} from '../components/Pages/Files'
 import '../styles/global.scss';
 
 
@@ -9,5 +9,5 @@ import '../styles/global.scss';
 ---
 
 <Layout>
-  <NotesList client:load />
+  <FilesPage />
 </Layout>

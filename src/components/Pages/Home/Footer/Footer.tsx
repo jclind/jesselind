@@ -88,7 +88,8 @@ const Footer = () => {
           </div>
           <div className={styles.right}>
             <div className={styles.links}>
-              <a href='/privacy'>privacy</a> | <a href='/terms'>terms</a>
+              <a href='/files/legal/privacy'>privacy</a> |{' '}
+              <a href='/files/legal/terms'>terms</a>
             </div>
             <p
               className={styles.copyright}

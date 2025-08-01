@@ -1,18 +1,17 @@
 import React from 'react'
 import styles from './Terms.module.scss'
+import NavHeader from '../../Common/NavHeader'
+import { NAV_LINKS_LEGAL } from '../../../util/NAV_VARS'
 
 const Terms = () => {
   const lastUpdated = 'July 31, 2025'
 
+  const navLinks = [...NAV_LINKS_LEGAL, { name: 'terms', src: '#' }]
+
   return (
     <div className={`${styles.Terms} notes-style-page`}>
       <div className={`${styles.content} notes-content`}>
-        <div className='nav-header'>
-          <a href='/'>jesselind</a> /{' '}
-          <i>
-            <a href='/privacy'>terms</a>
-          </i>
-        </div>
+        <NavHeader links={navLinks} />
         <div className='note-title'>terms of service</div>
         <p className='note-last-updated'>Last updated: [{lastUpdated}]</p>
 

@@ -2,17 +2,21 @@ import React from 'react'
 import styles from './SingleNote.module.scss'
 import type { NoteType } from '../../../../assets/data/notes'
 import { formatNotesDate } from '../../../../util/formatNotesDate'
+import NavHeader from '../../../Common/NavHeader'
+import BackButton from '../../../Common/BackButton'
 
 const SingleNote = ({ note }: { note: NoteType }) => {
+  const noteLinks = [
+    { name: 'jesselind', src: '/' },
+    { name: 'files', src: '/files' },
+    { name: 'notes', src: '/files/notes' },
+    { name: note.title, src: '#' },
+  ]
+
   return (
     <div className={`${styles.SingleNote} notes-style-page`}>
       <div className={`${styles.content} notes-content`}>
-        <div className='nav-header'>
-          <a href='/'>jesselind</a> / <a href='/notes'>notes</a> /{' '}
-          <i>
-            <a href='#'>{note.title}</a>
-          </i>
-        </div>
+        <NavHeader links={noteLinks} />
         <h1 className={'note-title'}>{note.title}</h1>
         <div className={'note-text'}>
           {note.text.map(paragraph => {
@@ -20,9 +24,7 @@ const SingleNote = ({ note }: { note: NoteType }) => {
           })}
         </div>
         <div className={styles.date}>{formatNotesDate(note.date)}</div>
-        <a href='/notes' className='notes-back-btn'>
-          ../
-        </a>
+        <BackButton />
       </div>
     </div>
   )
