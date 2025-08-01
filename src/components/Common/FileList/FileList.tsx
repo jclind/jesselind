@@ -5,16 +5,20 @@ export type FileLinkType = {
   id?: number | string
   name: string
   src: string
+  type?: string
 }
 
 const FileList = ({ list }: { list: FileLinkType[] }) => {
   return (
     <div className={`files-list`}>
-      {list.map((file, index) => (
+      {list.map((file, index, origArr) => (
         <div className={`file`}>
-          <div className={`file_index`}>{file.id || index}.</div>
+          <div className={`file_index`}>
+            {file.id || origArr.length - index - 1}.
+          </div>
           <a href={file.src} key={file.id}>
             {file.name}
+            {file.type && <span>{file.type}</span>}
           </a>
         </div>
       ))}

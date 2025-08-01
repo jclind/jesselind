@@ -12,6 +12,7 @@ const BackButton = () => {
     const parentPath =
       '/' + segments.join('/') + (segments.length > 0 ? '/' : '')
     window.location.href = parentPath
+    console.log(path, segments, parentPath)
   }
 
   return (

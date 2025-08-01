@@ -17,7 +17,7 @@ export const notes = [
   },
   {
     id: 1,
-    title: '未来 — mirai',
+    title: '未来 mirai',
     link: 'mirai',
     text: [
       'Nostrud occaecat pariatur laboris minim voluptate ea adipisicing quis occaecat. Deserunt officia sunt qui ad incididunt. Eiusmod cillum aute quis irure ullamco. Duis labore amet commodo reprehenderit consectetur qui consequat do ad et ut do cupidatat aliquip. Dolor occaecat cupidatat dolore id eiusmod labore non proident eiusmod dolore occaecat. Labore sunt consequat amet labore. Nisi tempor ipsum esse ea amet sint Lorem magna minim nulla labore qui cillum qui.',

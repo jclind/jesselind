@@ -314,7 +314,6 @@ a[href^='tel'] {
       width: 3ch;
     }
     span {
-      color: $tertiary-text;
     }
     a {
       text-transform: lowercase;
@@ -323,6 +322,7 @@ a[href^='tel'] {
   a {
     font-size: $fs-xs;
     font-weight: 200;
+    width: fit-content;
   }
 }
 
