@@ -10,14 +10,6 @@ const Hero = () => {
     const el = document.querySelector('.page-height-line') as HTMLElement
     const displacement =
       (parseFloat(scssVars.pageLineTopDisplacement) / 100) * heroHeight
-    console.log(
-      'Page height:',
-      pageHeight,
-      'Hero height:',
-      heroHeight,
-      'Displacement:',
-      displacement
-    )
     if (el) {
       el.style.height = `${pageHeight - displacement}px`
     }
@@ -52,7 +44,11 @@ const Hero = () => {
         </div>
       </div>
       <div className={styles.links}>
-        <a href='/files/notes' className={`${styles.notes} nav_link`}>
+        <a
+          href='/files/notes'
+          className={`${styles.notes} nav_link`}
+          data-astro-prefetch='hover'
+        >
           n<br />
           o<br /> t<br /> e<br />s
         </a>
@@ -60,7 +56,11 @@ const Hero = () => {
           p<br />
           r<br /> o<br /> j<br /> e<br /> c<br /> t<br /> s
         </a>
-        <a href='/notes/mirai' className={`${styles.logo} nav_link`}>
+        <a
+          href='/files/notes/mirai'
+          className={`${styles.logo} nav_link`}
+          data-astro-prefetch='viewport'
+        >
           <img
             src='/images/jesselind_kanji_logo.png'
             alt='jesse lind kanji logo'

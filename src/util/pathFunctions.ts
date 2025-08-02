@@ -12,8 +12,10 @@ export const generateSlug = (
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+    .trim()
     .replace(/\s+/g, '-') // collapse whitespace and replace by -
     .replace(/-+/g, '-')
+  console.log(pageSlug)
   return pageSlug
   // return slugOnly ? pageSlug : `${path}/${pageSlug}`
 }

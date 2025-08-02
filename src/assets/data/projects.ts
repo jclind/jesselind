@@ -1,5 +1,3 @@
-import { links } from '../../components/Layout/Footer/links'
-
 export type ProjectType = {
   id: number
   title: string
