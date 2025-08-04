@@ -19,7 +19,7 @@ const genProjectImgs = (
     `${basePath}${projectName}/1.png`,
     `${basePath}${projectName}/2.png`,
     `${basePath}${projectName}/3.png`,
-    `${basePath}${projectName}/3.png`,
+    `${basePath}${projectName}/4.png`,
   ]
 }
 
@@ -39,7 +39,7 @@ export const projects: ProjectType[] = [
   },
   {
     id: 1,
-    title: 'Pump Track',
+    title: 'pumptrack',
     tagline: 'Simple yet functional workout tracking.',
     description: [
       'Pump Track is a streamlined workout app designed to make fitness tracking simple and effective. Users can log workouts by entering exercises with titles, weights (including multiple values), sets, and reps. The app offers a smart "Last Exercise Weight" suggestion to guide users in their next sessions. A complete workout history is easily accessible and editable from the home page. To support long-term progress, Pump Track includes visual charts displaying personal records and performance trends for each exercise. Social features allow users to connect with friends and view each other’s workout counts, adding a motivational layer to the experience.',
