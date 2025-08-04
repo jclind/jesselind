@@ -3,6 +3,14 @@ import styles from './Hero.module.scss'
 import { ButtonLink } from '../../../Common/ButtonLink'
 import scssVars from '../../../../styles/_exports.module.scss'
 const Hero = () => {
+  const handleClick = (e: any) => {
+    e.preventDefault()
+    const element = document.getElementById('projects')
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   // React/JS (in a useEffect)
   useEffect(() => {
     const pageHeight = document.documentElement.scrollHeight
@@ -52,7 +60,11 @@ const Hero = () => {
           n<br />
           o<br /> t<br /> e<br />s
         </a>
-        <a href='#projects' className={`${styles.projects} nav_link`}>
+        <a
+          href='#projects'
+          className={`${styles.projects} nav_link`}
+          onClick={handleClick}
+        >
           p<br />
           r<br /> o<br /> j<br /> e<br /> c<br /> t<br /> s
         </a>
