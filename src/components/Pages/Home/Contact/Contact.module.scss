@@ -111,6 +111,10 @@
         opacity: inherit;
       }
 
+      &:hover {
+        text-decoration: none;
+      }
+
       &:hover::after,
       &:hover .btn_glow {
         animation-play-state: running;
