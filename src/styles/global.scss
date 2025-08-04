@@ -246,6 +246,10 @@ a[href^='tel'] {
   @media (max-width: $breakpoint-sm) {
     top: 15%;
   }
+
+  a {
+    width: fit-content;
+  }
 }
 .note-title {
   margin-bottom: $gap-regular;
@@ -298,6 +302,11 @@ a[href^='tel'] {
   font-size: $fs-xs;
   margin-top: $gap-medium;
   width: fit-content;
+}
+.footnotes {
+  font-size: $fs-xxs;
+  color: $tertiary-text;
+  font-weight: 400;
 }
 
 .files-list {
