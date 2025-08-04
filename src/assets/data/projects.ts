@@ -16,10 +16,10 @@ const genProjectImgs = (
   basePath: string = projectImgPath
 ): string[] => {
   return [
-    `${basePath}${projectName}/1.png`,
-    `${basePath}${projectName}/2.png`,
-    `${basePath}${projectName}/3.png`,
-    `${basePath}${projectName}/4.png`,
+    `${basePath}${projectName}/1.webp`,
+    `${basePath}${projectName}/2.webp`,
+    `${basePath}${projectName}/3.webp`,
+    `${basePath}${projectName}/4.webp`,
   ]
 }
 
