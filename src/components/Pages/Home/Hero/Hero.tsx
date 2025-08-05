@@ -30,7 +30,7 @@ const Hero = () => {
 
       <a href='/contact' className={styles.overlapping_logo}>
         <img
-          src='/images/jesselind_overlapping.png'
+          src='/images/jesselind_overlapping.webp'
           alt='Jesse Lind Logo'
           draggable='false'
           className={styles.logo}
@@ -74,7 +74,7 @@ const Hero = () => {
           data-astro-prefetch='viewport'
         >
           <img
-            src='/images/jesselind_kanji_logo.png'
+            src='/images/jesselind_kanji_logo.webp'
             alt='jesse lind kanji logo'
             draggable='false'
           />

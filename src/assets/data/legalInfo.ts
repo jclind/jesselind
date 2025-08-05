@@ -8,5 +8,6 @@ export const COUNTRY = 'United States'
 export const FULL_ADDRESS = `${ADDRESS}, ${CITY}, ${STATE} ${ZIP_CODE}, ${COUNTRY}`
 
 export const LEGAL_NAME = 'jesselind'
-export const WEBSITE_DESCRIPTION = 'jesse'
+export const WEBSITE_DESCRIPTION =
+  'jesselind. designer. developer. human. portfolio + thoughts on design, philosophy, cool animals, and everything else.'
 export const WEBSITE_URL = 'https://jesselind.com'
