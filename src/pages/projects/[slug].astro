@@ -23,6 +23,6 @@ export function getStaticPaths() {
 const { project } = Astro.props;
 ---
 
-<Layout>
+<Layout title={project.title}>
   <SingleProject project={project} />
 </Layout>

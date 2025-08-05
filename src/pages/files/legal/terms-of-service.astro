@@ -1,6 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import {default as TermsPage} from '../../../components/Pages/Terms'
+import Terms from '../../../components/Pages/Terms'
 import '../../../styles/global.scss';
 
 
@@ -8,6 +8,6 @@ import '../../../styles/global.scss';
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-  <TermsPage />
+<Layout title="terms of service">
+  <Terms client:load />
 </Layout>

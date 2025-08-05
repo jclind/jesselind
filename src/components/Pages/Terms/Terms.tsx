@@ -2,11 +2,15 @@ import React from 'react'
 import styles from './Terms.module.scss'
 import NavHeader from '../../Common/NavHeader'
 import { NAV_LINKS_LEGAL } from '../../../util/NAV_VARS'
+import BackButton from '../../Common/BackButton'
 
 const Terms = () => {
   const lastUpdated = 'July 31, 2025'
 
-  const navLinks = [...NAV_LINKS_LEGAL, { name: 'terms', src: '#' }]
+  const navLinks = [
+    ...NAV_LINKS_LEGAL,
+    { name: 'terms-of-service.txt', src: '#' },
+  ]
 
   return (
     <div className={`${styles.Terms} notes-style-page`}>
@@ -33,9 +37,7 @@ const Terms = () => {
             website.
           </p>
         </div>
-        <a href='/' className='notes-back-btn'>
-          ../
-        </a>
+        <BackButton />
       </div>
     </div>
   )

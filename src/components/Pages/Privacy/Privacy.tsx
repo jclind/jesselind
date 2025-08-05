@@ -2,17 +2,21 @@ import React from 'react'
 import styles from './Privacy.module.scss'
 import NavHeader from '../../Common/NavHeader'
 import { NAV_LINKS_LEGAL } from '../../../util/NAV_VARS'
+import BackButton from '../../Common/BackButton'
 
 const Privacy = () => {
   const lastUpdated = 'July 31, 2025'
 
-  const navLinks = [...NAV_LINKS_LEGAL, { name: 'privacy', src: '#' }]
+  const navLinks = [
+    ...NAV_LINKS_LEGAL,
+    { name: 'privacy-policy.txt', src: '#' },
+  ]
 
   return (
     <div className={`${styles.Privacy} notes-style-page`}>
       <div className={`${styles.content} notes-content`}>
         <NavHeader links={navLinks} />
-        <div className='note-title'>Privacy Policy</div>
+        <div className='note-title'>privacy policy</div>
         <p className='note-last-updated'>Last updated: [{lastUpdated}]</p>
 
         <div className='note-text'>
@@ -48,9 +52,7 @@ const Privacy = () => {
             .
           </p>
         </div>
-        <a href='/' className='notes-back-btn'>
-          ../
-        </a>
+        <BackButton />
       </div>
     </div>
   )

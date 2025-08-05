@@ -1,5 +1,5 @@
 @use 'vars' as *;
-@import 'fonts';
+@use 'fonts';
 
 /* Reset & Base Styles */
 *,
@@ -13,7 +13,6 @@
 }
 
 *:focus {
-  display: flex;
   outline: 1px solid $primary-text !important;
   border-radius: 4px;
 }

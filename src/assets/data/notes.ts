@@ -9,7 +9,7 @@ export type NoteType = {
 export const notes = [
   {
     id: 0,
-    title: 'Hello World',
+    title: 'hello world',
     text: [
       'Hello, these are a collections of my thoughts, ideas, likes, dislikes, life events or really anything on my mind. Enjoy :)',
     ],

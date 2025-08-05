@@ -1,6 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import {default as PrivacyPage} from '../../../components/Pages/Privacy';
+import Privacy from '../../../components/Pages/Privacy';
 import '../../../styles/global.scss';
 
 
@@ -8,7 +8,6 @@ import '../../../styles/global.scss';
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-  <PrivacyPage />
-  
+<Layout title="privacy policy">
+  <Privacy client:load />
 </Layout>

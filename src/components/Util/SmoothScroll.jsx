@@ -1,10 +1,9 @@
-import { ReactLenis, useLenis } from 'lenis/react'
+import { ReactLenis } from 'lenis/react'
 
 function SmoothScroll() {
   return (
     <>
       <ReactLenis root />
-      {/* content */}
     </>
   )
 }

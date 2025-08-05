@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import styles from './Footer.module.scss'
 import scssVars from '../../../../styles/_exports.module.scss'
-import { ArrowUp, MoveUp } from 'lucide-react'
+import { MoveUp } from 'lucide-react'
 
 const Footer = () => {
   const footerRef = useRef<HTMLDivElement>(null)
@@ -88,8 +88,8 @@ const Footer = () => {
           </div>
           <div className={styles.right}>
             <div className={styles.links}>
-              <a href='/files/legal/privacy'>privacy</a> |{' '}
-              <a href='/files/legal/terms'>terms</a>
+              <a href='/files/legal/privacy-policy'>privacy</a> |{' '}
+              <a href='/files/legal/terms-of-service'>terms</a>
             </div>
             <p
               className={styles.copyright}
