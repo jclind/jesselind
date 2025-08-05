@@ -56,13 +56,13 @@ const Footer = () => {
           <picture>
             <source
               media={`(max-width: ${scssVars.breakpointSM})`}
-              srcSet='/images/home_footer_mobile.png'
+              srcSet='/images/home_footer_mobile.webp'
             />
             <source
               media={`(min-width: ${scssVars.breakpointSM})`}
-              srcSet='/images/home_footer_large.png'
+              srcSet='/images/home_footer_large.webp'
             />
-            <img src='/images/home_footer_large.png' alt='' />
+            <img src='/images/home_footer_large.webp' alt='' />
           </picture>
         </div>
         <div className={styles.box_top}></div>
@@ -78,7 +78,7 @@ const Footer = () => {
             <a href='/files/notes/mirai'>
               <div className={styles.logo}>
                 <img
-                  src='/images/jesselind_kanji_logo.png'
+                  src='/images/jesselind_kanji_logo.webp'
                   alt='Jesse Lind Logo'
                   draggable='false'
                 />
