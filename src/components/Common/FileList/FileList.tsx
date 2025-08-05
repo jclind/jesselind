@@ -16,7 +16,7 @@ const FileList = ({ list }: { list: FileLinkType[] }) => {
           <div className={`file_index`}>
             {file.id || origArr.length - index - 1}.
           </div>
-          <a href={file.src} key={file.id}>
+          <a href={file.src} key={file.id} data-astro-prefetch='hover'>
             {file.name}
             {file.type && <span>{file.type}</span>}
           </a>

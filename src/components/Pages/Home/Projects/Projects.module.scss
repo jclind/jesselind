@@ -80,10 +80,9 @@
         }
 
         a {
+          transition: all linear 0.15s;
           &:hover {
-            .images {
-              transform: scale(1.015);
-            }
+            transform: scale(1.015);
           }
           border-radius: 36px;
         }

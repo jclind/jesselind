@@ -3,6 +3,14 @@ import styles from './Hero.module.scss'
 import { ButtonLink } from '../../../Common/ButtonLink'
 import scssVars from '../../../../styles/_exports.module.scss'
 const Hero = () => {
+  const handleClick = (e: any) => {
+    e.preventDefault()
+    const element = document.getElementById('projects')
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   // React/JS (in a useEffect)
   useEffect(() => {
     const pageHeight = document.documentElement.scrollHeight
@@ -10,14 +18,6 @@ const Hero = () => {
     const el = document.querySelector('.page-height-line') as HTMLElement
     const displacement =
       (parseFloat(scssVars.pageLineTopDisplacement) / 100) * heroHeight
-    console.log(
-      'Page height:',
-      pageHeight,
-      'Hero height:',
-      heroHeight,
-      'Displacement:',
-      displacement
-    )
     if (el) {
       el.style.height = `${pageHeight - displacement}px`
     }
@@ -52,15 +52,27 @@ const Hero = () => {
         </div>
       </div>
       <div className={styles.links}>
-        <a href='/files/notes' className={`${styles.notes} nav_link`}>
+        <a
+          href='/files/notes'
+          className={`${styles.notes} nav_link`}
+          data-astro-prefetch='hover'
+        >
           n<br />
           o<br /> t<br /> e<br />s
         </a>
-        <a href='#projects' className={`${styles.projects} nav_link`}>
+        <a
+          href='#projects'
+          className={`${styles.projects} nav_link`}
+          onClick={handleClick}
+        >
           p<br />
           r<br /> o<br /> j<br /> e<br /> c<br /> t<br /> s
         </a>
-        <a href='/notes/mirai' className={`${styles.logo} nav_link`}>
+        <a
+          href='/files/notes/mirai'
+          className={`${styles.logo} nav_link`}
+          data-astro-prefetch='viewport'
+        >
           <img
             src='/images/jesselind_kanji_logo.png'
             alt='jesse lind kanji logo'

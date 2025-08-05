@@ -20,7 +20,7 @@ const SingleNote = ({ note }: { note: NoteType }) => {
         <h1 className={'note-title'}>{note.title}</h1>
         <div className={'note-text'}>
           {note.text.map(paragraph => {
-            return <p>{paragraph}</p>
+            return <p dangerouslySetInnerHTML={{ __html: paragraph }} />
           })}
         </div>
         <div className={styles.date}>{formatNotesDate(note.date)}</div>

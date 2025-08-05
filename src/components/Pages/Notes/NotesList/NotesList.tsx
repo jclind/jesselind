@@ -26,12 +26,6 @@ const NotesList = () => {
     { name: 'notes', src: '/files/notes' },
   ]
 
-  // useEffect(() => {
-  //   const notesList = [...originalNotes]
-  //   const notesListReversed = notesList.reverse()
-  //   setNotesList(notesListReversed)
-  // }, [])
-
   return (
     <div className={`${styles.NotesList} notes-style-page`}>
       <div className={`${styles.content} notes-content`}>

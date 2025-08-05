@@ -19,6 +19,7 @@ const SingleProject = ({ project }: { project: ProjectType }) => {
                 key={imgIndex}
                 src={image}
                 alt={`${project.title} image ${imgIndex + 1}`}
+                loading='lazy'
               />
             </div>
           ))}
