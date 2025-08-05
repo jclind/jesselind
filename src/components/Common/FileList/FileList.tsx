@@ -12,7 +12,7 @@ const FileList = ({ list }: { list: FileLinkType[] }) => {
   return (
     <div className={`files-list`}>
       {list.map((file, index, origArr) => (
-        <div className={`file`}>
+        <div className={`file`} key={file.id || file.name}>
           <div className={`file_index`}>
             {file.id || origArr.length - index - 1}.
           </div>

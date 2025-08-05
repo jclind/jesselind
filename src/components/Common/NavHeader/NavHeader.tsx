@@ -11,15 +11,17 @@ const NavHeader = ({ links }: { links: NavLinkType[] }) => {
       {updatedLinks.map((link, index, origArr) => {
         if (origArr.length - 1 == index) {
           return (
-            <i>
-              <a href={link.src}>{link.name}</a>
-            </i>
+            <React.Fragment key={link.src}>
+              <i>
+                <a href={link.src}>{link.name}</a>
+              </i>
+            </React.Fragment>
           )
         }
         return (
-          <>
+          <React.Fragment key={link.src}>
             <a href={link.src}>{link.name}</a> /{' '}
-          </>
+          </React.Fragment>
         )
       })}
     </div>

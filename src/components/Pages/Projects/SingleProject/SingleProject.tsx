@@ -1,13 +1,11 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styles from './SingleProject.module.scss'
 import type { ProjectType } from '../../../../assets/data/projects'
 import { MoveRight, SquareArrowOutUpRight } from 'lucide-react'
 import { getNextProjectLink } from '../../../../util/getNextProjectLink'
 
 const SingleProject = ({ project }: { project: ProjectType }) => {
-  const [nextProjectLink, setNextProjectLink] = useState(
-    getNextProjectLink(project.id)
-  )
+  const [nextProjectLink, _] = useState(getNextProjectLink(project.id))
 
   return (
     <div className={styles.SingleProject}>

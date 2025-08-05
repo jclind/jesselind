@@ -19,8 +19,10 @@ const SingleNote = ({ note }: { note: NoteType }) => {
         <NavHeader links={noteLinks} />
         <h1 className={'note-title'}>{note.title}</h1>
         <div className={'note-text'}>
-          {note.text.map(paragraph => {
-            return <p dangerouslySetInnerHTML={{ __html: paragraph }} />
+          {note.text.map((paragraph, index) => {
+            return (
+              <p dangerouslySetInnerHTML={{ __html: paragraph }} key={index} />
+            )
           })}
         </div>
         <div className={styles.date}>{formatNotesDate(note.date)}</div>
