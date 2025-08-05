@@ -53,7 +53,6 @@ const Footer = () => {
       <div className={styles.top_line}></div>
       <div className={styles.content}>
         <div className={styles.background_image} ref={bgImageRef}>
-          {/* <img src='/images/home_footer_large.png' alt='' /> */}
           <picture>
             <source
               media={`(max-width: ${scssVars.breakpointSM})`}
