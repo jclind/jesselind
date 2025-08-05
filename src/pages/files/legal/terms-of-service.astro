@@ -1,6 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import {default as PrivacyPage} from '../../../components/Pages/Privacy';
+import Terms from '../../../components/Pages/Terms'
 import '../../../styles/global.scss';
 
 
@@ -9,6 +9,5 @@ import '../../../styles/global.scss';
 ---
 
 <Layout>
-  <PrivacyPage />
-  
+  <Terms client:load />
 </Layout>
