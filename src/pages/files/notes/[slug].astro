@@ -25,9 +25,8 @@ export function getStaticPaths() {
 
 
 const { note } = Astro.props;
-console.log(note)
 ---
 
-<Layout>
+<Layout title={note.title} description={note.text[0]}>
   <SingleNote note={note} client:load />
 </Layout>

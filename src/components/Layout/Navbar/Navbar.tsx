@@ -9,7 +9,6 @@ interface NavbarProps {
 
 const Navbar = ({ currentPath }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  console.log(currentPath)
   return (
     <div className={styles.navbar}>
       <div className={styles.inner}>
