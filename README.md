@@ -2,6 +2,6 @@
 
 jesselind. designer. developer. human. portfolio + thoughts on design, philosophy, cool animals, and everything else.
 
-# Stack
+# stack
 
 created with Astro using React.js, Typescript, and Sass
