@@ -26,6 +26,18 @@ const genProjectImgs = (
 export const projects: ProjectType[] = [
   {
     id: 0,
+    title: 'Jesse Lind Photography',
+    tagline: 'My personal photography portfolio.',
+    description: [
+      "My personal photography portfolio website. I've always been fascinated with photography and capturing moments, and over the years, I've taken some pictures that I think are worthy of sharing.",
+    ],
+    images: genProjectImgs('jesselind-photography'),
+    link: 'https://jesselindphoto.vercel.app/',
+    slug: 'jesselind-photography',
+    github: 'https://github.com/jclind/jesselind-photo',
+  },
+  {
+    id: 1,
     title: 'Prepify',
     tagline: 'Prep meals. Track costs. Eat better.',
     description: [
@@ -38,7 +50,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/prepify',
   },
   {
-    id: 1,
+    id: 2,
     title: 'pumptrack',
     tagline: 'Simple yet functional workout tracking.',
     description: [
@@ -50,7 +62,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/pump-track',
   },
   {
-    id: 2,
+    id: 3,
     title: 'DoorDash Driver Recap',
     tagline: 'A recap of your dashing year.',
     description: [
@@ -62,7 +74,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/doordash-recap',
   },
   {
-    id: 3,
+    id: 4,
     title: 'BitWorkout',
     tagline: 'Gamify your workouts and collect treasure.',
     description: [
@@ -73,18 +85,7 @@ export const projects: ProjectType[] = [
     slug: 'bitworkout',
     github: 'https://github.com/jclind/bit-workout',
   },
-  {
-    id: 4,
-    title: 'Jesse Lind Photography',
-    tagline: 'My personal photography portfolio.',
-    description: [
-      "My personal photography portfolio website. I've always been fascinated with photography and capturing moments, and over the years, I've taken some pictures that I think are worthy of sharing.",
-    ],
-    images: genProjectImgs('jesselind-photography'),
-    link: 'https://jesselindphotography.netlify.app/',
-    slug: 'jesselind-photography',
-    github: 'https://github.com/jclind/jesse-lind-photography',
-  },
+
   {
     id: 5,
     title: 'Tridle',
