@@ -12,7 +12,7 @@ interface Props {
 }
 const { title = LEGAL_NAME, description = WEBSITE_DESCRIPTION } = Astro.props;
 const siteName = LEGAL_NAME
-const GOOGLE_ANALYTICS_ID = 'G-XXXXXXXXXX'
+const GOOGLE_ANALYTICS_ID = 'G-G33532W32B'
 ---
 
 
@@ -21,14 +21,14 @@ const GOOGLE_ANALYTICS_ID = 'G-XXXXXXXXXX'
 <html lang="en">
 	<head>
 		<!-- Google tag (gtag.js) -->
-		<!-- <script type="text/partytown" async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}`></script>
+		<script type="text/partytown" async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}`></script>
 		<script type="text/partytown">
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
 
 			gtag('config', GOOGLE_ANALYTICS_ID);
-		</script> -->
+		</script>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
