@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-const FRAME_HEIGHT = 500
-const FRAME_WIDTH = 500
+const FRAME_HEIGHT = 600
+const FRAME_WIDTH = 600
+const NUM_POINTS = 200
 
 type PointType = { x: number; y: number }
 // type LineType = {start: PointType, end: PointType}
 
 type Point = { x: number; y: number }
+type AnimationStyleType = 'rotate' | 'translate' | 'centerRotate'
+type LinesProps = { style?: AnimationStyleType }
 
 function interpolateCurvedPoints(
   originalArr: Point[],
@@ -92,10 +95,70 @@ const getDistance = (point1: PointType, point2: PointType) => {
   return Math.sqrt(dx * dx + dy * dy) // Pythagorean theorem
 }
 
-const Lines = () => {
-  const [points, setPoints] = useState<PointType[]>([]) // Initialize as empty array
+function createRotateAroundMid(
+  startX: number,
+  minX: number = 0,
+  maxX: number = FRAME_WIDTH,
+  cyclesPerSecond: number = 0.05
+): () => number {
+  const midPoint = (minX + maxX) / 2
+  const amplitude = Math.abs(startX - midPoint) // distance from axis
+  const startTime = Date.now()
 
-  // 0 - x - max
+  // Phase so we start exactly at startX
+  const normalized = (startX - midPoint) / amplitude || 0 // handle when amplitude=0
+  const phase = amplitude === 0 ? 0 : Math.acos(normalized)
+
+  return () => {
+    const elapsed = (Date.now() - startTime) / 1000
+    return (
+      Math.cos(elapsed * cyclesPerSecond * Math.PI * 2 + phase) * amplitude +
+      midPoint
+    )
+  }
+}
+
+function createOscillator(
+  startX: number,
+  minX: number = 0,
+  speed: number = 1
+): () => number {
+  const maxX = FRAME_WIDTH
+  const amplitude = (maxX - minX) / 2
+  const midPoint = minX + amplitude
+  const startTime = Date.now()
+
+  // Map startX into an angle (0 → 2π)
+  const normalized = (startX - midPoint) / amplitude
+  const phase = Math.acos(Math.min(1, Math.max(-1, normalized)))
+  const baseSpeed = 0.02
+  return () => {
+    const elapsed = (Date.now() - startTime) / 1000
+    const value =
+      Math.cos(elapsed * speed * baseSpeed * Math.PI * 2 + phase) * amplitude +
+      midPoint
+    return value
+  }
+}
+const createTranslator = (
+  startX: number,
+  minX: number = 0,
+  speed: number = 1
+) => {
+  const startTime = Date.now()
+
+  return () => {
+    const elapsed = (Date.now() - startTime) / 10
+    const value = startX + elapsed * speed - minX + minX
+    return value
+  }
+}
+
+const Lines = ({ style = 'centerRotate' }: LinesProps) => {
+  const [points, setPoints] = useState<PointType[]>([]) // Initialize as empty array
+  const translatorsRef = useRef<((() => number) | null)[]>([])
+  const oscillatorsRef = useRef<((() => number) | null)[]>([])
+  const centerOscillatorRef = useRef<((() => number) | null)[]>([])
 
   const [progress, setProgress] = useState(0)
   const [isAnimating, setIsAnimating] = useState(true)
@@ -154,51 +217,74 @@ const Lines = () => {
     const initialPoints = interpolateCurvedPoints(
       generatePoints(
         { height: FRAME_HEIGHT / 0.9, width: FRAME_WIDTH / 0.9 },
-        100
+        NUM_POINTS
       ),
       100
     )
     setPoints(initialPoints)
     setIsAnimating(true) // Start animation
 
-    function createOscillator(
-      startX: number,
-      minX: number = 0,
-      maxX: number = FRAME_WIDTH,
-      speed: number = 1
-    ): () => number {
-      const amplitude = (maxX - minX) / 2
-      const midPoint = minX + amplitude
-      const startTime = Date.now()
-
-      // Map startX into an angle (0 → 2π)
-      const phase = ((startX - minX) / (maxX - minX)) * Math.PI * 2
-
-      return () => {
-        const elapsed = (Date.now() - startTime) / 1000
-        const value =
-          Math.cos(elapsed * speed * Math.PI * 2 + phase) * amplitude + midPoint
-        return value
-      }
-    }
-
     if (initialPoints.length === 0) return
 
-    const pointOscillators = initialPoints.map(p =>
-      createOscillator(p.x, 0, FRAME_WIDTH, 0.01)
-    )
+    let interval: NodeJS.Timer
+    if (style === 'rotate') {
+      const interval = setInterval(() => {
+        setPoints(prevPoints =>
+          prevPoints.map((p, i) => {
+            const oscillator = oscillatorsRef.current[i]
+            if (oscillator) {
+              return { ...p, x: oscillator() }
+            }
+            return p
+          })
+        )
+      }, 80)
+      return () => clearInterval(interval)
+    } else if (style === 'translate') {
+      const interval = setInterval(() => {
+        setPoints(prevPoints =>
+          prevPoints.map((p, i) => {
+            const translator = translatorsRef.current[i]
+            if (translator) {
+              return { ...p, x: translator() }
+            }
+            return p
+          })
+        )
+      }, 80)
 
-    const interval = setInterval(() => {
-      setPoints(prevPoints =>
-        prevPoints.map((p, i) => ({
-          ...p,
-          x: pointOscillators[i](),
-        }))
-      )
-    }, 100)
+      return () => clearInterval(interval)
+    } else if (style === 'centerRotate') {
+      const interval = setInterval(() => {
+        setPoints(prevPoints =>
+          prevPoints.map((p, i) => {
+            const centerOscillator = centerOscillatorRef.current[i]
+            if (centerOscillator) {
+              return { ...p, x: centerOscillator() }
+            }
+            return p
+          })
+        )
+      }, 80)
 
-    return () => clearInterval(interval)
+      return () => clearInterval(interval)
+    }
   }, [])
+
+  useEffect(() => {
+    if (points.length > 0 && style === 'translate') {
+      // give point[0] a translator immediately
+      translatorsRef.current[0] = createTranslator(points[0].x, 0, 0.5)
+    } else if (points.length > 0 && style === 'rotate') {
+      oscillatorsRef.current[0] = createOscillator(points[0].x, 0, 1)
+    } else if (points.length > 0 && style === 'centerRotate') {
+      centerOscillatorRef.current[0] = createRotateAroundMid(
+        points[0].x,
+        0,
+        FRAME_WIDTH
+      )
+    }
+  }, [points])
 
   // Animation function
   useEffect(() => {
@@ -211,17 +297,37 @@ const Lines = () => {
         const totalProgress = elapsed / segmentDuration
 
         if (totalProgress >= 1 && currentSegment < totalSegments - 1) {
-          // Current segment complete, move to next segment
-          setCurrentSegment(prev => prev + 1)
+          // segment complete → advance
+          setCurrentSegment(prev => {
+            const next = prev + 1
+            // activate translator for the "next" point
+            if (style === 'translate') {
+              translatorsRef.current[next] = createTranslator(
+                points[next].x,
+                0,
+                0.5
+              )
+            } else if (style === 'rotate') {
+              oscillatorsRef.current[next] = createOscillator(
+                points[next].x,
+                0,
+                1
+              )
+            } else if (style === 'centerRotate') {
+              centerOscillatorRef.current[next] = createRotateAroundMid(
+                points[next].x,
+                0,
+                FRAME_WIDTH
+              )
+            }
+            return next
+          })
           setProgress(0)
         } else if (totalProgress >= 1 && currentSegment === totalSegments - 1) {
-          // All segments complete
           setProgress(1)
           setIsAnimating(false)
         } else {
-          // Continue current segment with linear progress
-          const linearProgress = Math.min(totalProgress, 1)
-          setProgress(linearProgress)
+          setProgress(Math.min(totalProgress, 1))
           requestAnimationFrame(animate)
         }
       }
@@ -244,7 +350,6 @@ const Lines = () => {
           stroke='white'
           strokeWidth='1'
           strokeLinecap='butt'
-          shapeRendering='optimizeSpeed'
         />
       ))}
 
@@ -258,7 +363,6 @@ const Lines = () => {
           stroke='white'
           strokeWidth='1'
           strokeLinecap='round'
-          shape-rendering='optimizeSpeed'
         />
       )}
     </svg>
