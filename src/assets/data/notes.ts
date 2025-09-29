@@ -30,8 +30,20 @@ export const notes = [
     ],
     date: '2025-08-04T23:16:00.000Z',
   },
+  {
+    id: 2,
+    title: 'the dichotomy of beauty',
+    link: 'the dichotomy of beauty',
+    text: [
+      'I yearn to truly experience the things I find beautiful. The joy of engaging with beauty and the urge to recreate it becomes an addiction, a hindrance to true appreciation. When my soul resonates with a work of art or a melody that affects me deeply, a great longing overwhelms me to create something similar, I feel as though I cannot grasp that beauty fully without capturing and reshaping its likeness with my own hands.',
+      `Every time I hear something that moves me, there is a dichotomy that agitates my soul: joy and discontentment. Joy for the gift of experience; discontentment for a feeling that eludes me. Perhaps it is a selfish desire: I want to be the one who created this beauty and therefore to be known for it. Perhaps it is a craving for a deeper understanding that only emerges through the struggle of creation.`,
+      `I don't want to be this way, yet every day I see creations that strike me. Designs, animations, songs, buildings, technologies, photographs. And instead of simply marveling, I compare them to myself, my own abilities and ideas. I sort them into boxes: <i>I could replicate that</i> or <i>I could never dream of achieving such brilliance.</i> Ironically, it is my desperate desire to appreciate beauty that keeps me from truly doing so.`,
+      `How do I escape this exhausting trap? How do I learn to celebrate the creativity of others without looking at it through a mirror of my own abilities? `,
+    ],
+    date: '2025-09-29T17:13:11-05:00',
+  },
   // {
-  //   id: 2,
+  //   id: 3,
   //   title: '',
   //   link: '',
   //   text: ["",
