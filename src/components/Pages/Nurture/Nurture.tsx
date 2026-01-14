@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styles from './Nurture.module.scss'
 import Lines from '../../Common/Lines/Lines'
+import NavHeader from '../../Common/NavHeader'
 // import Lines from './Lines'
 
 const Nurture = () => {
+  const noteLinks = [
+    { name: 'jesselind', src: '/' },
+    { name: 'files', src: '/files' },
+    { name: 'notes', src: '/files/notes' },
+    { name: 'nurture', src: '#' },
+  ]
   return (
     <div className={styles.Nurtures}>
+      <div className={styles.backLink}>
+        <NavHeader links={noteLinks} />
+      </div>
       <Lines />
       {/* <div className={styles.imageContainer}>
         <img src='/images/nurture/clouds.webp' alt='clouds and blue sky' />

@@ -91,7 +91,12 @@ const Lines = ({ style = 'centerRotate' }: LinesProps) => {
   if (!lineState?.completedSegments) return null
 
   return (
-    <svg width={FRAME_WIDTH} height={FRAME_HEIGHT} className='bg-gray-900'>
+    <svg
+      width={FRAME_WIDTH}
+      height={FRAME_HEIGHT}
+      className='bg-gray-900'
+      style={{ pointerEvents: 'none' }}
+    >
       {/* Completed segments */}
       {lineState.completedSegments.map((segment, index) => (
         <line
