@@ -28,18 +28,23 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
       {intro.map((paragraph) => <p set:html={paragraph} />)}
     </div>
 
-    <!-- The interactive game. Hidden on touch devices, which have no keyboard. -->
+    <!-- The interactive game. Hidden on small / touch screens (see the media
+         query below), which have no keyboard. -->
     <div class="jack-stage" id="jack-stage">
-      <canvas id="jack-canvas" width="512" height="256" tabindex="0"></canvas>
-      <div id="jack-status" class="jack-status">loading…</div>
+      <!-- canvas + status share a positioning context so the status overlays the
+           canvas instead of taking layout space (no shift when it disappears). -->
+      <div class="jack-screen">
+        <canvas id="jack-canvas" width="512" height="256" tabindex="0"></canvas>
+        <div id="jack-status" class="jack-status">loading…</div>
+      </div>
       <div class="jack-controls">
         <button id="jack-restart" class="jack-size-btn" type="button">restart ↻</button>
         <button id="jack-size" class="jack-size-btn" type="button">expand ⤢</button>
       </div>
     </div>
 
-    <!-- Shown instead of the game on touch devices (revealed by JS). -->
-    <p class="jack-desktop-only" id="jack-desktop-only" hidden>
+    <!-- Shown instead of the game on small / touch screens (see media query). -->
+    <p class="jack-desktop-only" id="jack-desktop-only">
       This game runs on a physical keyboard, so it's playable on desktop only.
       Open this page on a computer to give it a try.
     </p>
@@ -272,17 +277,15 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
   }
 
   function main() {
-    // The game needs a physical keyboard, so on touch-only devices (no hover +
-    // coarse pointer) we skip running it and show a "desktop only" notice
-    // instead. `ontouchstart` is unreliable here — it's truthy on many desktop
-    // Chrome builds — so we rely on the media query.
-    const isTouchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-    if (isTouchOnly) {
-      document.getElementById('jack-stage')?.setAttribute('hidden', '');
-      document.getElementById('jack-hint')?.setAttribute('hidden', '');
-      document.getElementById('jack-desktop-only')?.removeAttribute('hidden');
-      return;
-    }
+    // The game needs a physical keyboard. CSS (see the media query) hides the
+    // game and shows a "desktop only" notice on small / touch screens; here we
+    // just match the same condition to skip running the VM so we don't burn CPU
+    // on a hidden game. The width clause catches phones/tablets that report an
+    // unexpected pointer/hover (e.g. iPadOS reporting as desktop).
+    const noKeyboard = window.matchMedia(
+      '(hover: none) and (pointer: coarse), (max-width: 768px)'
+    ).matches;
+    if (noKeyboard) return;
 
     // Feed keyboard state into the VM. The Jack OS reads a single word at the
     // keyboard address; we write the current key on keydown and 0 on keyup.
@@ -336,7 +339,15 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     flex-direction: column;
     gap: 0.5rem;
   }
+  /* Sizes to the canvas and provides the positioning context for the status
+     overlay. */
+  .jack-screen {
+    position: relative;
+    width: 512px;
+    max-width: 100%;
+  }
   #jack-canvas {
+    display: block;
     width: 512px;
     max-width: 100%;
     height: auto;
@@ -377,13 +388,23 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
   .jack-size-btn:hover {
     border-color: rgba(255, 255, 255, 0.5);
   }
+  /* Overlays the canvas (centered) rather than sitting below it, so showing or
+     hiding it never shifts the rest of the page. */
   .jack-status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    text-align: center;
     font-size: 0.8rem;
     font-weight: 200;
+    color: #111;
     opacity: 0.8;
   }
   .jack-status.is-error {
-    color: #ff8a8a;
+    color: #b00020;
     opacity: 1;
     white-space: pre-wrap;
   }
@@ -393,8 +414,10 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     opacity: 0.7;
   }
 
-  /* Shown instead of the game on touch-only devices. */
+  /* Replaces the game on small / touch screens. Hidden by default (desktop);
+     the media query below swaps it in for the game + hint. */
   .jack-desktop-only {
+    display: none;
     margin-top: 0.6rem;
     padding: 1rem 1.1rem;
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -403,6 +426,19 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     font-weight: 200;
     line-height: 1.6;
     opacity: 0.85;
+  }
+
+  /* No physical keyboard (touch) or screen too small to play: hide the game and
+     its keyboard hint, show the desktop-only notice instead. Kept in sync with
+     the matchMedia() check in the script above. */
+  @media (hover: none) and (pointer: coarse), (max-width: 768px) {
+    #jack-stage,
+    #jack-hint {
+      display: none;
+    }
+    .jack-desktop-only {
+      display: block;
+    }
   }
 
   /* intro prose sits between the title and the game */
