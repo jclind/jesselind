@@ -200,6 +200,10 @@ const intro = notes.find((n) => n.link === 'jack-game')?.text ?? []
     const big = canvas.classList.toggle('large');
     sizeBtn.textContent = big ? 'shrink ⤡' : 'expand ⤢';
     canvas.focus(); // keep keyboard control after toggling
+    // The page just grew/shrank. The Lenis smooth-scroll caches the scroll height
+    // and can't see the change because .notes-content is absolutely positioned, so
+    // the bottom becomes unreachable. A resize event makes Lenis recompute its limit.
+    requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
   });
 
   // Back button: go up one path segment (matches the React BackButton behavior).
