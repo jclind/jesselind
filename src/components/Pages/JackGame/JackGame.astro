@@ -41,7 +41,7 @@ const intro = notes.find((n) => n.link === 'jack-game')?.text ?? []
 
     <section class="jack-arch">
       <div class="jack-arch__head">
-        <span class="jack-arch__kicker">Architecture</span>
+        <span class="jack-arch__kicker">Hack Computer Architecture</span>
         <span class="jack-arch__rule" aria-hidden="true"></span>
       </div>
       <p class="jack-arch__sub">
@@ -50,6 +50,47 @@ const intro = notes.find((n) => n.link === 'jack-game')?.text ?? []
       </p>
       <ArchCardsSpec />
     </section>
+
+    <div class="note-text jack-outro">
+      <p>
+        Starting the Nand2Tetris journey, I knew little about the processes and
+        hardware responsible for the technology I use every day. I was aware of
+        the logic gates at the lowest level and how you can make simple chips,
+        but I had never pieced all the parts together. The jump from
+        understanding a single NAND gate to writing complex chips to creating a
+        full computer and running a complete program on that computer had too
+        many complex layers, so I never attempted to learn more than what I
+        needed to. And honestly, that is the beautiful thing about programming
+        and technology in general. Abstraction is an extremely powerful concept.
+        The fact that I have been able to create all my websites and programs
+        while knowing virtually nothing about the practical logic happening
+        after pressing 'compile' is truly remarkable.
+      </p>
+      <p>
+        That being said, when I stumbled across Nand2Tetris I decided it was
+        time to attempt to remove the magical cloud of mystery I held in my mind
+        as the 'computer'. In just the first couple modules it was clear the
+        course was thought out and planned with precision. The lectures combined
+        with projects were perfectly crafted to break down complex topics and
+        actually help you cement them with hands-on work. I went from creating
+        NAND gates, to creating more and more complex chips, from MUX to a full
+        RAM system to finally creating a full working CPU. From scratch! Then
+        learning and creating machine programs and an assembler, on and on until
+        finally creating a full programming language: Jack.
+      </p>
+      <p>
+        The most satisfying aspect of Nand2Tetris is the compounding nature of
+        the course. Every module builds on the implementations and principles of
+        the previous. You know you've literally built everything beforehand, but
+        it reiterates the power of abstraction.
+      </p>
+      <p>
+        On paper, a course like Nand2Tetris may not seem to be relevant to high
+        level developers, but coming out the other side I can confidently say it
+        has sharpened the way I think and approach problems. I now have a far
+        deeper appreciation for the technology I interact with every day.
+      </p>
+    </div>
 
     <a href="../" class="notes-back-btn" id="jack-back">../</a>
   </div>
@@ -279,6 +320,11 @@ const intro = notes.find((n) => n.link === 'jack-game')?.text ?? []
   /* intro prose sits between the title and the game */
   .jack-intro {
     margin-bottom: 0.4rem;
+  }
+
+  /* closing prose: the course wrap-up after the architecture section */
+  .jack-outro {
+    margin-top: 2.6rem;
   }
 
   /* architecture section */
