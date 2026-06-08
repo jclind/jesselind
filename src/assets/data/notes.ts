@@ -52,7 +52,7 @@ export const notes = [
   },
   {
     id: 4,
-    title: 'jack game',
+    title: 'building a computer',
     link: 'jack-game',
     text: [
       'Through the past month, I built a fully working Hack computer from scratch following the <a href="https://www.nand2tetris.org/">Nand To Tetris</a> curriculum. Check out the project I built to run on this computer with the Jack language:',
