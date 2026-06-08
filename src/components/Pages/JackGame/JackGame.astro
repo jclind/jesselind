@@ -46,8 +46,8 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
         <button class="jack-touch__btn" type="button" data-key="132" aria-label="move right">▶</button>
       </div>
       <div class="jack-touch__group">
-        <button class="jack-touch__btn" type="button" data-key="32" aria-label="space">space</button>
-        <button class="jack-touch__btn" type="button" data-key="120" aria-label="x key">X</button>
+        <button class="jack-touch__btn" type="button" data-key="32" aria-label="shoot">shoot</button>
+        <button class="jack-touch__btn" type="button" data-key="120" aria-label="ultimate">ult</button>
       </div>
     </div>
 
@@ -59,8 +59,7 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     <p class="jack-hint">
       Click the screen to give it focus, then use the keyboard. Arrow keys and
       letter keys are mapped to Hack keycodes. The game explains its own rules
-      on the start screen. Source on
-      <a href="https://github.com/jclind/shadow-strike-jack" target="_blank" rel="noopener noreferrer">GitHub</a>.
+      on the start screen.
     </p>
 
     <section class="jack-arch">
@@ -119,6 +118,10 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
         deeper appreciation for the technology I interact with every day.
       </p>
       </div>
+    </div>
+
+    <div class="jack-links">
+      <a href="https://github.com/jclind/shadow-strike-jack" target="_blank" rel="noopener noreferrer">github</a>
     </div>
 
     <a href="../" class="notes-back-btn" id="jack-back">../</a>
@@ -301,8 +304,9 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
   // Touch devices have no keyboard, so expose on-screen buttons that drive the
   // same single-word Hack keyboard. Only revealed when there's no fine pointer.
   function setupTouch() {
-    const isTouch =
-      window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+    // Touch-only devices: no hover + coarse pointer. (Plain `ontouchstart` is
+    // true on many desktop Chrome builds, so it can't be used here.)
+    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
     if (!isTouch) return;
 
     document.getElementById('jack-touch')?.removeAttribute('hidden');
@@ -318,6 +322,9 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
         vm?.Keyboard.set(0, code);
       };
       const release = () => vm?.Keyboard.set(0, 0);
+      // Stop the button from taking focus off the canvas — otherwise the canvas
+      // blur handler clears the keyboard the instant we set it.
+      btn.addEventListener('mousedown', (e) => e.preventDefault());
       btn.addEventListener('pointerdown', press);
       btn.addEventListener('pointerup', release);
       btn.addEventListener('pointercancel', release);
@@ -464,6 +471,18 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
   /* closing prose: the course wrap-up after the architecture section */
   .jack-outro {
     margin-top: 2.6rem;
+  }
+
+  /* bottom links row, matching the project pages' github/website links */
+  .jack-links {
+    display: flex;
+    gap: 0.6rem;
+    margin: 1.5rem 0;
+    text-decoration: underline;
+  }
+  .jack-links a {
+    font-size: 0.8rem;
+    font-weight: 300;
   }
 
   /* architecture section */
