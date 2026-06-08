@@ -31,12 +31,17 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     <div class="jack-stage">
       <canvas id="jack-canvas" width="512" height="256" tabindex="0"></canvas>
       <div id="jack-status" class="jack-status">loading…</div>
-      <button id="jack-size" class="jack-size-btn" type="button">expand ⤢</button>
+      <div class="jack-controls">
+        <button id="jack-restart" class="jack-size-btn" type="button">restart ↻</button>
+        <button id="jack-size" class="jack-size-btn" type="button">expand ⤢</button>
+      </div>
     </div>
 
     <p class="jack-hint">
       Click the screen to give it focus, then use the keyboard. Arrow keys and
-      letter keys are mapped to Hack keycodes.
+      letter keys are mapped to Hack keycodes. The game explains its own rules
+      on the start screen. Source on
+      <a href="https://github.com/jclind/shadow-strike-jack" target="_blank" rel="noopener noreferrer">GitHub</a>.
     </p>
 
     <section class="jack-arch">
@@ -204,26 +209,14 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     return built.ok;
   }
 
-  async function main() {
-    const vm = await loadVm();
-    if (!vm) return;
-    setStatus('');
+  // The currently running program. `restart` swaps in a fresh build, so the
+  // frame loop and keyboard handlers read this rather than a captured local.
+  let vm: any = null;
+  let halted = false;
+  let loopActive = false; // guards against stacking multiple rAF loops
 
-    // Feed keyboard state into the VM. The Jack OS reads a single word at the
-    // keyboard address; we write the current key on keydown and 0 on keyup.
-    canvas.addEventListener('keydown', (e) => {
-      const code = hackKeyCode(e);
-      if (code === null) return;
-      if (e.key.startsWith('Arrow') || e.key === ' ') e.preventDefault();
-      vm.Keyboard.set(0, code);
-    });
-    canvas.addEventListener('keyup', () => vm.Keyboard.set(0, 0));
-    // Clear held keys if focus leaves the canvas (avoids "stuck" movement).
-    canvas.addEventListener('blur', () => vm.Keyboard.set(0, 0));
-    canvas.focus();
-
-    let halted = false;
-    function frame() {
+  function frame() {
+    if (vm) {
       if (!halted) {
         for (let i = 0; i < STEPS_PER_FRAME; i++) {
           const res = vm.step(); // undefined = running/blocked, number = halted
@@ -234,9 +227,54 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
         }
       }
       render(vm);
-      if (!halted) requestAnimationFrame(frame);
     }
-    requestAnimationFrame(frame);
+    // Keep looping while there's a live, un-halted program. A halted program
+    // stops the loop; restart() revives it via ensureLoop().
+    if (vm && !halted) {
+      requestAnimationFrame(frame);
+    } else {
+      loopActive = false;
+    }
+  }
+
+  function ensureLoop() {
+    if (!loopActive) {
+      loopActive = true;
+      requestAnimationFrame(frame);
+    }
+  }
+
+  // Build (or rebuild) the program and run it. Used for the first load and by
+  // the restart button.
+  let starting = false;
+  async function start() {
+    if (starting) return; // ignore re-entrant clicks while a build is in flight
+    starting = true;
+    setStatus('loading…');
+    const next = await loadVm();
+    starting = false;
+    if (!next) return; // loadVm already surfaced the error
+    vm = next;
+    halted = false;
+    setStatus('');
+    canvas.focus();
+    ensureLoop();
+  }
+
+  function main() {
+    // Feed keyboard state into the VM. The Jack OS reads a single word at the
+    // keyboard address; we write the current key on keydown and 0 on keyup.
+    canvas.addEventListener('keydown', (e) => {
+      if (!vm) return;
+      const code = hackKeyCode(e);
+      if (code === null) return;
+      if (e.key.startsWith('Arrow') || e.key === ' ') e.preventDefault();
+      vm.Keyboard.set(0, code);
+    });
+    canvas.addEventListener('keyup', () => vm?.Keyboard.set(0, 0));
+    // Clear held keys if focus leaves the canvas (avoids "stuck" movement).
+    canvas.addEventListener('blur', () => vm?.Keyboard.set(0, 0));
+    start();
   }
 
   // Size toggle: snap the canvas between its default size and a larger 2x view
@@ -250,6 +288,12 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     // and can't see the change because .notes-content is absolutely positioned, so
     // the bottom becomes unreachable. A resize event makes Lenis recompute its limit.
     requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+  });
+
+  // Restart button: rebuild the program from scratch and run it again. Lets a
+  // player replay after the game halts (or just reset mid-run).
+  document.getElementById('jack-restart')?.addEventListener('click', () => {
+    start();
   });
 
   // Back button: go up one path segment (matches the React BackButton behavior).
@@ -290,6 +334,10 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     position: relative;
     left: 50%;
     transform: translateX(-50%);
+  }
+  .jack-controls {
+    display: flex;
+    gap: 0.5rem;
   }
   .jack-size-btn {
     align-self: flex-start;
