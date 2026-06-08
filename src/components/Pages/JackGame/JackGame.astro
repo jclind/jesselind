@@ -45,13 +45,17 @@ const intro = notes.find((n) => n.link === 'jack-game')?.text ?? []
         <span class="jack-arch__rule" aria-hidden="true"></span>
       </div>
       <p class="jack-arch__sub">
-        Every layer this game runs on — from the Jack code down to a single NAND
-        gate. I built all of it.
+        Every layer that makes up the Nand2Tetris Hack computer. Built from scratch.
       </p>
       <ArchCardsSpec />
     </section>
 
-    <div class="note-text jack-outro">
+    <div class="jack-outro">
+      <div class="jack-arch__head">
+        <span class="jack-arch__kicker">Reflection</span>
+        <span class="jack-arch__rule" aria-hidden="true"></span>
+      </div>
+      <div class="note-text">
       <p>
         Starting the Nand2Tetris journey, I knew little about the processes and
         hardware responsible for the technology I use every day. I was aware of
@@ -90,6 +94,7 @@ const intro = notes.find((n) => n.link === 'jack-game')?.text ?? []
         has sharpened the way I think and approach problems. I now have a far
         deeper appreciation for the technology I interact with every day.
       </p>
+      </div>
     </div>
 
     <a href="../" class="notes-back-btn" id="jack-back">../</a>

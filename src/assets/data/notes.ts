@@ -55,8 +55,7 @@ export const notes = [
     title: 'jack game',
     link: 'jack-game',
     text: [
-      'A playable game written in Jack and compiled to Hack VM code, running in the browser on the nand2tetris VM simulator.',
-      'Through the past month, I built a full working computer from scratch following the <a href="https://www.nand2tetris.org/">Nand To Tetris</a> curriculum.',
+      'Through the past month, I built a fully working Hack computer from scratch following the <a href="https://www.nand2tetris.org/">Nand To Tetris</a> curriculum. Check out the project I built to run on on this computer with the Jack language:',
     ],
     component: 'JackGame',
     date: '2026-06-08T12:00:00-05:00',
