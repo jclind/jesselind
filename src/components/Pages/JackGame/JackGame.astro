@@ -12,7 +12,7 @@ import ArchCardsSpec from './ArchCardsSpec.astro'
 import { notes } from '../../../assets/data/notes'
 
 // Pull the intro prose from the note's own data (single source of truth).
-const intro = notes.find((n) => n.link === 'jack-game')?.text ?? []
+const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
 ---
 
 <div class="notes-style-page jack-game-page">
