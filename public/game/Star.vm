@@ -1,0 +1,241 @@
+function Star.new 0
+    push constant 4
+    call Memory.alloc 1
+    pop pointer 0
+    push argument 0
+    pop this 0
+    push argument 1
+    pop this 1
+    push constant 8
+    pop this 2
+    push constant 8
+    pop this 3
+    push pointer 0
+    return
+function Star.getX2 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    push this 2
+    add
+    return
+function Star.getY2 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push this 2
+    add
+    return
+function Star.isCollidingWith 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    push argument 3
+    lt
+    push pointer 0
+    call Star.getX2 1
+    push argument 1
+    gt
+    and
+    push this 1
+    push argument 4
+    lt
+    and
+    push pointer 0
+    call Star.getY2 1
+    push argument 2
+    gt
+    and
+    return
+function Star.move 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push this 3
+    sub
+    pop this 1
+    push constant 0
+    return
+function Star.draw 0
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 0
+    add
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 0
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 1
+    add
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 1
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 2
+    add
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 2
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 3
+    add
+    push this 0
+    push constant 6
+    add
+    push this 1
+    push constant 3
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 1
+    add
+    push this 1
+    push constant 4
+    add
+    push this 0
+    push constant 7
+    add
+    push this 1
+    push constant 4
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Star.erase 0
+    push argument 0
+    pop pointer 0
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push this 0
+    push this 1
+    push pointer 0
+    call Star.getX2 1
+    push pointer 0
+    call Star.getY2 1
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Star.update 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Star.erase 1
+    pop temp 0
+    push pointer 0
+    call Star.move 1
+    pop temp 0
+    push pointer 0
+    call Star.isOffscreen 1
+    not
+    not
+    if-goto Star_1
+    push pointer 0
+    call Star.draw 1
+    pop temp 0
+    goto Star_0
+label Star_1
+label Star_0
+    push constant 0
+    return
+function Star.isOffscreen 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push constant 0
+    lt
+    push this 0
+    push constant 512
+    gt
+    or
+    push pointer 0
+    call Star.getX2 1
+    push constant 0
+    lt
+    or
+    return
+function Star.dispose 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return

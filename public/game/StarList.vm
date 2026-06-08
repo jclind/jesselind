@@ -1,0 +1,186 @@
+function StarList.new 0
+    push constant 1
+    call Memory.alloc 1
+    pop pointer 0
+    push constant 0
+    pop this 0
+    push pointer 0
+    return
+function StarList.addStar 1
+    push argument 0
+    pop pointer 0
+    push argument 1
+    call Node.new 1
+    pop local 0
+    push local 0
+    push this 0
+    call Node.setNext 2
+    pop temp 0
+    push local 0
+    pop this 0
+    push constant 0
+    return
+function StarList.updateStars 4
+    push argument 0
+    pop pointer 0
+    push this 0
+    pop local 0
+    push constant 0
+    pop local 1
+label StarList_0
+    push local 0
+    push constant 0
+    eq
+    not
+    not
+    if-goto StarList_1
+    push local 0
+    call Node.getData 1
+    pop local 3
+    push local 3
+    call Star.update 1
+    pop temp 0
+    push local 3
+    call Star.isOffscreen 1
+    not
+    if-goto StarList_3
+    push local 0
+    call Node.getNext 1
+    pop local 2
+    push local 1
+    push constant 0
+    eq
+    not
+    if-goto StarList_5
+    push local 2
+    pop this 0
+    goto StarList_4
+label StarList_5
+    push local 1
+    push local 2
+    call Node.setNext 2
+    pop temp 0
+label StarList_4
+    push local 3
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 2
+    pop local 0
+    goto StarList_2
+label StarList_3
+    push local 0
+    pop local 1
+    push local 0
+    call Node.getNext 1
+    pop local 0
+label StarList_2
+    goto StarList_0
+label StarList_1
+    push constant 0
+    return
+function StarList.checkCollisions 5
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 3
+    push this 0
+    pop local 0
+    push constant 0
+    pop local 1
+label StarList_6
+    push local 0
+    push constant 0
+    eq
+    not
+    not
+    if-goto StarList_7
+    push local 0
+    call Node.getData 1
+    pop local 4
+    push local 4
+    push argument 1
+    push argument 2
+    push argument 3
+    push argument 4
+    call Star.isCollidingWith 5
+    not
+    if-goto StarList_9
+    push constant 1
+    neg
+    pop local 3
+    push local 0
+    call Node.getNext 1
+    pop local 2
+    push local 4
+    call Star.erase 1
+    pop temp 0
+    push local 1
+    push constant 0
+    eq
+    not
+    if-goto StarList_11
+    push local 2
+    pop this 0
+    goto StarList_10
+label StarList_11
+    push local 1
+    push local 2
+    call Node.setNext 2
+    pop temp 0
+label StarList_10
+    push local 4
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 2
+    pop local 0
+    goto StarList_8
+label StarList_9
+    push local 0
+    pop local 1
+    push local 0
+    call Node.getNext 1
+    pop local 0
+label StarList_8
+    goto StarList_6
+label StarList_7
+    push local 3
+    return
+function StarList.dispose 3
+    push argument 0
+    pop pointer 0
+    push this 0
+    pop local 0
+label StarList_12
+    push local 0
+    push constant 0
+    eq
+    not
+    not
+    if-goto StarList_13
+    push local 0
+    call Node.getNext 1
+    pop local 1
+    push local 0
+    call Node.getData 1
+    pop local 2
+    push local 2
+    call Star.dispose 1
+    pop temp 0
+    push local 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 1
+    pop local 0
+    goto StarList_12
+label StarList_13
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return
