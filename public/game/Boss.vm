@@ -1,0 +1,1655 @@
+function Boss.new 0
+    push constant 9
+    call Memory.alloc 1
+    pop pointer 0
+    push argument 0
+    pop this 0
+    push argument 1
+    pop this 1
+    push constant 64
+    pop this 2
+    push constant 32
+    pop this 3
+    push constant 250
+    pop this 5
+    push constant 30
+    pop this 6
+    push constant 0
+    pop this 7
+    push constant 3
+    pop this 8
+    push this 8
+    pop this 4
+    push pointer 0
+    return
+function Boss.getX 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    return
+function Boss.getY 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    return
+function Boss.getX2 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    push this 2
+    add
+    return
+function Boss.getY2 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push this 3
+    add
+    return
+function Boss.getHealth 0
+    push argument 0
+    pop pointer 0
+    push this 5
+    return
+function Boss.move 0
+    push argument 0
+    pop pointer 0
+    push this 6
+    push constant 1
+    sub
+    pop this 6
+    push this 6
+    push constant 0
+    eq
+    not
+    if-goto Boss_1
+    push this 4
+    push constant 0
+    lt
+    not
+    if-goto Boss_3
+    push constant 4
+    call Util.random 1
+    push this 8
+    add
+    neg
+    pop this 4
+    goto Boss_2
+label Boss_3
+    push constant 4
+    call Util.random 1
+    push this 8
+    add
+    pop this 4
+label Boss_2
+    push constant 24
+    call Util.random 1
+    push constant 0
+    eq
+    not
+    if-goto Boss_5
+    push this 4
+    neg
+    pop this 4
+    goto Boss_4
+label Boss_5
+label Boss_4
+    push constant 60
+    call Util.random 1
+    push constant 50
+    add
+    pop this 6
+    goto Boss_0
+label Boss_1
+label Boss_0
+    push this 0
+    push this 4
+    add
+    pop this 0
+    push this 0
+    push constant 80
+    lt
+    not
+    if-goto Boss_7
+    push constant 80
+    pop this 0
+    push this 4
+    neg
+    pop this 4
+    goto Boss_6
+label Boss_7
+label Boss_6
+    push pointer 0
+    call Boss.getX2 1
+    push constant 512
+    lt
+    not
+    not
+    if-goto Boss_9
+    push constant 512
+    push this 2
+    sub
+    pop this 0
+    push this 4
+    neg
+    pop this 4
+    goto Boss_8
+label Boss_9
+label Boss_8
+    push constant 0
+    return
+function Boss.fireAttack 1
+    push argument 0
+    pop pointer 0
+    push this 0
+    push this 2
+    push constant 2
+    call Math.divide 2
+    add
+    push pointer 0
+    call Boss.getY2 1
+    push constant 1
+    add
+    call Attack.new 2
+    pop local 0
+    push argument 1
+    push local 0
+    call AttackList.addAttack 2
+    pop temp 0
+    push constant 0
+    return
+function Boss.takeDamage 0
+    push argument 0
+    pop pointer 0
+    push constant 8
+    pop this 7
+    push this 5
+    push constant 10
+    sub
+    pop this 5
+    push constant 0
+    return
+function Boss.isDead 0
+    push argument 0
+    pop pointer 0
+    push this 5
+    push constant 0
+    gt
+    not
+    return
+function Boss.drawLeft 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    push constant 19
+    add
+    push this 1
+    push constant 0
+    add
+    push this 0
+    push constant 42
+    add
+    push this 1
+    push constant 0
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 17
+    add
+    push this 1
+    push constant 1
+    add
+    push this 0
+    push constant 44
+    add
+    push this 1
+    push constant 1
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 15
+    add
+    push this 1
+    push constant 2
+    add
+    push this 0
+    push constant 46
+    add
+    push this 1
+    push constant 2
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 13
+    add
+    push this 1
+    push constant 3
+    add
+    push this 0
+    push constant 48
+    add
+    push this 1
+    push constant 3
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 12
+    add
+    push this 1
+    push constant 4
+    add
+    push this 0
+    push constant 49
+    add
+    push this 1
+    push constant 4
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 11
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 20
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 22
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 39
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 41
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 52
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 22
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 24
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 39
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 41
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 54
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 8
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 22
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 24
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 37
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 39
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 54
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 8
+    add
+    push this 1
+    push constant 8
+    add
+    push this 0
+    push constant 55
+    add
+    push this 1
+    push constant 8
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 8
+    add
+    push this 1
+    push constant 9
+    add
+    push this 0
+    push constant 18
+    add
+    push this 1
+    push constant 9
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 20
+    add
+    push this 1
+    push constant 9
+    add
+    push this 0
+    push constant 42
+    add
+    push this 1
+    push constant 9
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 44
+    add
+    push this 1
+    push constant 9
+    add
+    push this 0
+    push constant 55
+    add
+    push this 1
+    push constant 9
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 9
+    add
+    push this 1
+    push constant 10
+    add
+    push this 0
+    push constant 18
+    add
+    push this 1
+    push constant 10
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 25
+    add
+    push this 1
+    push constant 10
+    add
+    push this 0
+    push constant 37
+    add
+    push this 1
+    push constant 10
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 44
+    add
+    push this 1
+    push constant 10
+    add
+    push this 0
+    push constant 54
+    add
+    push this 1
+    push constant 10
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 11
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 11
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 12
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 12
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 13
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 13
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 14
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 14
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 11
+    add
+    push this 1
+    push constant 15
+    add
+    push this 0
+    push constant 52
+    add
+    push this 1
+    push constant 15
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 11
+    add
+    push this 1
+    push constant 16
+    add
+    push this 0
+    push constant 25
+    add
+    push this 1
+    push constant 16
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 32
+    add
+    push this 1
+    push constant 16
+    add
+    push this 0
+    push constant 50
+    add
+    push this 1
+    push constant 16
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 12
+    add
+    push this 1
+    push constant 17
+    add
+    push this 0
+    push constant 49
+    add
+    push this 1
+    push constant 17
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 14
+    add
+    push this 1
+    push constant 18
+    add
+    push this 0
+    push constant 47
+    add
+    push this 1
+    push constant 18
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 16
+    add
+    push this 1
+    push constant 19
+    add
+    push this 0
+    push constant 45
+    add
+    push this 1
+    push constant 19
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 18
+    add
+    push this 1
+    push constant 20
+    add
+    push this 0
+    push constant 43
+    add
+    push this 1
+    push constant 20
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 21
+    add
+    push this 0
+    push constant 63
+    add
+    push this 1
+    push constant 21
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 22
+    add
+    push this 0
+    push constant 63
+    add
+    push this 1
+    push constant 22
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 21
+    add
+    push this 1
+    push constant 23
+    add
+    push this 0
+    push constant 42
+    add
+    push this 1
+    push constant 23
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 2
+    add
+    push this 1
+    push constant 24
+    add
+    push this 0
+    push constant 61
+    add
+    push this 1
+    push constant 24
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 21
+    add
+    push this 1
+    push constant 25
+    add
+    push this 0
+    push constant 42
+    add
+    push this 1
+    push constant 25
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 26
+    add
+    push this 0
+    push constant 59
+    add
+    push this 1
+    push constant 26
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 21
+    add
+    push this 1
+    push constant 27
+    add
+    push this 0
+    push constant 43
+    add
+    push this 1
+    push constant 27
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 6
+    add
+    push this 1
+    push constant 28
+    add
+    push this 0
+    push constant 28
+    add
+    push this 1
+    push constant 28
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 36
+    add
+    push this 1
+    push constant 28
+    add
+    push this 0
+    push constant 57
+    add
+    push this 1
+    push constant 28
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 22
+    add
+    push this 1
+    push constant 29
+    add
+    push this 0
+    push constant 27
+    add
+    push this 1
+    push constant 29
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 37
+    add
+    push this 1
+    push constant 29
+    add
+    push this 0
+    push constant 42
+    add
+    push this 1
+    push constant 29
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 23
+    add
+    push this 1
+    push constant 30
+    add
+    push this 0
+    push constant 26
+    add
+    push this 1
+    push constant 30
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 37
+    add
+    push this 1
+    push constant 30
+    add
+    push this 0
+    push constant 40
+    add
+    push this 1
+    push constant 30
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 23
+    add
+    push this 1
+    push constant 31
+    add
+    push this 0
+    push constant 26
+    add
+    push this 1
+    push constant 31
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 37
+    add
+    push this 1
+    push constant 31
+    add
+    push this 0
+    push constant 40
+    add
+    push this 1
+    push constant 31
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Boss.drawRight 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    push constant 21
+    add
+    push this 1
+    push constant 0
+    add
+    push this 0
+    push constant 44
+    add
+    push this 1
+    push constant 0
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 19
+    add
+    push this 1
+    push constant 1
+    add
+    push this 0
+    push constant 46
+    add
+    push this 1
+    push constant 1
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 17
+    add
+    push this 1
+    push constant 2
+    add
+    push this 0
+    push constant 48
+    add
+    push this 1
+    push constant 2
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 15
+    add
+    push this 1
+    push constant 3
+    add
+    push this 0
+    push constant 50
+    add
+    push this 1
+    push constant 3
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 14
+    add
+    push this 1
+    push constant 4
+    add
+    push this 0
+    push constant 51
+    add
+    push this 1
+    push constant 4
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 11
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 22
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 24
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 41
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 43
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 52
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 9
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 22
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 24
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 39
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 41
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 9
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 24
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 26
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 39
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 41
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 55
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 8
+    add
+    push this 1
+    push constant 8
+    add
+    push this 0
+    push constant 55
+    add
+    push this 1
+    push constant 8
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 8
+    add
+    push this 1
+    push constant 9
+    add
+    push this 0
+    push constant 19
+    add
+    push this 1
+    push constant 9
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 21
+    add
+    push this 1
+    push constant 9
+    add
+    push this 0
+    push constant 43
+    add
+    push this 1
+    push constant 9
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 45
+    add
+    push this 1
+    push constant 9
+    add
+    push this 0
+    push constant 55
+    add
+    push this 1
+    push constant 9
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 9
+    add
+    push this 1
+    push constant 10
+    add
+    push this 0
+    push constant 19
+    add
+    push this 1
+    push constant 10
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 26
+    add
+    push this 1
+    push constant 10
+    add
+    push this 0
+    push constant 38
+    add
+    push this 1
+    push constant 10
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 45
+    add
+    push this 1
+    push constant 10
+    add
+    push this 0
+    push constant 54
+    add
+    push this 1
+    push constant 10
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 11
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 11
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 12
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 12
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 13
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 13
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 14
+    add
+    push this 0
+    push constant 53
+    add
+    push this 1
+    push constant 14
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 11
+    add
+    push this 1
+    push constant 15
+    add
+    push this 0
+    push constant 52
+    add
+    push this 1
+    push constant 15
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 13
+    add
+    push this 1
+    push constant 16
+    add
+    push this 0
+    push constant 31
+    add
+    push this 1
+    push constant 16
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 38
+    add
+    push this 1
+    push constant 16
+    add
+    push this 0
+    push constant 52
+    add
+    push this 1
+    push constant 16
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 14
+    add
+    push this 1
+    push constant 17
+    add
+    push this 0
+    push constant 51
+    add
+    push this 1
+    push constant 17
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 16
+    add
+    push this 1
+    push constant 18
+    add
+    push this 0
+    push constant 49
+    add
+    push this 1
+    push constant 18
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 18
+    add
+    push this 1
+    push constant 19
+    add
+    push this 0
+    push constant 47
+    add
+    push this 1
+    push constant 19
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 20
+    add
+    push this 1
+    push constant 20
+    add
+    push this 0
+    push constant 45
+    add
+    push this 1
+    push constant 20
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 21
+    add
+    push this 0
+    push constant 63
+    add
+    push this 1
+    push constant 21
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 22
+    add
+    push this 0
+    push constant 63
+    add
+    push this 1
+    push constant 22
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 21
+    add
+    push this 1
+    push constant 23
+    add
+    push this 0
+    push constant 42
+    add
+    push this 1
+    push constant 23
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 2
+    add
+    push this 1
+    push constant 24
+    add
+    push this 0
+    push constant 61
+    add
+    push this 1
+    push constant 24
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 21
+    add
+    push this 1
+    push constant 25
+    add
+    push this 0
+    push constant 42
+    add
+    push this 1
+    push constant 25
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 26
+    add
+    push this 0
+    push constant 59
+    add
+    push this 1
+    push constant 26
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 20
+    add
+    push this 1
+    push constant 27
+    add
+    push this 0
+    push constant 42
+    add
+    push this 1
+    push constant 27
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 6
+    add
+    push this 1
+    push constant 28
+    add
+    push this 0
+    push constant 27
+    add
+    push this 1
+    push constant 28
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 35
+    add
+    push this 1
+    push constant 28
+    add
+    push this 0
+    push constant 57
+    add
+    push this 1
+    push constant 28
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 21
+    add
+    push this 1
+    push constant 29
+    add
+    push this 0
+    push constant 26
+    add
+    push this 1
+    push constant 29
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 36
+    add
+    push this 1
+    push constant 29
+    add
+    push this 0
+    push constant 41
+    add
+    push this 1
+    push constant 29
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 23
+    add
+    push this 1
+    push constant 30
+    add
+    push this 0
+    push constant 26
+    add
+    push this 1
+    push constant 30
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 37
+    add
+    push this 1
+    push constant 30
+    add
+    push this 0
+    push constant 40
+    add
+    push this 1
+    push constant 30
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 23
+    add
+    push this 1
+    push constant 31
+    add
+    push this 0
+    push constant 26
+    add
+    push this 1
+    push constant 31
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 37
+    add
+    push this 1
+    push constant 31
+    add
+    push this 0
+    push constant 40
+    add
+    push this 1
+    push constant 31
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Boss.isOutOfBounds 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    push constant 0
+    lt
+    not
+    if-goto Boss_11
+    push constant 1
+    neg
+    return
+    goto Boss_10
+label Boss_11
+label Boss_10
+    push this 1
+    push constant 0
+    lt
+    not
+    if-goto Boss_13
+    push constant 1
+    neg
+    return
+    goto Boss_12
+label Boss_13
+label Boss_12
+    push pointer 0
+    call Boss.getX2 1
+    push constant 513
+    lt
+    not
+    not
+    if-goto Boss_15
+    push constant 1
+    neg
+    return
+    goto Boss_14
+label Boss_15
+label Boss_14
+    push pointer 0
+    call Boss.getY2 1
+    push constant 257
+    lt
+    not
+    not
+    if-goto Boss_17
+    push constant 1
+    neg
+    return
+    goto Boss_16
+label Boss_17
+label Boss_16
+    push constant 0
+    return
+function Boss.draw 0
+    push argument 0
+    pop pointer 0
+    push this 7
+    push constant 0
+    gt
+    not
+    if-goto Boss_19
+    push this 7
+    push this 7
+    push constant 2
+    call Math.divide 2
+    push constant 2
+    call Math.multiply 2
+    sub
+    push constant 0
+    eq
+    not
+    if-goto Boss_21
+    push this 7
+    push constant 1
+    sub
+    pop this 7
+    push constant 0
+    return
+    goto Boss_20
+label Boss_21
+label Boss_20
+    push this 7
+    push constant 1
+    sub
+    pop this 7
+    goto Boss_18
+label Boss_19
+label Boss_18
+    push pointer 0
+    call Boss.isOutOfBounds 1
+    not
+    if-goto Boss_23
+    push constant 0
+    return
+    goto Boss_22
+label Boss_23
+label Boss_22
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push this 4
+    push constant 0
+    lt
+    not
+    if-goto Boss_25
+    push pointer 0
+    call Boss.drawLeft 1
+    pop temp 0
+    goto Boss_24
+label Boss_25
+    push pointer 0
+    call Boss.drawRight 1
+    pop temp 0
+label Boss_24
+    push constant 0
+    return
+function Boss.erase 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Boss.isOutOfBounds 1
+    not
+    if-goto Boss_27
+    push constant 0
+    return
+    goto Boss_26
+label Boss_27
+label Boss_26
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push this 0
+    push this 1
+    push pointer 0
+    call Boss.getX2 1
+    push pointer 0
+    call Boss.getY2 1
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Boss.dispose 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return

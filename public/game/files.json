@@ -1,0 +1,12 @@
+[
+  "Main.vm",
+  "Game.vm",
+  "Player.vm",
+  "Boss.vm",
+  "Attack.vm",
+  "AttackList.vm",
+  "Star.vm",
+  "StarList.vm",
+  "Node.vm",
+  "Util.vm"
+]

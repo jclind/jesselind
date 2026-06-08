@@ -50,8 +50,19 @@ export const notes = [
     component: 'NurtureNote',
     date: '2026-01-14T10:47:00-05:00',
   },
+  {
+    id: 4,
+    title: 'jack game',
+    link: 'jack-game',
+    text: [
+      'A playable game written in Jack and compiled to Hack VM code, running in the browser on the nand2tetris VM simulator.',
+      'Through the past month, I built a full working computer from scratch following the <a href="https://www.nand2tetris.org/">Nand To Tetris</a> curriculum.',
+    ],
+    component: 'JackGame',
+    date: '2026-06-08T12:00:00-05:00',
+  },
   // {
-  //   id: 4,
+  //   id: 5,
   //   title: '',
   //   link: '',
   //   text: ["",

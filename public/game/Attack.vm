@@ -1,0 +1,490 @@
+function Attack.new 0
+    push constant 5
+    call Memory.alloc 1
+    pop pointer 0
+    push argument 0
+    pop this 0
+    push argument 1
+    pop this 1
+    push constant 16
+    pop this 2
+    push constant 8
+    pop this 3
+    push constant 8
+    pop this 4
+    push pointer 0
+    return
+function Attack.getX2 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    push this 2
+    add
+    return
+function Attack.getY2 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push this 3
+    add
+    return
+function Attack.isCollidingWith 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    push argument 3
+    lt
+    push pointer 0
+    call Attack.getX2 1
+    push argument 1
+    gt
+    and
+    push this 1
+    push argument 4
+    lt
+    and
+    push pointer 0
+    call Attack.getY2 1
+    push argument 2
+    gt
+    and
+    return
+function Attack.move 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push this 4
+    add
+    pop this 1
+    push constant 0
+    return
+function Attack.draw 0
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push this 0
+    push constant 2
+    add
+    push this 1
+    push constant 0
+    add
+    push this 0
+    push constant 5
+    add
+    push this 1
+    push constant 0
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 0
+    add
+    push this 0
+    push constant 13
+    add
+    push this 1
+    push constant 0
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 1
+    add
+    push this 1
+    push constant 1
+    add
+    push this 0
+    push constant 6
+    add
+    push this 1
+    push constant 1
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 9
+    add
+    push this 1
+    push constant 1
+    add
+    push this 0
+    push constant 14
+    add
+    push this 1
+    push constant 1
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 2
+    add
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 2
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 5
+    add
+    push this 1
+    push constant 2
+    add
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 2
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 12
+    add
+    push this 1
+    push constant 2
+    add
+    push this 0
+    push constant 15
+    add
+    push this 1
+    push constant 2
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 3
+    add
+    push this 0
+    push constant 2
+    add
+    push this 1
+    push constant 3
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 6
+    add
+    push this 1
+    push constant 3
+    add
+    push this 0
+    push constant 9
+    add
+    push this 1
+    push constant 3
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 13
+    add
+    push this 1
+    push constant 3
+    add
+    push this 0
+    push constant 15
+    add
+    push this 1
+    push constant 3
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 4
+    add
+    push this 0
+    push constant 1
+    add
+    push this 1
+    push constant 4
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 4
+    add
+    push this 1
+    push constant 4
+    add
+    push this 0
+    push constant 5
+    add
+    push this 1
+    push constant 4
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 7
+    add
+    push this 1
+    push constant 4
+    add
+    push this 0
+    push constant 8
+    add
+    push this 1
+    push constant 4
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 10
+    add
+    push this 1
+    push constant 4
+    add
+    push this 0
+    push constant 11
+    add
+    push this 1
+    push constant 4
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 14
+    add
+    push this 1
+    push constant 4
+    add
+    push this 0
+    push constant 15
+    add
+    push this 1
+    push constant 4
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 0
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 1
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 6
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 9
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 12
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 14
+    add
+    push this 1
+    push constant 5
+    add
+    push this 0
+    push constant 15
+    add
+    push this 1
+    push constant 5
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 1
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 3
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 6
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 9
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 12
+    add
+    push this 1
+    push constant 6
+    add
+    push this 0
+    push constant 14
+    add
+    push this 1
+    push constant 6
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 2
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 2
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 7
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 8
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push this 0
+    push constant 13
+    add
+    push this 1
+    push constant 7
+    add
+    push this 0
+    push constant 13
+    add
+    push this 1
+    push constant 7
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Attack.erase 0
+    push argument 0
+    pop pointer 0
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push this 0
+    push this 1
+    push pointer 0
+    call Attack.getX2 1
+    push pointer 0
+    call Attack.getY2 1
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Attack.update 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Attack.isOffscreen 1
+    not
+    not
+    if-goto Attack_1
+    push pointer 0
+    call Attack.erase 1
+    pop temp 0
+    goto Attack_0
+label Attack_1
+label Attack_0
+    push pointer 0
+    call Attack.move 1
+    pop temp 0
+    push pointer 0
+    call Attack.isOffscreen 1
+    not
+    not
+    if-goto Attack_3
+    push pointer 0
+    call Attack.draw 1
+    pop temp 0
+    goto Attack_2
+label Attack_3
+label Attack_2
+    push constant 0
+    return
+function Attack.isOffscreen 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Attack.getY2 1
+    push constant 256
+    gt
+    push this 0
+    push constant 512
+    gt
+    or
+    push pointer 0
+    call Attack.getX2 1
+    push constant 0
+    lt
+    or
+    return
+function Attack.dispose 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return

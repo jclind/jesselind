@@ -1,0 +1,12 @@
+export declare function chars(i: number): string;
+export declare function bits(i: number): string;
+export declare function int(n: string, radix: number): number;
+export declare function int16(i: string): number;
+export declare function int10(i: string): number;
+export declare function int2(i: string): number;
+export declare function parseTwosInt(i: string): number;
+export declare function hex(i: number): string;
+export declare function bin(i: number, precision?: number): string;
+export declare function dec(i: number): string;
+export declare function unsigned(i: number): string;
+export declare function nand16(a: number, b: number): number;
