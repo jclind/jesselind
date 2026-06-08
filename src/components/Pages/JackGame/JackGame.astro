@@ -1,0 +1,496 @@
+---
+// Vanilla JS island that runs a compiled nand2tetris Jack program in the browser
+// using the official web-ide VM simulator (vendored at src/lib/n2t-sim).
+//
+// Pipeline: fetch /game/files.json -> fetch each .vm -> VM.parse -> Vm.buildFromFiles
+//           -> step() loop -> blit Screen memory to <canvas> -> map keyboard to Hack keycodes.
+//
+// To swap in your own game: drop your compiled .vm files in public/game/ and list
+// them in public/game/files.json. The first function the OS runs is Sys.init, which
+// calls Main.main, so your program needs a Main.vm with `function Main.main`.
+import ArchCardsSpec from './ArchCardsSpec.astro'
+import { notes } from '../../../assets/data/notes'
+
+// Pull the intro prose from the note's own data (single source of truth).
+const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
+---
+
+<div class="notes-style-page jack-game-page">
+  <div class="notes-content">
+    <div class="nav-header">
+      <a href="/">jesselind</a> / <a href="/files">files</a> /
+      <a href="/files/notes">notes</a> / <i><a href="#">building a computer</a></i>
+    </div>
+
+    <h1 class="note-title">building a computer</h1>
+
+    <div class="note-text jack-intro">
+      {intro.map((paragraph) => <p set:html={paragraph} />)}
+    </div>
+
+    <!-- The interactive game. Hidden on small / touch screens (see the media
+         query below), which have no keyboard. -->
+    <div class="jack-stage" id="jack-stage">
+      <!-- canvas + status share a positioning context so the status overlays the
+           canvas instead of taking layout space (no shift when it disappears). -->
+      <div class="jack-screen">
+        <canvas id="jack-canvas" width="512" height="256" tabindex="0"></canvas>
+        <div id="jack-status" class="jack-status">loading…</div>
+      </div>
+      <div class="jack-controls">
+        <button id="jack-restart" class="jack-size-btn" type="button">restart ↻</button>
+        <button id="jack-size" class="jack-size-btn" type="button">expand ⤢</button>
+      </div>
+    </div>
+
+    <!-- Shown instead of the game on small / touch screens (see media query). -->
+    <p class="jack-desktop-only" id="jack-desktop-only">
+      This game runs on a physical keyboard, so it's playable on desktop only.
+      Open this page on a computer to give it a try.
+    </p>
+
+    <p class="jack-hint" id="jack-hint">
+      Click the screen to give it focus, then use the keyboard. Arrow keys and
+      letter keys are mapped to Hack keycodes. The game explains its own rules
+      on the start screen.
+    </p>
+
+    <section class="jack-arch">
+      <div class="jack-arch__head">
+        <span class="jack-arch__kicker">Hack Computer Architecture</span>
+        <span class="jack-arch__rule" aria-hidden="true"></span>
+      </div>
+      <p class="jack-arch__sub">
+        Every layer that makes up the Nand2Tetris Hack computer. Built from scratch.
+      </p>
+      <ArchCardsSpec />
+    </section>
+
+    <div class="jack-outro">
+      <div class="jack-arch__head">
+        <span class="jack-arch__kicker">Reflection</span>
+        <span class="jack-arch__rule" aria-hidden="true"></span>
+      </div>
+      <div class="note-text">
+      <p>
+        Starting the Nand2Tetris journey, I knew little about the processes and
+        hardware responsible for the technology I use every day. I was aware of
+        the logic gates at the lowest level and how you can make simple chips,
+        but I had never pieced all the parts together. The jump from
+        understanding a single NAND gate to writing complex chips to creating a
+        full computer and running a complete program on that computer had too
+        many complex layers, so I never attempted to learn more than what I
+        needed to. And honestly, that is the beautiful thing about programming
+        and technology in general. Abstraction is an extremely powerful concept.
+        The fact that I have been able to create all my websites and programs
+        while knowing virtually nothing about the practical logic happening
+        after pressing 'compile' is truly remarkable.
+      </p>
+      <p>
+        That being said, when I stumbled across Nand2Tetris I decided it was
+        time to attempt to remove the magical cloud of mystery I held in my mind
+        as the 'computer'. In just the first couple modules it was clear the
+        course was thought out and planned with precision. The lectures combined
+        with projects were perfectly crafted to break down complex topics and
+        actually help you cement them with hands-on work. I went from creating
+        NAND gates, to creating more and more complex chips, from MUX to a full
+        RAM system to finally creating a full working CPU. From scratch! Then
+        learning and creating machine programs and an assembler, on and on until
+        finally creating a full programming language: Jack.
+      </p>
+      <p>
+        The most satisfying aspect of Nand2Tetris is the compounding nature of
+        the course. Every module builds on the implementations and principles of
+        the previous. You know you've literally built everything beforehand, but
+        it reiterates the power of abstraction.
+      </p>
+      <p>
+        On paper, a course like Nand2Tetris may not seem to be relevant to high
+        level developers, but coming out the other side I can confidently say it
+        has sharpened the way I think and approach problems. I now have a far
+        deeper appreciation for the technology I interact with every day.
+      </p>
+      </div>
+    </div>
+
+    <div class="jack-links">
+      <a href="https://github.com/jclind/shadow-strike-jack" target="_blank" rel="noopener noreferrer">github</a>
+    </div>
+
+    <a href="../" class="notes-back-btn" id="jack-back">../</a>
+  </div>
+</div>
+
+<script>
+  import { Vm } from '../../../lib/n2t-sim/vm/vm.js';
+  import { VM } from '../../../lib/n2t-sim/languages/vm.js';
+  import { isErr } from '@davidsouther/jiffies/lib/esm/result.js';
+
+  const WIDTH = 512;
+  const HEIGHT = 256;
+  const SCREEN_WORDS = (WIDTH * HEIGHT) / 16; // 8192 words, 16 px each
+  const WORDS_PER_ROW = WIDTH / 16; // 32
+
+  // How many VM instructions to execute per animation frame. This is the speed
+  // knob: too low and the game crawls, too high and the tab janks. Tune per game.
+  const STEPS_PER_FRAME = 30000;
+
+  const canvas = document.getElementById('jack-canvas') as HTMLCanvasElement;
+  const statusEl = document.getElementById('jack-status') as HTMLDivElement;
+  const ctx = canvas.getContext('2d')!;
+  const image = ctx.createImageData(WIDTH, HEIGHT);
+
+  function setStatus(msg: string, isError = false) {
+    statusEl.textContent = msg;
+    statusEl.classList.toggle('is-error', isError);
+    statusEl.style.display = msg ? 'block' : 'none';
+  }
+
+  // Read the Hack screen memory (1 bit per pixel, bit 0 = leftmost, 1 = black)
+  // and paint it into the canvas ImageData.
+  function render(vm: any) {
+    const data = image.data;
+    for (let i = 0; i < SCREEN_WORDS; i++) {
+      const word = vm.Screen.get(i) & 0xffff;
+      const row = Math.floor(i / WORDS_PER_ROW);
+      const colBase = (i % WORDS_PER_ROW) * 16;
+      for (let bit = 0; bit < 16; bit++) {
+        const on = (word >> bit) & 1; // bit 0 is the leftmost pixel
+        const px = (row * WIDTH + colBase + bit) * 4;
+        const v = on ? 0 : 255; // black when the bit is set
+        data[px] = v;
+        data[px + 1] = v;
+        data[px + 2] = v;
+        data[px + 3] = 255;
+      }
+    }
+    ctx.putImageData(image, 0, 0);
+  }
+
+  // Map a browser KeyboardEvent to the Hack keyboard code the Jack OS expects.
+  function hackKeyCode(e: KeyboardEvent): number | null {
+    const special: Record<string, number> = {
+      Enter: 128,
+      Backspace: 129,
+      ArrowLeft: 130,
+      ArrowUp: 131,
+      ArrowRight: 132,
+      ArrowDown: 133,
+      Home: 134,
+      End: 135,
+      PageUp: 136,
+      PageDown: 137,
+      Insert: 138,
+      Delete: 139,
+      Escape: 140,
+    };
+    if (e.key in special) return special[e.key];
+    if (/^F([1-9]|1[0-2])$/.test(e.key)) return 140 + Number(e.key.slice(1));
+    if (e.key.length === 1) return e.key.charCodeAt(0); // printable ASCII
+    return null;
+  }
+
+  async function loadVm(): Promise<any | null> {
+    let manifest: string[];
+    try {
+      manifest = await fetch('/game/files.json').then((r) => {
+        if (!r.ok) throw new Error(`files.json -> ${r.status}`);
+        return r.json();
+      });
+    } catch (err) {
+      setStatus(`Could not load /game/files.json: ${err}`, true);
+      return null;
+    }
+
+    const files: { name: string; instructions: any[] }[] = [];
+    for (const name of manifest) {
+      const text = await fetch(`/game/${name}`).then((r) => {
+        if (!r.ok) throw new Error(`${name} -> ${r.status}`);
+        return r.text();
+      });
+      const parsed: any = VM.parse(text);
+      if (isErr(parsed)) {
+        setStatus(`Parse error in ${name}: ${parsed.err?.message ?? parsed.err}`, true);
+        return null;
+      }
+      files.push({ name: name.replace(/\.vm$/, ''), instructions: parsed.ok.instructions });
+    }
+
+    const built: any = Vm.buildFromFiles(files);
+    if (isErr(built)) {
+      setStatus(`Build error: ${built.err?.message ?? built.err}`, true);
+      return null;
+    }
+    return built.ok;
+  }
+
+  // The currently running program. `restart` swaps in a fresh build, so the
+  // frame loop and keyboard handlers read this rather than a captured local.
+  let vm: any = null;
+  let halted = false;
+  let loopActive = false; // guards against stacking multiple rAF loops
+
+  function frame() {
+    if (vm) {
+      if (!halted) {
+        for (let i = 0; i < STEPS_PER_FRAME; i++) {
+          const res = vm.step(); // undefined = running/blocked, number = halted
+          if (typeof res === 'number') {
+            halted = true;
+            break;
+          }
+        }
+      }
+      render(vm);
+    }
+    // Keep looping while there's a live, un-halted program. A halted program
+    // stops the loop; restart() revives it via ensureLoop().
+    if (vm && !halted) {
+      requestAnimationFrame(frame);
+    } else {
+      loopActive = false;
+    }
+  }
+
+  function ensureLoop() {
+    if (!loopActive) {
+      loopActive = true;
+      requestAnimationFrame(frame);
+    }
+  }
+
+  // Build (or rebuild) the program and run it. Used for the first load and by
+  // the restart button.
+  let starting = false;
+  async function start() {
+    if (starting) return; // ignore re-entrant clicks while a build is in flight
+    starting = true;
+    setStatus('loading…');
+    const next = await loadVm();
+    starting = false;
+    if (!next) return; // loadVm already surfaced the error
+    vm = next;
+    halted = false;
+    setStatus('');
+    canvas.focus();
+    ensureLoop();
+  }
+
+  function main() {
+    // The game needs a physical keyboard. CSS (see the media query) hides the
+    // game and shows a "desktop only" notice on small / touch screens; here we
+    // just match the same condition to skip running the VM so we don't burn CPU
+    // on a hidden game. The width clause catches phones/tablets that report an
+    // unexpected pointer/hover (e.g. iPadOS reporting as desktop).
+    const noKeyboard = window.matchMedia(
+      '(hover: none) and (pointer: coarse), (max-width: 768px)'
+    ).matches;
+    if (noKeyboard) return;
+
+    // Feed keyboard state into the VM. The Jack OS reads a single word at the
+    // keyboard address; we write the current key on keydown and 0 on keyup.
+    canvas.addEventListener('keydown', (e) => {
+      if (!vm) return;
+      const code = hackKeyCode(e);
+      if (code === null) return;
+      if (e.key.startsWith('Arrow') || e.key === ' ') e.preventDefault();
+      vm.Keyboard.set(0, code);
+    });
+    canvas.addEventListener('keyup', () => vm?.Keyboard.set(0, 0));
+    // Clear held keys if focus leaves the canvas (avoids "stuck" movement).
+    canvas.addEventListener('blur', () => vm?.Keyboard.set(0, 0));
+
+    start();
+  }
+
+  // Size toggle: snap the canvas between its default size and a larger 2x view
+  // that breaks out of the note column and centers on the viewport.
+  const sizeBtn = document.getElementById('jack-size');
+  sizeBtn?.addEventListener('click', () => {
+    const big = canvas.classList.toggle('large');
+    sizeBtn.textContent = big ? 'shrink ⤡' : 'expand ⤢';
+    canvas.focus(); // keep keyboard control after toggling
+    // The page just grew/shrank. The Lenis smooth-scroll caches the scroll height
+    // and can't see the change because .notes-content is absolutely positioned, so
+    // the bottom becomes unreachable. A resize event makes Lenis recompute its limit.
+    requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+  });
+
+  // Restart button: rebuild the program from scratch and run it again. Lets a
+  // player replay after the game halts (or just reset mid-run).
+  document.getElementById('jack-restart')?.addEventListener('click', () => {
+    start();
+  });
+
+  // Back button: go up one path segment (matches the React BackButton behavior).
+  document.getElementById('jack-back')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    segments.pop();
+    window.location.href = '/' + segments.join('/') + (segments.length ? '/' : '');
+  });
+
+  main();
+</script>
+
+<style>
+  .jack-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  /* Sizes to the canvas and provides the positioning context for the status
+     overlay. */
+  .jack-screen {
+    position: relative;
+    width: 512px;
+    max-width: 100%;
+  }
+  #jack-canvas {
+    display: block;
+    width: 512px;
+    max-width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    background: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    outline: none;
+    cursor: pointer;
+  }
+  #jack-canvas:focus {
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+  /* Larger view: 2x native (crisp), clamped on small screens, centered on the
+     viewport so it can break out of the ~500px note column. */
+  #jack-canvas.large {
+    width: 1024px;
+    max-width: 95vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .jack-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .jack-size-btn {
+    align-self: flex-start;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: inherit;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 200;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .jack-size-btn:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  /* Overlays the canvas (centered) rather than sitting below it, so showing or
+     hiding it never shifts the rest of the page. */
+  .jack-status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 200;
+    color: #111;
+    opacity: 0.8;
+  }
+  .jack-status.is-error {
+    color: #b00020;
+    opacity: 1;
+    white-space: pre-wrap;
+  }
+  .jack-hint {
+    font-size: 0.8rem;
+    font-weight: 200;
+    opacity: 0.7;
+  }
+
+  /* Replaces the game on small / touch screens. Hidden by default (desktop);
+     the media query below swaps it in for the game + hint. */
+  .jack-desktop-only {
+    display: none;
+    margin-top: 0.6rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 200;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* No physical keyboard (touch) or screen too small to play: hide the game and
+     its keyboard hint, show the desktop-only notice instead. Kept in sync with
+     the matchMedia() check in the script above. */
+  @media (hover: none) and (pointer: coarse), (max-width: 768px) {
+    #jack-stage,
+    #jack-hint {
+      display: none;
+    }
+    .jack-desktop-only {
+      display: block;
+    }
+  }
+
+  /* intro prose sits between the title and the game */
+  .jack-intro {
+    margin-bottom: 0.4rem;
+  }
+
+  /* closing prose: the course wrap-up after the architecture section */
+  .jack-outro {
+    margin-top: 2.6rem;
+  }
+
+  /* bottom links row, matching the project pages' github/website links */
+  .jack-links {
+    display: flex;
+    gap: 0.6rem;
+    margin: 1.5rem 0;
+    text-decoration: underline;
+  }
+  .jack-links a {
+    font-size: 14px; /* matches $fs-xs, the project pages' bottom links */
+    font-weight: 300;
+  }
+
+  /* architecture section */
+  .jack-arch {
+    margin-top: 2.6rem;
+  }
+  .jack-arch__head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  .jack-arch__kicker {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .jack-arch__rule {
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .jack-arch__sub {
+    margin: 0 0 1.4rem;
+    max-width: none;
+    font-size: 0.8rem;
+    font-weight: 200;
+    line-height: 1.6;
+    color: #b3b3b3;
+    opacity: 0.8;
+  }
+</style>

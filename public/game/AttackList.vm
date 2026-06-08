@@ -1,0 +1,186 @@
+function AttackList.new 0
+    push constant 1
+    call Memory.alloc 1
+    pop pointer 0
+    push constant 0
+    pop this 0
+    push pointer 0
+    return
+function AttackList.addAttack 1
+    push argument 0
+    pop pointer 0
+    push argument 1
+    call Node.new 1
+    pop local 0
+    push local 0
+    push this 0
+    call Node.setNext 2
+    pop temp 0
+    push local 0
+    pop this 0
+    push constant 0
+    return
+function AttackList.updateAttacks 4
+    push argument 0
+    pop pointer 0
+    push this 0
+    pop local 0
+    push constant 0
+    pop local 1
+label AttackList_0
+    push local 0
+    push constant 0
+    eq
+    not
+    not
+    if-goto AttackList_1
+    push local 0
+    call Node.getData 1
+    pop local 3
+    push local 3
+    call Attack.update 1
+    pop temp 0
+    push local 3
+    call Attack.isOffscreen 1
+    not
+    if-goto AttackList_3
+    push local 0
+    call Node.getNext 1
+    pop local 2
+    push local 1
+    push constant 0
+    eq
+    not
+    if-goto AttackList_5
+    push local 2
+    pop this 0
+    goto AttackList_4
+label AttackList_5
+    push local 1
+    push local 2
+    call Node.setNext 2
+    pop temp 0
+label AttackList_4
+    push local 3
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 2
+    pop local 0
+    goto AttackList_2
+label AttackList_3
+    push local 0
+    pop local 1
+    push local 0
+    call Node.getNext 1
+    pop local 0
+label AttackList_2
+    goto AttackList_0
+label AttackList_1
+    push constant 0
+    return
+function AttackList.checkCollisions 5
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 3
+    push this 0
+    pop local 0
+    push constant 0
+    pop local 1
+label AttackList_6
+    push local 0
+    push constant 0
+    eq
+    not
+    not
+    if-goto AttackList_7
+    push local 0
+    call Node.getData 1
+    pop local 4
+    push local 4
+    push argument 1
+    push argument 2
+    push argument 3
+    push argument 4
+    call Attack.isCollidingWith 5
+    not
+    if-goto AttackList_9
+    push constant 1
+    neg
+    pop local 3
+    push local 0
+    call Node.getNext 1
+    pop local 2
+    push local 1
+    push constant 0
+    eq
+    not
+    if-goto AttackList_11
+    push local 2
+    pop this 0
+    goto AttackList_10
+label AttackList_11
+    push local 1
+    push local 2
+    call Node.setNext 2
+    pop temp 0
+label AttackList_10
+    push local 4
+    call Attack.erase 1
+    pop temp 0
+    push local 4
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 2
+    pop local 0
+    goto AttackList_8
+label AttackList_9
+    push local 0
+    pop local 1
+    push local 0
+    call Node.getNext 1
+    pop local 0
+label AttackList_8
+    goto AttackList_6
+label AttackList_7
+    push local 3
+    return
+function AttackList.dispose 3
+    push argument 0
+    pop pointer 0
+    push this 0
+    pop local 0
+label AttackList_12
+    push local 0
+    push constant 0
+    eq
+    not
+    not
+    if-goto AttackList_13
+    push local 0
+    call Node.getNext 1
+    pop local 1
+    push local 0
+    call Node.getData 1
+    pop local 2
+    push local 2
+    call Attack.dispose 1
+    pop temp 0
+    push local 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push local 1
+    pop local 0
+    goto AttackList_12
+label AttackList_13
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return
