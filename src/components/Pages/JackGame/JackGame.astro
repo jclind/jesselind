@@ -28,7 +28,8 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
       {intro.map((paragraph) => <p set:html={paragraph} />)}
     </div>
 
-    <div class="jack-stage">
+    <!-- The interactive game. Hidden on touch devices, which have no keyboard. -->
+    <div class="jack-stage" id="jack-stage">
       <canvas id="jack-canvas" width="512" height="256" tabindex="0"></canvas>
       <div id="jack-status" class="jack-status">loading…</div>
       <div class="jack-controls">
@@ -37,26 +38,13 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
       </div>
     </div>
 
-    <!-- On-screen controls for touch devices (no physical keyboard). Each button
-         writes a Hack keycode to the VM keyboard on press and clears it on release,
-         exactly like a keydown/keyup. Hidden until JS detects a touch device. -->
-    <div class="jack-touch" id="jack-touch" hidden>
-      <div class="jack-touch__group">
-        <button class="jack-touch__btn" type="button" data-key="130" aria-label="move left">◀</button>
-        <button class="jack-touch__btn" type="button" data-key="132" aria-label="move right">▶</button>
-      </div>
-      <div class="jack-touch__group">
-        <button class="jack-touch__btn" type="button" data-key="32" aria-label="shoot">shoot</button>
-        <button class="jack-touch__btn" type="button" data-key="120" aria-label="ultimate">ult</button>
-      </div>
-    </div>
-
-    <p class="jack-touch-note" id="jack-touch-note" hidden>
-      Best experienced on desktop with a keyboard — these on-screen buttons are a
-      smaller substitute.
+    <!-- Shown instead of the game on touch devices (revealed by JS). -->
+    <p class="jack-desktop-only" id="jack-desktop-only" hidden>
+      This game runs on a physical keyboard, so it's playable on desktop only.
+      Open this page on a computer to give it a try.
     </p>
 
-    <p class="jack-hint">
+    <p class="jack-hint" id="jack-hint">
       Click the screen to give it focus, then use the keyboard. Arrow keys and
       letter keys are mapped to Hack keycodes. The game explains its own rules
       on the start screen.
@@ -284,6 +272,18 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
   }
 
   function main() {
+    // The game needs a physical keyboard, so on touch-only devices (no hover +
+    // coarse pointer) we skip running it and show a "desktop only" notice
+    // instead. `ontouchstart` is unreliable here — it's truthy on many desktop
+    // Chrome builds — so we rely on the media query.
+    const isTouchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (isTouchOnly) {
+      document.getElementById('jack-stage')?.setAttribute('hidden', '');
+      document.getElementById('jack-hint')?.setAttribute('hidden', '');
+      document.getElementById('jack-desktop-only')?.removeAttribute('hidden');
+      return;
+    }
+
     // Feed keyboard state into the VM. The Jack OS reads a single word at the
     // keyboard address; we write the current key on keydown and 0 on keyup.
     canvas.addEventListener('keydown', (e) => {
@@ -297,39 +297,7 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     // Clear held keys if focus leaves the canvas (avoids "stuck" movement).
     canvas.addEventListener('blur', () => vm?.Keyboard.set(0, 0));
 
-    setupTouch();
     start();
-  }
-
-  // Touch devices have no keyboard, so expose on-screen buttons that drive the
-  // same single-word Hack keyboard. Only revealed when there's no fine pointer.
-  function setupTouch() {
-    // Touch-only devices: no hover + coarse pointer. (Plain `ontouchstart` is
-    // true on many desktop Chrome builds, so it can't be used here.)
-    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-    if (!isTouch) return;
-
-    document.getElementById('jack-touch')?.removeAttribute('hidden');
-    document.getElementById('jack-touch-note')?.removeAttribute('hidden');
-
-    const buttons = document.querySelectorAll<HTMLButtonElement>('.jack-touch__btn');
-    buttons.forEach((btn) => {
-      const code = Number(btn.dataset.key);
-      // pointerdown/up covers touch and mouse; preventDefault stops the tap from
-      // scrolling, zooming, or stealing focus so the key state stays clean.
-      const press = (e: Event) => {
-        e.preventDefault();
-        vm?.Keyboard.set(0, code);
-      };
-      const release = () => vm?.Keyboard.set(0, 0);
-      // Stop the button from taking focus off the canvas — otherwise the canvas
-      // blur handler clears the keyboard the instant we set it.
-      btn.addEventListener('mousedown', (e) => e.preventDefault());
-      btn.addEventListener('pointerdown', press);
-      btn.addEventListener('pointerup', release);
-      btn.addEventListener('pointercancel', release);
-      btn.addEventListener('pointerleave', release);
-    });
   }
 
   // Size toggle: snap the canvas between its default size and a larger 2x view
@@ -425,42 +393,16 @@ const intro = notes.find((n) => n.link === 'building-a-computer')?.text ?? []
     opacity: 0.7;
   }
 
-  /* On-screen game controls — only unhidden on touch devices. */
-  .jack-touch {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
+  /* Shown instead of the game on touch-only devices. */
+  .jack-desktop-only {
     margin-top: 0.6rem;
-  }
-  .jack-touch__group {
-    display: flex;
-    gap: 0.6rem;
-  }
-  .jack-touch__btn {
-    min-width: 3.2rem;
-    padding: 0.9rem 0.8rem;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 6px;
-    color: inherit;
-    font: inherit;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 200;
-    cursor: pointer;
-    touch-action: none; /* we handle the gesture; don't scroll/zoom */
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .jack-touch__btn:active {
-    background: rgba(255, 255, 255, 0.18);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
-  .jack-touch-note {
-    margin-top: 0.6rem;
-    font-size: 0.8rem;
-    font-weight: 200;
-    opacity: 0.7;
+    line-height: 1.6;
+    opacity: 0.85;
   }
 
   /* intro prose sits between the title and the game */
