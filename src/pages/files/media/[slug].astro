@@ -1,0 +1,83 @@
+---
+// Viewer page for a single media item. Mirrors the notes pages: breadcrumbs at
+// top, content in the centered note column, back link at the bottom. The raw
+// file still lives at /media/<file> (that's the shareable link); this page just
+// wraps it so on-site viewing is consistent and has back navigation.
+import Layout from '../../../layouts/Layout.astro';
+import '../../../styles/global.scss';
+import fs from 'node:fs';
+import path from 'node:path';
+
+export function getStaticPaths() {
+  const mediaDir = path.join(process.cwd(), 'public/media');
+  const files = fs.existsSync(mediaDir)
+    ? fs.readdirSync(mediaDir).filter((name) => !name.startsWith('.'))
+    : [];
+  return files.map((file) => {
+    const ext = path.extname(file);
+    return {
+      params: { slug: path.basename(file, ext) },
+      props: { file, ext: ext.toLowerCase(), base: path.basename(file, ext) },
+    };
+  });
+}
+
+const { file, ext, base } = Astro.props;
+const src = `/media/${file}`;
+
+const kind = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif'].includes(ext)
+  ? 'image'
+  : ['.mp4', '.webm', '.mov', '.ogv'].includes(ext)
+    ? 'video'
+    : ['.mp3', '.wav', '.m4a', '.flac', '.ogg'].includes(ext)
+      ? 'audio'
+      : 'file';
+---
+
+<Layout title={`${base}${ext}`}>
+  <div class="notes-style-page">
+    <div class="notes-content">
+      <div class="nav-header">
+        <a href="/">jesselind</a> / <a href="/files">files</a> /
+        <a href="/files/media">media</a> / <i><a href="#">{base}</a></i>
+      </div>
+
+      <div class="media-view">
+        {kind === 'image' && <img src={src} alt={base} />}
+        {kind === 'video' && <video src={src} controls />}
+        {kind === 'audio' && <audio src={src} controls />}
+        {kind === 'file' && (
+          <a class="media-download" href={src} download>download {base}{ext}</a>
+        )}
+      </div>
+
+      <a class="media-original" href={src} target="_blank" rel="noopener noreferrer">
+        open original ↗
+      </a>
+
+      <a href="/files/media" class="notes-back-btn">../</a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .media-view img,
+  .media-view video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .media-view audio {
+    width: 100%;
+  }
+  .media-download {
+    text-decoration: underline;
+  }
+  .media-original {
+    font-size: 0.8rem;
+    font-weight: 200;
+    text-decoration: underline;
+    opacity: 0.7;
+  }
+</style>
