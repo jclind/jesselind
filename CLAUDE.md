@@ -9,9 +9,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev      # astro dev --host (local dev server, exposed on the network)
-npm run build    # astro build -> dist/
-npm run preview  # serve the production build locally
+npm run dev          # astro dev --host (local dev server, exposed on the network)
+npm run build        # astro build -> dist/
+npm run preview      # serve the production build locally
+npm run media -- <file> [more...]  # copy file(s) into public/media/ (see below)
 ```
 
 There is no test suite, linter, or formatter configured — `package.json` only wraps the Astro CLI. TypeScript runs in Astro's `strict` mode (`tsconfig.json` extends `astro/tsconfigs/strict`).
@@ -27,6 +28,8 @@ There is no test suite, linter, or formatter configured — `package.json` only 
 **Special notes shadow the dynamic route.** A note with a `component` field (e.g. `nurture`, `building-a-computer`) is rendered by a dedicated static `.astro` page at `src/pages/files/notes/<slug>.astro` instead of the generic `[slug].astro`. Astro prioritizes static routes over dynamic ones, so the static page wins. These pages still pull their intro prose from the matching `notes.ts` entry to keep a single source of truth.
 
 **The Jack game is a vendored Nand2Tetris simulator.** `src/lib/n2t-sim/` is the official web-ide VM/CPU/ALU/Jack-language simulator (vendored, plain `.js` + `.d.ts`). `src/components/Pages/JackGame/JackGame.astro` is a vanilla-JS island that: fetches `public/game/files.json` → fetches each `.vm` file → `VM.parse` → `Vm.buildFromFiles` → runs a `step()` loop, blitting the Hack screen memory to a `<canvas>` and mapping browser keys to Hack keycodes. To swap the game, replace the `.vm` files in `public/game/` and list them in `files.json` (entry point is `Sys.init` → `Main.main`). `STEPS_PER_FRAME` in that file is the speed knob. The game is keyboard-only and hidden on touch/small screens (a `matchMedia` check in the script mirrors the CSS media query).
+
+**The `media/` folder is auto-listed.** `public/media/` is a drop folder for shareable files. Anything placed there serves from the site root (`public/media/x.webp` → `/media/x.webp` — that's the shareable link) and is auto-listed at `/files/media` by `src/pages/files/media.astro`, which reads the directory with `fs` at build time — no manual list editing to add a file. `npm run media -- <file>` just copies files in. To publish, commit and deploy (main → prod). Keep this in-repo only while files stay small/infrequent; large or high-volume media should move to external storage (e.g. Cloudflare R2) and the index made data-driven.
 
 **Layout & globals.** Every page wraps content in `src/layouts/Layout.astro`, which sets meta/OG tags, loads global SCSS, mounts the Lenis smooth-scroll island (`SmoothScroll`), and injects Google Analytics via Partytown. The GA ID is hardcoded in `Layout.astro`.
 

@@ -11,6 +11,7 @@ const Files = () => {
   const folderLinks = [
     { name: 'notes/', src: '/files/notes' },
     { name: 'legal/', src: '/files/legal' },
+    { name: 'media/', src: '/files/media' },
   ]
 
   return (

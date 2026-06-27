@@ -1,0 +1,40 @@
+---
+import DefaultFileList from '../../components/Common/DefaultFileList';
+import type { NavLinkType } from '../../components/Common/NavHeader/NavHeader';
+import type { FileLinkType } from '../../components/Common/FileList/FileList';
+import Layout from '../../layouts/Layout.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+import '../../styles/global.scss';
+
+const navLinks: NavLinkType[] = [
+  { name: 'jesselind', src: '/' },
+  { name: 'files', src: '/files' },
+  { name: 'media', src: '/files/media' },
+]
+
+// Auto-listed at build time: every file dropped in public/media/ shows up here
+// and is shareable at /media/<filename>. No need to edit this file to add one.
+const mediaDir = path.join(process.cwd(), 'public/media')
+const assetLinks: FileLinkType[] = (fs.existsSync(mediaDir) ? fs.readdirSync(mediaDir) : [])
+  .filter((name) => !name.startsWith('.'))
+  .sort()
+  .map((name) => {
+    const ext = path.extname(name)
+    return {
+      name: path.basename(name, ext),
+      src: `/media/${name}`,
+      type: ext || undefined,
+    }
+  })
+
+// Optional hand-added rendered pages (real routes under /files/media/<slug>.astro)
+// can be appended here. Empty for now.
+const pageLinks: FileLinkType[] = []
+
+const fileLinks = [...assetLinks, ...pageLinks]
+---
+
+<Layout title="media/">
+  <DefaultFileList navLinks={navLinks} fileLinks={fileLinks} client:load />
+</Layout>
