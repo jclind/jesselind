@@ -8,7 +8,20 @@ export type FileLinkType = {
   type?: string
 }
 
-const FileList = ({ list }: { list: FileLinkType[] }) => {
+const FileList = ({
+  list,
+  emptyMessage,
+}: {
+  list: FileLinkType[]
+  emptyMessage?: string
+}) => {
+  if (list.length === 0 && emptyMessage) {
+    return (
+      <div className={`files-list`}>
+        <div className={`files-empty`}>{emptyMessage}</div>
+      </div>
+    )
+  }
   return (
     <div className={`files-list`}>
       {list.map((file, index, origArr) => (

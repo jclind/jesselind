@@ -334,6 +334,12 @@ a[href^='tel'] {
   }
 }
 
+.files-empty {
+  font-size: $fs-xs;
+  font-weight: 200;
+  color: $secondary-text;
+}
+
 .project-images {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

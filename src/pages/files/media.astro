@@ -13,17 +13,19 @@ const navLinks: NavLinkType[] = [
   { name: 'media', src: '/files/media' },
 ]
 
-// Auto-listed at build time: every file dropped in public/media/ shows up here
-// and is shareable at /media/<filename>. No need to edit this file to add one.
+// Auto-listed at build time: every file dropped in public/media/ shows up here.
+// Each row links to its viewer page (/files/media/<name>) for consistent on-site
+// viewing with back navigation; the raw file stays shareable at /media/<filename>.
 const mediaDir = path.join(process.cwd(), 'public/media')
 const assetLinks: FileLinkType[] = (fs.existsSync(mediaDir) ? fs.readdirSync(mediaDir) : [])
   .filter((name) => !name.startsWith('.'))
   .sort()
   .map((name) => {
     const ext = path.extname(name)
+    const base = path.basename(name, ext)
     return {
-      name: path.basename(name, ext),
-      src: `/media/${name}`,
+      name: base,
+      src: `/files/media/${base}`,
       type: ext || undefined,
     }
   })
@@ -36,5 +38,10 @@ const fileLinks = [...assetLinks, ...pageLinks]
 ---
 
 <Layout title="media/">
-  <DefaultFileList navLinks={navLinks} fileLinks={fileLinks} client:load />
+  <DefaultFileList
+    navLinks={navLinks}
+    fileLinks={fileLinks}
+    emptyMessage="nothing here yet."
+    client:load
+  />
 </Layout>
