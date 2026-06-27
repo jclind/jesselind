@@ -6,7 +6,8 @@
     "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "media": "node scripts/add-media.mjs"
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.4",
