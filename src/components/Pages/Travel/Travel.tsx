@@ -26,17 +26,27 @@ const worldProjection = () => geoEqualEarth()
 const excluded = [ANTARCTICA_ID]
 const visitedIds = travelCountries.map(country => country.id)
 const STAGGER = 0.11
+/** Flip the tooltip to the cursor's left inside this margin of the right edge. */
+const TOOLTIP_EDGE = 220
+
+type Tip = { id: string; x: number; y: number; flip: boolean }
 
 const Travel = () => {
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [tip, setTip] = useState<Tip | null>(null)
 
-  const labelFor = (id: string) => {
-    const country = travelCountries.find(c => c.id === id)
-    if (!country) return ''
-    return country.visits
-      ? `${country.name} · ${country.visits.join(', ')}`
-      : country.name
+  // Only the map raises a tooltip. Hovering an index row highlights the country
+  // but shows no label, since the row already reads as name and dates.
+  const handleActivate = (id: string | null) => {
+    setActiveId(id)
+    if (id === null) setTip(null)
   }
+
+  const handlePointerMove = (id: string, x: number, y: number) => {
+    setTip({ id, x, y, flip: x > window.innerWidth - TOOLTIP_EDGE })
+  }
+
+  const tipCountry = tip && travelCountries.find(c => c.id === tip.id)
 
   return (
     <div className={`${styles.travel} notes-style-page`}>
@@ -55,8 +65,8 @@ const Travel = () => {
             excludeIds={excluded}
             fillBounds={FILL_BOUNDS}
             activeId={activeId}
-            onActivate={setActiveId}
-            labelFor={labelFor}
+            onActivate={handleActivate}
+            onPointerMove={handlePointerMove}
             stagger={STAGGER}
           />
 
@@ -69,10 +79,10 @@ const Travel = () => {
                     activeId === country.id ? styles.active : ''
                   }`}
                   style={{ animationDelay: `${i * STAGGER}s` }}
-                  onMouseEnter={() => setActiveId(country.id)}
-                  onMouseLeave={() => setActiveId(null)}
-                  onFocus={() => setActiveId(country.id)}
-                  onBlur={() => setActiveId(null)}
+                  onMouseEnter={() => handleActivate(country.id)}
+                  onMouseLeave={() => handleActivate(null)}
+                  onFocus={() => handleActivate(country.id)}
+                  onBlur={() => handleActivate(null)}
                   onClick={() =>
                     setActiveId(activeId === country.id ? null : country.id)
                   }
@@ -91,6 +101,21 @@ const Travel = () => {
 
         <BackButton />
       </div>
+
+      {tip && tipCountry && (
+        <div
+          className={`${styles.tooltip} ${tip.flip ? styles.flip : ''}`}
+          style={{ left: tip.x, top: tip.y }}
+          aria-hidden='true'
+        >
+          {tipCountry.name}
+          {tipCountry.visits && (
+            <span className={styles.visits}>
+              {tipCountry.visits.join(', ')}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   )
 }

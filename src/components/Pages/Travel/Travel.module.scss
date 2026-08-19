@@ -140,6 +140,32 @@
   }
 }
 
+// -------------------------------------------------
+// Map tooltip. A pointer-only affordance, so it is fixed to the cursor rather
+// than placed in the map, and hidden from screen readers because the index
+// already carries the same names and dates.
+// -------------------------------------------------
+.tooltip {
+  position: fixed;
+  z-index: 3;
+  // Offset off the cursor so it never sits under the pointer itself.
+  transform: translate(14px, 14px);
+  pointer-events: none;
+  white-space: nowrap;
+  // The label lands on top of the country it describes, which is a light fill
+  // and turns white on hover, so it needs to mask what is behind it.
+  background: $primary-background;
+  padding: 5px 8px;
+  font-size: 13px;
+  font-weight: 200;
+  line-height: 1;
+  color: $primary-text;
+
+  &.flip {
+    transform: translate(calc(-100% - 14px), 14px);
+  }
+}
+
 @keyframes row_in {
   to {
     opacity: 1;
@@ -186,6 +212,11 @@
 
   .row {
     cursor: default;
+  }
+
+  // The map is illustration below this width, so nothing can raise a tooltip.
+  .tooltip {
+    display: none;
   }
 }
 

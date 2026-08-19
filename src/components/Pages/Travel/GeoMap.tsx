@@ -30,7 +30,12 @@ export type GeoMapProps = {
   fillBounds?: Record<string, LonLatBox>
   activeId: string | null
   onActivate: (id: string | null) => void
-  labelFor?: (id: string) => string
+  /**
+   * Fires as the pointer tracks across a filled shape, in client coordinates.
+   * The renderer stays out of tooltip layout; it only reports where the pointer
+   * is and which shape is under it.
+   */
+  onPointerMove?: (id: string, clientX: number, clientY: number) => void
   /** Projected width in user units. Only sets the viewBox — the svg scales to its container. */
   width?: number
   /** Seconds between each fill in the entrance stagger. */
@@ -56,7 +61,7 @@ const GeoMap = ({
   fillBounds = {},
   activeId,
   onActivate,
-  labelFor,
+  onPointerMove,
   width = 1100,
   stagger = 0.11,
 }: GeoMapProps) => {
@@ -149,9 +154,8 @@ const GeoMap = ({
             style={{ animationDelay: `${i * stagger}s` }}
             onMouseEnter={() => onActivate(id)}
             onMouseLeave={() => onActivate(null)}
-          >
-            {labelFor && <title>{labelFor(id)}</title>}
-          </path>
+            onMouseMove={e => onPointerMove?.(id, e.clientX, e.clientY)}
+          />
         ))}
       </g>
     </svg>
