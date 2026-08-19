@@ -167,12 +167,30 @@ $arrow-width: 12px;
       }
     }
 
+    // Sits below the right-hand end of .line1, mirroring the way .notes hangs
+    // below .line3 on the left. Inset by the same displacement as the left line.
+    .globe {
+      position: absolute;
+      top: calc(var(--top-lines-gap) + #{$gap-large});
+      right: var(--left-line-displacement);
+      line-height: 0;
+
+      // .wire is scoped to WireframeGlobe's own module, so reach it structurally.
+      &:hover svg g {
+        stroke: $secondary-text;
+      }
+    }
+
     @media (max-width: $breakpoint-lg) {
       a {
         line-height: 1.3;
       }
       .logo {
         left: var(--left-line-displacement);
+      }
+      .globe svg {
+        width: 44px;
+        height: 44px;
       }
     }
     @media (max-width: $breakpoint-md) {
@@ -185,6 +203,13 @@ $arrow-width: 12px;
       .notes,
       .projects {
         left: calc(var(--left-line-displacement) + 16px);
+      }
+      .globe {
+        right: calc(var(--left-line-displacement) + 16px);
+        svg {
+          width: 36px;
+          height: 36px;
+        }
       }
       .notes {
         top: calc(var(--top-lines-gap) + 1%);

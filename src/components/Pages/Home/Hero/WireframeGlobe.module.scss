@@ -1,0 +1,37 @@
+@use '../../../../styles/vars' as *;
+
+.globe {
+  display: block;
+  overflow: visible;
+}
+
+.wire {
+  fill: none;
+  stroke: $border-color;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 0.4s ease;
+}
+
+.meridian {
+  animation: meridian_spin 12s linear infinite;
+}
+
+// rx traces the projected width of a meridian rotating at a constant rate.
+@keyframes meridian_spin {
+  0% {
+    rx: 26px;
+  }
+  50% {
+    rx: 0px;
+  }
+  100% {
+    rx: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meridian {
+    animation: none;
+  }
+}

@@ -1,0 +1,198 @@
+@use '../../../styles/vars' as *;
+
+.travel {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Lifted out of flow so the map below is free of the page's usual measure —
+// same move as the nurture note.
+.nav_top {
+  position: absolute;
+  top: $gap-medium;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.content {
+  // Bounded on both axes: 94vw keeps a margin at any width, and 155vh stops a
+  // 2.26:1 map from growing taller than the viewport on wide, short screens.
+  width: min(94vw, 155vh, 1800px);
+  display: flex;
+  flex-direction: column;
+}
+
+.map_wrap {
+  position: relative;
+  width: 100%;
+  // Lets the overlaid index scale with the map rather than the viewport, which
+  // is what keeps it clear of Hawaii above and South America to its right.
+  container-type: inline-size;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+// Countries not visited: outline only, and inert — nothing on this map responds
+// to a pointer unless it has a row in the index beside it.
+.base {
+  pointer-events: none;
+
+  path {
+    fill: none;
+    stroke: $secondary-border-color;
+    stroke-width: 0.75;
+    vector-effect: non-scaling-stroke;
+  }
+}
+
+.visited_layer {
+  pointer-events: auto;
+}
+
+.visited {
+  fill: $secondary-text;
+  // Adjacent visited countries share an edge, so without a stroke France,
+  // Switzerland and Italy fuse into one shape. Cutting them apart with the page
+  // background keeps each country readable.
+  stroke: $primary-background;
+  stroke-width: 0.75;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  opacity: 0;
+  animation: map_fill 0.5s ease forwards;
+  transition: fill 0.25s ease;
+
+  &.active {
+    fill: $primary-text;
+  }
+}
+
+@keyframes map_fill {
+  to {
+    opacity: 1;
+  }
+}
+
+// -------------------------------------------------
+// Index — overlaid bottom-left on desktop, no chrome.
+// Sits over empty South Pacific: South America's west edge is at ~27% of the
+// map width, and the southern US bottoms out at ~39% of its height.
+// -------------------------------------------------
+.index {
+  position: absolute;
+  left: 2%;
+  bottom: 4%;
+  max-width: 25%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: clamp(10px, 1.1cqw, 13px);
+  font-weight: 200;
+  line-height: 1.75;
+}
+
+.row {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  color: $secondary-text;
+  cursor: pointer;
+  opacity: 0;
+  animation: row_in 0.5s ease forwards;
+  transition: color 0.25s ease;
+
+  &:hover,
+  &.active {
+    color: $primary-text;
+
+    .visits {
+      color: $secondary-text;
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid $secondary-border-color;
+    outline-offset: 2px;
+  }
+}
+
+.visits {
+  color: $secondary-border-color;
+  transition: color 0.25s ease;
+
+  &::before {
+    content: '·';
+    margin: 0 0.45em;
+  }
+}
+
+@keyframes row_in {
+  to {
+    opacity: 1;
+  }
+}
+
+// -------------------------------------------------
+// Below the two-column threshold the index moves out from over the map and
+// becomes the interactive element. The map stays as illustration: at phone
+// widths Switzerland is a couple of pixels across and cannot be tapped.
+// -------------------------------------------------
+@media (max-width: $breakpoint-lg) {
+  // Not enough room to float the breadcrumb over a full-height map, and the
+  // index is long enough here that it would collide. Back to normal flow.
+  .travel {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .nav_top {
+    position: static;
+    transform: none;
+    padding-top: 12vh;
+  }
+
+  .content {
+    width: $max-width-percentage;
+    max-width: $max-width-container;
+    padding-bottom: $gap-xl;
+  }
+
+  .visited_layer {
+    pointer-events: none;
+  }
+
+  .index {
+    position: static;
+    max-width: none;
+    margin-top: $gap-large;
+    font-size: $fs-xs;
+    line-height: 2;
+  }
+
+  .row {
+    cursor: default;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visited,
+  .row {
+    animation: none;
+    opacity: 1;
+  }
+}

@@ -12,6 +12,7 @@ const Files = () => {
     { name: 'notes/', src: '/files/notes' },
     { name: 'legal/', src: '/files/legal' },
     { name: 'media/', src: '/files/media' },
+    { name: 'travel/', src: '/files/travel' },
   ]
 
   return (
