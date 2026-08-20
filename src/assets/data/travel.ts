@@ -19,10 +19,15 @@ export type TravelCountryType = {
    */
   visits?: string[]
   /**
-   * Per-country pins. Empty by design — the map renders country fills only.
-   * Fill this in to add a pin layer without changing anything else here.
+   * Cities pinned on the country's detail view. The world map ignores these.
+   * Coordinates are decimal degrees, positive north and east.
    */
   places?: TravelPlaceType[]
+  /**
+   * Optional prose for the detail view, rendered as HTML the way note bodies
+   * are. Leave it out and the panel just shows the name, dates and cities.
+   */
+  notes?: string
 }
 
 /**
@@ -40,7 +45,15 @@ export const travelCountries: TravelCountryType[] = [
   { id: '756', name: 'Switzerland', visits: ['May 2016'] },
   { id: '380', name: 'Italy', visits: ['May 2016'] },
   { id: '214', name: 'Dominican Republic', visits: ['Feb 2018'] },
-  { id: '124', name: 'Canada', visits: ['Sep 2019'] },
+  {
+    id: '124',
+    name: 'Canada',
+    visits: ['Sep 2019'],
+    places: [
+      { name: 'Toronto', lat: 43.6532, lng: -79.3832 },
+      { name: 'Niagara Falls', lat: 43.0896, lng: -79.0849 },
+    ],
+  },
   { id: '392', name: 'Japan', visits: ['May 2023', 'May–Jul 2025'] },
   { id: '704', name: 'Vietnam', visits: ['Jun 2026'] },
   { id: '752', name: 'Sweden', visits: ['Aug 2026'] },

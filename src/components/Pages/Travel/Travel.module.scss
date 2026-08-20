@@ -210,10 +210,6 @@
     line-height: 2;
   }
 
-  .row {
-    cursor: default;
-  }
-
   // The map is illustration below this width, so nothing can raise a tooltip.
   .tooltip {
     display: none;
@@ -225,5 +221,178 @@
   .row {
     animation: none;
     opacity: 1;
+  }
+}
+
+// -------------------------------------------------
+// Country detail. Opening a country grows it out of the world map into a
+// full-screen overlay: the small shape appears to become the big one, so the
+// two views read as one map rather than two pages.
+// -------------------------------------------------
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $primary-background;
+  opacity: 0;
+  animation: fade_in 0.3s ease forwards;
+}
+
+.close {
+  position: absolute;
+  top: $gap-medium;
+  right: $gap-medium;
+  z-index: 2;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: $fs-xs;
+  font-weight: 200;
+  color: $tertiary-text;
+  cursor: pointer;
+  transition: color 0.25s ease;
+
+  &:hover {
+    color: $secondary-text;
+  }
+
+  &:focus-visible {
+    outline: 1px solid $secondary-border-color;
+    outline-offset: 4px;
+  }
+}
+
+.stage {
+  position: relative;
+  // --ar is the country's own width-to-height ratio, set once its geometry
+  // lands. Matching the frame to it means the shape fills the screen whatever
+  // proportions it has, and keeps the pin percentages exact by leaving the svg
+  // nothing to letterbox.
+  --ar: 1.6;
+  aspect-ratio: var(--ar);
+  width: min(76vw, calc(78vh * var(--ar)), 1250px);
+  transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.detail_map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+// An outline rather than a fill. At this size a solid shape becomes a grey slab
+// that the panel text has to sit on top of, and the hairline reads better
+// against the rest of the site.
+.detail_shape {
+  fill: rgba(255, 255, 255, 0.045);
+  stroke: $primary-text;
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.pins {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  animation: fade_in 0.4s ease forwards;
+}
+
+.pin {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: $primary-text;
+    flex: none;
+  }
+}
+
+.pin_label {
+  margin-left: $gap-tiny;
+  font-size: $fs-xxs;
+  font-weight: 200;
+  color: $secondary-text;
+}
+
+.panel {
+  position: absolute;
+  left: 5vw;
+  bottom: 8vh;
+  max-width: 34ch;
+  opacity: 0;
+  animation: fade_in 0.4s ease forwards;
+}
+
+.panel_name {
+  margin: 0;
+  font-size: $fs-medium;
+  font-weight: 200;
+  color: $primary-text;
+}
+
+.panel_visits {
+  margin: $gap-tiny 0 0;
+  font-size: $fs-xs;
+  font-weight: 200;
+  color: $secondary-text;
+}
+
+.panel_notes {
+  margin-top: $gap-small;
+  font-size: $fs-xs;
+  font-weight: 200;
+  line-height: 1.75;
+  color: $secondary-text;
+
+  p {
+    margin: 0 0 $gap-small;
+  }
+}
+
+@keyframes fade_in {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  // The map is inert at this width, so the index rows are the way in. The
+  // overlay itself still works, and is the better view of a country on a phone.
+  .stage {
+    width: min(90vw, calc(58vh * var(--ar)));
+  }
+
+  .panel {
+    left: 5vw;
+    right: 5vw;
+    bottom: 6vh;
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .pins,
+  .panel {
+    animation: none;
+    opacity: 1;
+  }
+
+  .stage {
+    transition: none;
   }
 }

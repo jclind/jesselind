@@ -3,6 +3,7 @@ import { geoPath, type GeoProjection } from 'd3-geo'
 import { feature } from 'topojson-client'
 import type { GeometryCollection, Topology } from 'topojson-specification'
 import type { LonLatBox } from '../../../assets/data/travel'
+import { insideBox } from './countryGeometry'
 import styles from './Travel.module.scss'
 
 export type GeoMapProps = {
@@ -36,19 +37,12 @@ export type GeoMapProps = {
    * is and which shape is under it.
    */
   onPointerMove?: (id: string, clientX: number, clientY: number) => void
+  /** Click on a filled shape. The rect is the shape's on-screen box at that moment. */
+  onSelect?: (id: string, rect: DOMRect) => void
   /** Projected width in user units. Only sets the viewBox — the svg scales to its container. */
   width?: number
   /** Seconds between each fill in the entrance stagger. */
   stagger?: number
-}
-
-/** Every vertex of the ring sits inside the lon/lat box. */
-const insideBox = (ring: GeoJSON.Position[], box: LonLatBox) => {
-  const [minLon, minLat, maxLon, maxLat] = box
-  return ring.every(
-    ([lon, lat]) =>
-      lon >= minLon && lon <= maxLon && lat >= minLat && lat <= maxLat
-  )
 }
 
 const GeoMap = ({
@@ -62,6 +56,7 @@ const GeoMap = ({
   activeId,
   onActivate,
   onPointerMove,
+  onSelect,
   width = 1100,
   stagger = 0.11,
 }: GeoMapProps) => {
@@ -155,6 +150,10 @@ const GeoMap = ({
             onMouseEnter={() => onActivate(id)}
             onMouseLeave={() => onActivate(null)}
             onMouseMove={e => onPointerMove?.(id, e.clientX, e.clientY)}
+            onClick={e => onSelect?.(id, e.currentTarget.getBoundingClientRect())}
+            // Lets the index rows open the same country with the same flight,
+            // by finding the shape they refer to.
+            data-country={id}
           />
         ))}
       </g>

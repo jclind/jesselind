@@ -7,7 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "media": "node scripts/add-media.mjs"
+    "media": "node scripts/add-media.mjs",
+    "geo": "node scripts/build-country-geo.mjs"
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.4",
