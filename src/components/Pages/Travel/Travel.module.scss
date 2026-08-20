@@ -301,8 +301,13 @@
 // mesh, so a shared edge is one path rather than two coincident ones, and a
 // visited/unvisited border cannot end up a different colour from a
 // visited/visited one.
+// The same fill the world map gives a visited country, so the shape you clicked
+// keeps its colour through the flight instead of arriving a different grey.
+// It has to stay clear of $secondary-border-color in either direction: at the
+// midpoint between them the state borders vanish and the visited states fuse
+// into one slab.
 .region_fill {
-  fill: rgba(255, 255, 255, 0.13);
+  fill: $secondary-text;
   stroke: none;
 }
 
