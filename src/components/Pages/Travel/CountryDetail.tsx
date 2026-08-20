@@ -1,7 +1,19 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { geoAlbersUsa, geoBounds, geoConicEqualArea, geoPath } from 'd3-geo'
-import { FILL_BOUNDS, type TravelCountryType } from '../../../assets/data/travel'
-import { loadCountry, restrictToBox } from './countryGeometry'
+import {
+  geoAlbersUsa,
+  geoArea,
+  geoBounds,
+  geoConicEqualArea,
+  geoContains,
+  geoPath,
+  type GeoPermissibleObjects,
+} from 'd3-geo'
+import {
+  FILL_BOUNDS,
+  type TravelCountryType,
+  type TravelPlaceType,
+} from '../../../assets/data/travel'
+import { loadCountry, loadRegions, restrictToBox } from './countryGeometry'
 import styles from './Travel.module.scss'
 
 /**
@@ -50,6 +62,38 @@ const covers = (r: Rect, x: number, y: number) =>
 /** ISO numeric for the United States. */
 const US = '840'
 
+/** An island smaller than this share of the biggest one is an outlier. */
+const OUTLIER = 0.02
+
+/**
+ * Drops distant specks so the frame belongs to the part of the country you'd
+ * recognise. Japan's Ryukyu and Ogasawara chains reach 1,500km southwest, which
+ * leaves the four main islands using about a third of the screen.
+ *
+ * An island is kept if it is a serious size *or* if a pin sits on it, so
+ * Gotland survives on Visby's account while Okinawa, which Jesse has not been
+ * to, does not.
+ */
+const trimOutliers = (
+  geometry: GeoJSON.Geometry,
+  places: TravelPlaceType[]
+): GeoJSON.Geometry => {
+  if (geometry.type !== 'MultiPolygon') return geometry
+
+  const areas = geometry.coordinates.map(coordinates =>
+    geoArea({ type: 'Polygon', coordinates })
+  )
+  const largest = Math.max(...areas)
+
+  const kept = geometry.coordinates.filter((coordinates, i) => {
+    if (areas[i] >= largest * OUTLIER) return true
+    const polygon: GeoJSON.Polygon = { type: 'Polygon', coordinates }
+    return places.some(place => geoContains(polygon, [place.lng, place.lat]))
+  })
+
+  return kept.length ? { type: 'MultiPolygon', coordinates: kept } : geometry
+}
+
 /**
  * A conic fitted to the country's own latitude band, which is what an atlas
  * does for a single country. Mercator would work but stretches anything far
@@ -60,10 +104,10 @@ const US = '840'
  * Alaska, which leaves the derived bounds meaningless, so it gets the
  * projection built for exactly this problem.
  */
-const projectionFor = (id: string, geometry: GeoJSON.Geometry) => {
+const projectionFor = (id: string, source: GeoPermissibleObjects) => {
   if (id === US) return geoAlbersUsa()
 
-  const [[minLon, minLat], [maxLon, maxLat]] = geoBounds(geometry)
+  const [[minLon, minLat], [maxLon, maxLat]] = geoBounds(source)
   const span = maxLat - minLat
   return geoConicEqualArea()
     .parallels([minLat + span / 6, maxLat - span / 6])
@@ -84,43 +128,69 @@ export type CountryDetailProps = {
 
 const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
   const [geometry, setGeometry] = useState<GeoJSON.Geometry | null>(null)
+  const [regions, setRegions] = useState<GeoJSON.FeatureCollection | null>(null)
   const [failed, setFailed] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
-  const shapeRef = useRef<SVGPathElement>(null)
+  const shapeRef = useRef<SVGGElement>(null)
   const pinsRef = useRef<HTMLDivElement>(null)
   const flownRef = useRef(false)
 
   useEffect(() => {
     let cancelled = false
     setGeometry(null)
+    setRegions(null)
     setFailed(false)
     flownRef.current = false
 
-    loadCountry(country.id)
-      .then(loaded => {
-        if (cancelled) return
-        setGeometry(restrictToBox(loaded.geometry, FILL_BOUNDS[country.id]))
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true)
-      })
+    // A country with subdivisions draws those instead of its own outline: the
+    // states already trace the border, and the two sources are different
+    // resolutions, so drawing both would double the coastline slightly offset.
+    const source = country.regions
+    const request = source
+      ? loadRegions(source.source).then(loaded => {
+          if (!cancelled) setRegions(loaded)
+        })
+      : loadCountry(country.id).then(loaded => {
+          if (!cancelled) {
+            const trimmed = restrictToBox(loaded.geometry, FILL_BOUNDS[country.id])
+            setGeometry(trimOutliers(trimmed, country.places ?? []))
+          }
+        })
+
+    request.catch(() => {
+      if (!cancelled) setFailed(true)
+    })
 
     return () => {
       cancelled = true
     }
-  }, [country.id])
+  }, [country.id, country.regions, country.places])
 
   const drawing = useMemo(() => {
-    if (!geometry) return null
-    const projection = projectionFor(country.id, geometry).fitWidth(W, geometry)
+    const source: GeoPermissibleObjects | null = regions ?? geometry
+    if (!source) return null
+
+    const projection = projectionFor(country.id, source).fitWidth(W, source)
     const path = geoPath(projection)
-    const d = path(geometry)
-    if (!d) return null
+
+    const visited = new Set(country.regions?.visited ?? [])
+    const shapes = regions
+      ? regions.features.flatMap(f => {
+          const d = path(f)
+          // geoAlbersUsa projects nothing outside its own frame, which is how
+          // Guam and Puerto Rico drop out rather than landing in the Pacific.
+          return d ? [{ key: String(f.id), d, visited: visited.has(String(f.id)) }] : []
+        })
+      : (() => {
+          const d = geometry && path(geometry)
+          return d ? [{ key: country.id, d, visited: true }] : []
+        })()
+    if (!shapes.length) return null
 
     // Crop the frame to what was drawn rather than fitting the country into a
     // fixed rectangle, so a tall country is not left as a narrow strip down the
     // middle of a wide one's frame.
-    const [[x0, y0], [x1, y1]] = path.bounds(geometry)
+    const [[x0, y0], [x1, y1]] = path.bounds(source)
     const box = {
       x: x0 - PAD,
       y: y0 - PAD,
@@ -143,8 +213,8 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
       ]
     })
 
-    return { d, pins, box, aspect: box.w / box.h }
-  }, [geometry, country.id, country.places])
+    return { shapes, pins, box, aspect: box.w / box.h }
+  }, [geometry, regions, country.id, country.places, country.regions])
 
   // The flight: put the stage where the world map's country is, then let it
   // transition back to its natural place. Measured from the drawn path, not the
@@ -190,12 +260,21 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
       const frame = container.getBoundingClientRect()
       if (!frame.width) return
 
+      // Placement can run mid-flight, while the stage is still scaled down to
+      // the size of the country on the world map. Everything measured off the
+      // screen is scaled by that, so divide it out and work in the layout
+      // coordinates the transforms are written in. Otherwise the pass sees
+      // fourteen labels inside a few pixels and hides most of them.
+      const scale = frame.width / container.offsetWidth || 1
+      const width = container.offsetWidth
+      const height = container.offsetHeight
+
       const pins = Array.from(
         container.querySelectorAll<HTMLElement>('[data-pin]')
       )
       const dots = pins.map(pin => {
         const r = pin.getBoundingClientRect()
-        return { x: r.left - frame.left, y: r.top - frame.top }
+        return { x: (r.left - frame.left) / scale, y: (r.top - frame.top) / scale }
       })
 
       const placed: Rect[] = []
@@ -204,16 +283,18 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
         if (!label) return
 
         label.style.transform = ''
-        const { width, height } = label.getBoundingClientRect()
+        const measured = label.getBoundingClientRect()
+        const labelW = measured.width / scale
+        const labelH = measured.height / scale
         const { x, y } = dots[i]
 
         let bestCost = Infinity
         let bestCollision = Infinity
         let best = PLACEMENTS[0]
         PLACEMENTS.forEach((candidate, rank) => {
-          const left = x + candidate.dx - candidate.ax * width
-          const top = y + candidate.dy - candidate.ay * height
-          const rect = { left, top, right: left + width, bottom: top + height }
+          const left = x + candidate.dx - candidate.ax * labelW
+          const top = y + candidate.dy - candidate.ay * labelH
+          const rect = { left, top, right: left + labelW, bottom: top + labelH }
 
           let collision = 0
           for (const other of placed) collision += overlap(rect, other)
@@ -223,12 +304,7 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
 
           let cost = collision
           // Running off the frame is worse than any amount of overlap.
-          if (
-            left < 0 ||
-            top < 0 ||
-            rect.right > frame.width ||
-            rect.bottom > frame.height
-          ) {
+          if (left < 0 || top < 0 || rect.right > width || rect.bottom > height) {
             cost += 1e4
           }
           // Breaks ties toward the earlier, more conventional positions.
@@ -244,8 +320,8 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
         // The label already sits on its dot, so the transform is the offset from
         // it. Collisions are tested in frame coordinates, which is why the two
         // are worked out separately.
-        const dx = best.dx - best.ax * width
-        const dy = best.dy - best.ay * height
+        const dx = best.dx - best.ax * labelW
+        const dy = best.dy - best.ay * labelH
         label.style.transform = `translate(${dx}px, ${dy}px)`
 
         // Eight cities inside greater Toronto need more label width than the
@@ -253,14 +329,14 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
         // to give up rather than stack names on top of each other. A crowded
         // label hides and its dot keeps it: hovering brings it back. Earlier
         // entries in places[] win, so the order there is the priority order.
-        const crowded = bestCollision > width * height * 0.08
+        const crowded = bestCollision > labelW * labelH * 0.08
         label.toggleAttribute('data-crowded', crowded)
         // A hidden label occupies nothing, so the next one may use the space.
         if (crowded) return
 
         const left = x + dx
         const top = y + dy
-        placed.push({ left, top, right: left + width, bottom: top + height })
+        placed.push({ left, top, right: left + labelW, bottom: top + labelH })
       })
     }
 
@@ -310,7 +386,21 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
           role='img'
           aria-label={`Map of ${country.name}`}
         >
-          {drawing && <path ref={shapeRef} className={styles.detail_shape} d={drawing.d} />}
+          {drawing && (
+            <g ref={shapeRef}>
+              {drawing.shapes.map(shape => (
+                <path
+                  key={shape.key}
+                  className={
+                    regions
+                      ? `${styles.region} ${shape.visited ? styles.visited_region : ''}`
+                      : styles.detail_shape
+                  }
+                  d={shape.d}
+                />
+              ))}
+            </g>
+          )}
         </svg>
 
         {drawing && drawing.pins.length > 0 && (

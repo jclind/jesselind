@@ -296,6 +296,22 @@
   vector-effect: non-scaling-stroke;
 }
 
+// Subdivision layer. Unvisited states are drawn but dim, so the shape of the
+// country still reads while the filled ones carry the information — the same
+// split the world map makes between visited and not.
+.region {
+  fill: none;
+  stroke: $tertiary-text;
+  stroke-width: 0.75;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.visited_region {
+  fill: rgba(255, 255, 255, 0.11);
+  stroke: $primary-text;
+}
+
 .pins {
   position: absolute;
   inset: 0;
