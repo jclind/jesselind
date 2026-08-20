@@ -304,28 +304,62 @@
   animation: fade_in 0.4s ease forwards;
 }
 
+// A zero-size point at the city's coordinates. The dot and the label both hang
+// off it, so the label can be moved without dragging the dot with it.
 .pin {
   position: absolute;
-  display: flex;
-  align-items: center;
-  transform: translate(-50%, -50%);
-  white-space: nowrap;
+  width: 0;
+  height: 0;
+  // Only the dots take the pointer, so a crowded name can be recovered by
+  // hovering it. The layer itself stays transparent to the mouse.
+  pointer-events: auto;
 
-  &::before {
-    content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: $primary-text;
-    flex: none;
+  &:hover {
+    z-index: 2;
+  }
+
+  &:hover .pin_label {
+    opacity: 1;
   }
 }
 
+.pin_dot {
+  position: absolute;
+  left: -2.5px;
+  top: -2.5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: $primary-text;
+
+  // A 5px dot is a poor target, so the hit area is widened without moving the
+  // mark itself.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+  }
+}
+
+// Positioned by the placement pass in CountryDetail, which writes a transform.
+// Sits on the dot until that runs, and the layer is still faded out by then.
 .pin_label {
-  margin-left: $gap-tiny;
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
   font-size: $fs-xxs;
   font-weight: 200;
+  line-height: 1.2;
   color: $secondary-text;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+
+  // Nowhere clear to put it. The dot still marks the city, and hovering the dot
+  // brings the name back.
+  &[data-crowded] {
+    opacity: 0;
+  }
 }
 
 .panel {

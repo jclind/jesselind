@@ -15,6 +15,38 @@ const PAD = 34
 /** Matches the flight duration in the stylesheet. */
 const FLIGHT_MS = 450
 
+type Rect = { left: number; top: number; right: number; bottom: number }
+
+/**
+ * Where a label may sit relative to its dot, best first. `ax`/`ay` are the
+ * fraction of the label pinned to the offset point, so ax:1 hangs it to the
+ * left of the dot and ax:0 to the right.
+ */
+const PLACEMENTS = [
+  { dx: 9, dy: 0, ax: 0, ay: 0.5 },
+  { dx: -9, dy: 0, ax: 1, ay: 0.5 },
+  { dx: 0, dy: -8, ax: 0.5, ay: 1 },
+  { dx: 0, dy: 8, ax: 0.5, ay: 0 },
+  { dx: 8, dy: -7, ax: 0, ay: 1 },
+  { dx: -8, dy: -7, ax: 1, ay: 1 },
+  { dx: 8, dy: 7, ax: 0, ay: 0 },
+  { dx: -8, dy: 7, ax: 1, ay: 0 },
+]
+
+/** Breathing room between two labels, in pixels. */
+const GAP = 4
+/** Radius around a dot that a label should not cover. */
+const DOT = 5
+
+const overlap = (a: Rect, b: Rect) => {
+  const w = Math.min(a.right, b.right + GAP) - Math.max(a.left, b.left - GAP)
+  const h = Math.min(a.bottom, b.bottom + GAP) - Math.max(a.top, b.top - GAP)
+  return w > 0 && h > 0 ? w * h : 0
+}
+
+const covers = (r: Rect, x: number, y: number) =>
+  x > r.left - DOT && x < r.right + DOT && y > r.top - DOT && y < r.bottom + DOT
+
 /** ISO numeric for the United States. */
 const US = '840'
 
@@ -55,6 +87,7 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
   const [failed, setFailed] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const shapeRef = useRef<SVGPathElement>(null)
+  const pinsRef = useRef<HTMLDivElement>(null)
   const flownRef = useRef(false)
 
   useEffect(() => {
@@ -145,6 +178,99 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
     stage.style.transform = ''
   }, [drawing, origin])
 
+  // Labels are placed rather than pinned to one side. Cities cluster (Toronto
+  // and Niagara Falls are 60km apart, a few pixels here), so each label takes
+  // the free-est of eight positions around its dot, in the order they were
+  // authored. Greedy and one pass, which is plenty for a dozen pins.
+  useLayoutEffect(() => {
+    const container = pinsRef.current
+    if (!container) return
+
+    const place = () => {
+      const frame = container.getBoundingClientRect()
+      if (!frame.width) return
+
+      const pins = Array.from(
+        container.querySelectorAll<HTMLElement>('[data-pin]')
+      )
+      const dots = pins.map(pin => {
+        const r = pin.getBoundingClientRect()
+        return { x: r.left - frame.left, y: r.top - frame.top }
+      })
+
+      const placed: Rect[] = []
+      pins.forEach((pin, i) => {
+        const label = pin.querySelector<HTMLElement>('[data-pin-label]')
+        if (!label) return
+
+        label.style.transform = ''
+        const { width, height } = label.getBoundingClientRect()
+        const { x, y } = dots[i]
+
+        let bestCost = Infinity
+        let bestCollision = Infinity
+        let best = PLACEMENTS[0]
+        PLACEMENTS.forEach((candidate, rank) => {
+          const left = x + candidate.dx - candidate.ax * width
+          const top = y + candidate.dy - candidate.ay * height
+          const rect = { left, top, right: left + width, bottom: top + height }
+
+          let collision = 0
+          for (const other of placed) collision += overlap(rect, other)
+          dots.forEach((dot, j) => {
+            if (j !== i && covers(rect, dot.x, dot.y)) collision += 400
+          })
+
+          let cost = collision
+          // Running off the frame is worse than any amount of overlap.
+          if (
+            left < 0 ||
+            top < 0 ||
+            rect.right > frame.width ||
+            rect.bottom > frame.height
+          ) {
+            cost += 1e4
+          }
+          // Breaks ties toward the earlier, more conventional positions.
+          cost += rank
+
+          if (cost < bestCost) {
+            bestCost = cost
+            bestCollision = collision
+            best = candidate
+          }
+        })
+
+        // The label already sits on its dot, so the transform is the offset from
+        // it. Collisions are tested in frame coordinates, which is why the two
+        // are worked out separately.
+        const dx = best.dx - best.ax * width
+        const dy = best.dy - best.ay * height
+        label.style.transform = `translate(${dx}px, ${dy}px)`
+
+        // Eight cities inside greater Toronto need more label width than the
+        // region has pixels, at any frame size, so somewhere the algorithm has
+        // to give up rather than stack names on top of each other. A crowded
+        // label hides and its dot keeps it: hovering brings it back. Earlier
+        // entries in places[] win, so the order there is the priority order.
+        const crowded = bestCollision > width * height * 0.08
+        label.toggleAttribute('data-crowded', crowded)
+        // A hidden label occupies nothing, so the next one may use the space.
+        if (crowded) return
+
+        const left = x + dx
+        const top = y + dy
+        placed.push({ left, top, right: left + width, bottom: top + height })
+      })
+    }
+
+    place()
+    // The frame is sized off the viewport, so every pin moves on resize.
+    const observer = new ResizeObserver(place)
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [drawing])
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -188,14 +314,22 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
         </svg>
 
         {drawing && drawing.pins.length > 0 && (
-          <div className={styles.pins} style={{ animationDelay: `${FLIGHT_MS}ms` }}>
+          <div
+            className={styles.pins}
+            ref={pinsRef}
+            style={{ animationDelay: `${FLIGHT_MS}ms` }}
+          >
             {drawing.pins.map(pin => (
               <span
                 key={pin.name}
+                data-pin=''
                 className={styles.pin}
                 style={{ left: pin.left, top: pin.top }}
               >
-                <span className={styles.pin_label}>{pin.name}</span>
+                <span className={styles.pin_dot} />
+                <span data-pin-label='' className={styles.pin_label}>
+                  {pin.name}
+                </span>
               </span>
             ))}
           </div>
