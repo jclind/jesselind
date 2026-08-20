@@ -19,7 +19,7 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { feature } from 'topojson-client'
+import { feature, mesh } from 'topojson-client'
 import { geoContains } from 'd3-geo'
 import { travelCountries } from '../src/assets/data/travel.ts'
 
@@ -125,10 +125,19 @@ for (const country of travelCountries) {
 }
 
 // ---- subdivisions ----------------------------------------------------------
+// A source hands back the topology and the object to carve up. Both the shapes
+// and the borders come out of the same object, so they cannot drift apart.
 const SOURCES = {
   'us-states': () => {
     const us = load('us-atlas', 'states-10m.json')
-    return feature(us, us.objects.states)
+    // FIPS 60 and up are the overseas territories. geoAlbersUsa projects
+    // nothing outside its own frame, so their shapes drop out at render time
+    // anyway, but their arcs would still be in the border meshes.
+    const states = {
+      ...us.objects.states,
+      geometries: us.objects.states.geometries.filter(g => Number(g.id) < 60),
+    }
+    return [us, states]
   },
 }
 
@@ -142,26 +151,44 @@ for (const country of travelCountries) {
     continue
   }
 
-  const collection = build()
+  const [topology, object] = build()
+  const collection = feature(topology, object)
   const ids = new Set(collection.features.map(f => String(f.id)))
   for (const id of regions.visited) {
     if (!ids.has(id)) problems.push(`${regions.source}: no shape for id '${id}'`)
   }
 
-  const json = JSON.stringify({
-    ...collection,
-    features: collection.features.map(f => ({
+  // Borders ship as meshes rather than as each subdivision's own outline. An
+  // arc shared by two subdivisions appears once, so a border cannot be painted
+  // twice — which is what made a visited/unvisited edge take a different colour
+  // from a visited/visited one, depending on which shape happened to draw last.
+  const interior = mesh(topology, object, (a, b) => a !== b)
+  const exterior = mesh(topology, object, (a, b) => a === b)
+
+  // Only the filled shapes are written out. Everything else is boundary, and
+  // interior plus exterior already covers every subdivision's edges, so the
+  // unvisited polygons would be 150 KB of coordinates nothing draws.
+  const wanted = new Set(regions.visited)
+  const features = collection.features
+    .filter(f => wanted.has(String(f.id)))
+    .map(f => ({
       type: 'Feature',
       id: String(f.id),
       properties: { name: f.properties?.name ?? '' },
       geometry: { ...f.geometry, coordinates: round(f.geometry.coordinates) },
-    })),
+    }))
+
+  const json = JSON.stringify({
+    type: 'FeatureCollection',
+    features,
+    interior: { ...interior, coordinates: round(interior.coordinates) },
+    exterior: { ...exterior, coordinates: round(exterior.coordinates) },
   })
   writeFileSync(join(OUT, `${regions.source}.json`), json)
   total += json.length
   console.log(
     `  --   ${regions.source.padEnd(22)} ${kb(json)} KB  ` +
-      `(${regions.visited.length} of ${collection.features.length} filled)`
+      `(${features.length} of ${collection.features.length} filled)`
   )
 }
 

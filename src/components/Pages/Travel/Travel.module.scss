@@ -296,20 +296,32 @@
   vector-effect: non-scaling-stroke;
 }
 
-// Subdivision layer. Unvisited states are drawn but dim, so the shape of the
-// country still reads while the filled ones carry the information — the same
-// split the world map makes between visited and not.
-.region {
+// Subdivision layer, in three passes: the visited shapes fill, then the borders
+// between subdivisions, then the country's own outline. Borders come from a
+// mesh, so a shared edge is one path rather than two coincident ones, and a
+// visited/unvisited border cannot end up a different colour from a
+// visited/visited one.
+.region_fill {
+  fill: rgba(255, 255, 255, 0.13);
+  stroke: none;
+}
+
+.region_line {
   fill: none;
-  stroke: $tertiary-text;
+  stroke: $secondary-border-color;
   stroke-width: 0.75;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
 
-.visited_region {
-  fill: rgba(255, 255, 255, 0.11);
+// The silhouette, which is what the eye reads first. Matches the outline a
+// country without subdivisions gets from .detail_shape.
+.outline {
+  fill: none;
   stroke: $primary-text;
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 .pins {
@@ -347,6 +359,9 @@
   height: 5px;
   border-radius: 50%;
   background: $primary-text;
+  // Cuts the dot out of whatever is behind it, so it stays a mark rather than
+  // dissolving into a filled state.
+  box-shadow: 0 0 0 1.5px $primary-background;
 
   // A 5px dot is a poor target, so the hit area is widened without moving the
   // mark itself.
@@ -364,10 +379,20 @@
   left: 0;
   top: 0;
   white-space: nowrap;
-  font-size: $fs-xxs;
-  font-weight: 200;
+  font-size: 13px;
+  font-weight: 300;
   line-height: 1.2;
-  color: $secondary-text;
+  // Full white rather than the site's secondary grey: a label can land on the
+  // page background, on a filled state, or across a border, and grey only
+  // holds up on the first.
+  color: $primary-text;
+  // A soft plate of the background colour under the glyphs, which is how an
+  // atlas keeps a place name legible over whatever it crosses. Three stacked
+  // shadows because one at this blur is too thin to cover a white border.
+  text-shadow:
+    0 0 4px $primary-background,
+    0 0 4px $primary-background,
+    0 0 8px $primary-background;
   pointer-events: none;
   transition: opacity 0.2s ease;
 

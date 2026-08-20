@@ -13,7 +13,12 @@ import {
   type TravelCountryType,
   type TravelPlaceType,
 } from '../../../assets/data/travel'
-import { loadCountry, loadRegions, restrictToBox } from './countryGeometry'
+import {
+  loadCountry,
+  loadRegions,
+  restrictToBox,
+  type RegionLayer,
+} from './countryGeometry'
 import styles from './Travel.module.scss'
 
 /**
@@ -128,7 +133,7 @@ export type CountryDetailProps = {
 
 const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
   const [geometry, setGeometry] = useState<GeoJSON.Geometry | null>(null)
-  const [regions, setRegions] = useState<GeoJSON.FeatureCollection | null>(null)
+  const [regions, setRegions] = useState<RegionLayer | null>(null)
   const [failed, setFailed] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const shapeRef = useRef<SVGGElement>(null)
@@ -167,25 +172,33 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
   }, [country.id, country.regions, country.places])
 
   const drawing = useMemo(() => {
-    const source: GeoPermissibleObjects | null = regions ?? geometry
+    // The frame comes from the outline, not the fills: half the states are
+    // unvisited, so fitting to the filled ones would crop Texas off the map.
+    const source: GeoPermissibleObjects | null = regions?.exterior ?? geometry
     if (!source) return null
 
     const projection = projectionFor(country.id, source).fitWidth(W, source)
     const path = geoPath(projection)
 
-    const visited = new Set(country.regions?.visited ?? [])
     const shapes = regions
       ? regions.features.flatMap(f => {
           const d = path(f)
           // geoAlbersUsa projects nothing outside its own frame, which is how
           // Guam and Puerto Rico drop out rather than landing in the Pacific.
-          return d ? [{ key: String(f.id), d, visited: visited.has(String(f.id)) }] : []
+          return d ? [{ key: String(f.id), d }] : []
         })
       : (() => {
           const d = geometry && path(geometry)
-          return d ? [{ key: country.id, d, visited: true }] : []
+          return d ? [{ key: country.id, d }] : []
         })()
-    if (!shapes.length) return null
+
+    const borders = regions
+      ? {
+          interior: path(regions.interior) ?? '',
+          exterior: path(regions.exterior) ?? '',
+        }
+      : null
+    if (!shapes.length && !borders) return null
 
     // Crop the frame to what was drawn rather than fitting the country into a
     // fixed rectangle, so a tall country is not left as a narrow strip down the
@@ -213,8 +226,8 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
       ]
     })
 
-    return { shapes, pins, box, aspect: box.w / box.h }
-  }, [geometry, regions, country.id, country.places, country.regions])
+    return { shapes, borders, pins, box, aspect: box.w / box.h }
+  }, [geometry, regions, country.id, country.places])
 
   // The flight: put the stage where the world map's country is, then let it
   // transition back to its natural place. Measured from the drawn path, not the
@@ -388,17 +401,23 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
         >
           {drawing && (
             <g ref={shapeRef}>
+              {/* Fills first and unstroked, then the borders over the top, so
+                  every edge on the map is drawn by exactly one path. */}
               {drawing.shapes.map(shape => (
                 <path
                   key={shape.key}
                   className={
-                    regions
-                      ? `${styles.region} ${shape.visited ? styles.visited_region : ''}`
-                      : styles.detail_shape
+                    drawing.borders ? styles.region_fill : styles.detail_shape
                   }
                   d={shape.d}
                 />
               ))}
+              {drawing.borders && (
+                <>
+                  <path className={styles.region_line} d={drawing.borders.interior} />
+                  <path className={styles.outline} d={drawing.borders.exterior} />
+                </>
+              )}
             </g>
           )}
         </svg>
