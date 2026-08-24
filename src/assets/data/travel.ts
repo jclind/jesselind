@@ -207,6 +207,7 @@ export const travelCountries: TravelCountryType[] = [
     id: '752',
     name: 'Sweden',
     visits: ['Aug 2026'],
+    routes: [['Stockholm', 'Nynäshamn', 'Visby', 'Nynäshamn', 'Stockholm']],
     places: [
       { name: 'Stockholm', lat: 59.3293, lng: 18.0686 },
       { name: 'Visby', lat: 57.6348, lng: 18.2948 },

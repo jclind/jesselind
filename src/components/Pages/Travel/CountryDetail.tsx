@@ -299,10 +299,21 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
 
       const shafts: string[] = []
       const heads: string[] = []
+      // A leg retracing one already drawn contributes only time. Its shaft
+      // lands exactly on the earlier one, and the draw animation walks the
+      // whole path, so Stockholm out to Visby and back would spend half its run
+      // redrawing a line already on screen. The arrowhead still goes on, and
+      // that is what makes the leg two-headed and says you came back the way
+      // you went.
+      const traced = new Set<string>()
       for (let i = 1; i < stops.length; i++) {
         const drawn = leg(stops[i - 1].point, stops[i].point)
         if (!drawn) continue
-        shafts.push(drawn.shaft)
+        const pair = [stops[i - 1].name, stops[i].name].sort().join('\u0000')
+        if (!traced.has(pair)) {
+          traced.add(pair)
+          shafts.push(drawn.shaft)
+        }
         heads.push(drawn.head)
       }
 
