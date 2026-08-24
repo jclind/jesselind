@@ -55,6 +55,60 @@ const GAP = 4
 /** Radius around a dot that a label should not cover. */
 const DOT = 5
 
+/**
+ * How far a leg stops short of the city at each end, in projected units. The
+ * frame is always ~1068 units wide, so this is a fixed ~10px gap at full size:
+ * enough that the line reads as running between the dots rather than through
+ * them, and that the arrowhead lands clear of the next city's name.
+ */
+const TRIM = 9
+/** Arrowhead half-length, same units. */
+const HEAD = 7
+/** Arrowhead half-angle, radians. Narrow enough to read at a 1px stroke. */
+const SPREAD = 0.42
+/** Below this a leg is shorter than the two dots it runs between. */
+const MIN_LEG = 8
+
+type Point = [number, number]
+
+/**
+ * One leg as a shaft plus a chevron on its far end. The chevron is drawn rather
+ * than left to an SVG marker because the route uses non-scaling-stroke: a
+ * marker would keep its user-space size while the line held at 1px, so the two
+ * would come apart at anything other than full width.
+ */
+const leg = ([ax, ay]: Point, [bx, by]: Point) => {
+  const dx = bx - ax
+  const dy = by - ay
+  const length = Math.hypot(dx, dy)
+  if (length < MIN_LEG) return null
+
+  // A short leg shrinks its trim and its arrowhead rather than being dropped.
+  // Tokyo to Okutama is 50km, about 17 units at this scale, and at the full
+  // trim there is nothing left of it but a hole in the itinerary.
+  const scale = Math.min(1, length / (TRIM * 2 + HEAD))
+  const trim = TRIM * scale
+  const head = HEAD * scale
+
+  const ux = dx / length
+  const uy = dy / length
+  const from: Point = [ax + ux * trim, ay + uy * trim]
+  const to: Point = [bx - ux * trim, by - uy * trim]
+
+  const angle = Math.atan2(uy, ux)
+  const wing = (turn: number): Point => [
+    to[0] - head * Math.cos(angle + turn),
+    to[1] - head * Math.sin(angle + turn),
+  ]
+  const [lx, ly] = wing(SPREAD)
+  const [rx, ry] = wing(-SPREAD)
+
+  return {
+    shaft: `M${from[0]},${from[1]}L${to[0]},${to[1]}`,
+    head: `M${lx},${ly}L${to[0]},${to[1]}L${rx},${ry}`,
+  }
+}
+
 const overlap = (a: Rect, b: Rect) => {
   const w = Math.min(a.right, b.right + GAP) - Math.max(a.left, b.left - GAP)
   const h = Math.min(a.bottom, b.bottom + GAP) - Math.max(a.top, b.top - GAP)
@@ -135,6 +189,9 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
   const [geometry, setGeometry] = useState<GeoJSON.Geometry | null>(null)
   const [regions, setRegions] = useState<RegionLayer | null>(null)
   const [failed, setFailed] = useState(false)
+  // Which trip the view is filtered to. null is 'all', the view a country had
+  // before its visits were split into routes, and the state it opens in.
+  const [trip, setTrip] = useState<number | null>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const shapeRef = useRef<SVGGElement>(null)
   const pinsRef = useRef<HTMLDivElement>(null)
@@ -211,9 +268,11 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
       h: y1 - y0 + PAD * 2,
     }
 
+    const projected = new Map<string, Point>()
     const pins = (country.places ?? []).flatMap(place => {
       const point = projection([place.lng, place.lat])
       if (!point) return []
+      projected.set(place.name, [point[0], point[1]])
       // Percentages of the frame rather than user units, so the labels are
       // typeset in CSS alongside the rest of the page instead of scaling with
       // the drawing.
@@ -226,8 +285,37 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
       ]
     })
 
-    return { shapes, borders, pins, box, aspect: box.w / box.h }
-  }, [geometry, regions, country.id, country.places])
+    // Every trip's route is worked out up front, not when one is picked. The
+    // geometry depends only on the projection, so switching trips comes down to
+    // swapping two path strings and a class.
+    const routes = (country.routes ?? []).map(route => {
+      const stops = route.flatMap(name => {
+        const point = projected.get(name)
+        return point ? [{ name, point }] : []
+      })
+
+      const shafts: string[] = []
+      const heads: string[] = []
+      for (let i = 1; i < stops.length; i++) {
+        const drawn = leg(stops[i - 1].point, stops[i].point)
+        if (!drawn) continue
+        shafts.push(drawn.shaft)
+        heads.push(drawn.head)
+      }
+
+      // Where each place falls in the itinerary, counting from 1. A place can
+      // hold more than one number: leaving Tokyo and coming home through it is
+      // one dot with two positions on the timeline.
+      const order = new Map<string, number[]>()
+      stops.forEach((stop, i) => {
+        order.set(stop.name, [...(order.get(stop.name) ?? []), i + 1])
+      })
+
+      return { shafts: shafts.join(''), heads: heads.join(''), order }
+    })
+
+    return { shapes, borders, pins, routes, box, aspect: box.w / box.h }
+  }, [geometry, regions, country.id, country.places, country.routes])
 
   // The flight: put the stage where the world map's country is, then let it
   // transition back to its natural place. Measured from the drawn path, not the
@@ -295,6 +383,12 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
         const label = pin.querySelector<HTMLElement>('[data-pin-label]')
         if (!label) return
 
+        // Not on the selected trip. Its dot stays as context and CSS hides the
+        // name, but it is still given a position, so hovering the dot puts the
+        // name somewhere sensible. It reserves nothing, which is what lets the
+        // trip's own labels spread into the space the other half gave up.
+        const off = pin.hasAttribute('data-off')
+
         label.style.transform = ''
         const measured = label.getBoundingClientRect()
         const labelW = measured.width / scale
@@ -342,10 +436,10 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
         // to give up rather than stack names on top of each other. A crowded
         // label hides and its dot keeps it: hovering brings it back. Earlier
         // entries in places[] win, so the order there is the priority order.
-        const crowded = bestCollision > labelW * labelH * 0.08
+        const crowded = !off && bestCollision > labelW * labelH * 0.08
         label.toggleAttribute('data-crowded', crowded)
         // A hidden label occupies nothing, so the next one may use the space.
-        if (crowded) return
+        if (crowded || off) return
 
         const left = x + dx
         const top = y + dy
@@ -358,7 +452,7 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
     const observer = new ResizeObserver(place)
     observer.observe(container)
     return () => observer.disconnect()
-  }, [drawing])
+  }, [drawing, trip])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -368,9 +462,17 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  // The itinerary in view, or null in 'all'. A country whose visits carry no
+  // routes never gets a toggle, so it can never be anything but null.
+  const route = trip === null ? null : (drawing?.routes[trip] ?? null)
+  const trips = country.routes?.length ? country.visits : undefined
+
   return (
     <div
       className={styles.overlay}
+      // Carries the selected trip's colour down to both the map and the panel,
+      // which are siblings, as --trip.
+      data-trip={trip ?? undefined}
       role='dialog'
       aria-modal='true'
       aria-label={country.name}
@@ -420,6 +522,22 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
               )}
             </g>
           )}
+
+          {/* Keyed on the trip so picking another one remounts the layer and
+              the route draws itself again rather than cutting between two. */}
+          {route && (
+            <g key={trip}>
+              {/* pathLength normalises the whole polyline to 1, so one dash the
+                  length of the route walks it end to end without anyone having
+                  to measure it. */}
+              <path
+                className={styles.route_line}
+                d={route.shafts}
+                pathLength={1}
+              />
+              <path className={styles.route_head} d={route.heads} />
+            </g>
+          )}
         </svg>
 
         {drawing && drawing.pins.length > 0 && (
@@ -428,27 +546,59 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
             ref={pinsRef}
             style={{ animationDelay: `${FLIGHT_MS}ms` }}
           >
-            {drawing.pins.map(pin => (
-              <span
-                key={pin.name}
-                data-pin=''
-                className={styles.pin}
-                style={{ left: pin.left, top: pin.top }}
-              >
-                <span className={styles.pin_dot} />
-                <span data-pin-label='' className={styles.pin_label}>
-                  {pin.name}
+            {drawing.pins.map(pin => {
+              const order = route?.order.get(pin.name)
+              return (
+                <span
+                  key={pin.name}
+                  data-pin=''
+                  data-off={route && !order ? '' : undefined}
+                  className={styles.pin}
+                  style={{ left: pin.left, top: pin.top }}
+                >
+                  <span className={styles.pin_dot} />
+                  <span data-pin-label='' className={styles.pin_label}>
+                    {order && (
+                      <span className={styles.pin_order}>{order.join(',')}</span>
+                    )}
+                    {pin.name}
+                  </span>
                 </span>
-              </span>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
 
       <div className={styles.panel} style={{ animationDelay: `${FLIGHT_MS * 0.6}ms` }}>
         <h2 className={styles.panel_name}>{country.name}</h2>
-        {country.visits && (
-          <p className={styles.panel_visits}>{country.visits.join(' · ')}</p>
+        {trips ? (
+          <div className={styles.trips} role='group' aria-label='Trips'>
+            <button
+              type='button'
+              className={styles.trip}
+              aria-pressed={trip === null}
+              onClick={() => setTrip(null)}
+            >
+              all
+            </button>
+            {trips.map((label, i) => (
+              <button
+                key={label}
+                type='button'
+                className={styles.trip}
+                data-trip={i}
+                aria-pressed={trip === i}
+                onClick={() => setTrip(trip === i ? null : i)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        ) : (
+          country.visits && (
+            <p className={styles.panel_visits}>{country.visits.join(' · ')}</p>
+          )
         )}
         {country.notes && (
           <div

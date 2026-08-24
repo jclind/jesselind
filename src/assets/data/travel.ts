@@ -19,6 +19,16 @@ export type TravelCountryType = {
    */
   visits?: string[]
   /**
+   * One itinerary per entry in `visits`, in the same order, which is what turns
+   * the detail view's trip toggle on. Each is place names in the order they
+   * were visited, matched against `places` by exact name. A name may repeat:
+   * flying home through Tokyo is a leg worth drawing. `npm run geo` fails if a
+   * name has no place or if the two arrays are different lengths, so they
+   * cannot drift apart. Leave the field off and the country draws the way it
+   * always has, every pin at once and no route.
+   */
+  routes?: string[][]
+  /**
    * Cities pinned on the country's detail view. The world map ignores these.
    * Coordinates are decimal degrees, positive north and east.
    */
@@ -143,6 +153,27 @@ export const travelCountries: TravelCountryType[] = [
     id: '392',
     name: 'Japan',
     visits: ['May 2023', 'May–Jul 2025'],
+    // TODO(jesse): both orders are a guess. The first is the classic
+    // Tokyo/Kansai loop, the second is everything else. Rewrite them to what
+    // actually happened. The route on the map is drawn from these arrays alone,
+    // so nothing else needs touching.
+    routes: [
+      ['Tokyo', 'Mount Fuji', 'Kyoto', 'Osaka', 'Tokyo'],
+      [
+        'Tokyo',
+        'Okutama',
+        'Yokohama',
+        'Nagoya',
+        'Nagano',
+        'Mount Togakushi',
+        'Nikko',
+        'Fukuoka',
+        'Nagasaki',
+        'Hakodate',
+        'Sapporo',
+        'Tokyo',
+      ],
+    ],
     places: [
       { name: 'Tokyo', lat: 35.6762, lng: 139.6503 },
       { name: 'Sapporo', lat: 43.0618, lng: 141.3545 },

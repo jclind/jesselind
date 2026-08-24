@@ -12,6 +12,10 @@ $secondary-background: #282828; // Secondary background color
 $primary-accent: #276aed; // Primary accent color
 $secondary-accent: #973000; // Secondary accent color
 
+// Trip colours for the travel map's routes. Lifted out of the two accents
+// above, which are mixed for large fills and go muddy as hairlines on black.
+$trip-colors: #5b9dff, #ff8a3d;
+
 $border-color: #313131; // Default border color
 $secondary-border-color: #575757; // Secondary border color
 

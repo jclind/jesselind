@@ -329,6 +329,54 @@
   vector-effect: non-scaling-stroke;
 }
 
+// One colour per trip, hung on the overlay so the map and the panel below it,
+// which are siblings, both read the same value. Falls back to white, which is
+// what 'all' and any country with a single unnamed visit get.
+.overlay,
+.trip {
+  --trip: #{$primary-text};
+}
+
+@for $i from 1 through length($trip-colors) {
+  .overlay[data-trip='#{$i - 1}'],
+  .trip[data-trip='#{$i - 1}'] {
+    --trip: #{nth($trip-colors, $i)};
+  }
+}
+
+// The itinerary: a line per leg, then the arrowheads. Two paths rather than one
+// so the line can draw itself in travel order while the arrows just fade in.
+.route_line,
+.route_head {
+  fill: none;
+  stroke: var(--trip);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.route_line {
+  // pathLength=1 in the markup, so one dash of the full length starts hidden
+  // and walks the route from the first city to the last.
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw_route 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.route_head {
+  opacity: 0;
+  // Starts once the line is most of the way there, so the arrows land behind
+  // the line rather than sitting ahead of it waiting.
+  animation: fade_in 0.5s ease 1s forwards;
+}
+
+@keyframes draw_route {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .pins {
   position: absolute;
   inset: 0;
@@ -375,6 +423,36 @@
     position: absolute;
     inset: -8px;
   }
+}
+
+// A city on the selected trip takes that trip's colour, so the dots and the
+// line between them read as one thing.
+.pin:not([data-off]) .pin_dot {
+  background: var(--trip);
+}
+
+// A city on one of the other trips. The dot stays, because the answer to
+// 'where have you been in Japan' shouldn't change when you pick a trip, but it
+// drops back far enough that the itinerary is what you read. Its name is
+// hidden; hovering the dot brings it back, the same as a crowded one.
+.pin[data-off] {
+  .pin_dot {
+    background: $tertiary-text;
+    box-shadow: none;
+  }
+
+  .pin_label {
+    opacity: 0;
+  }
+}
+
+// The city's position in the itinerary. Two numbers means the route passed
+// through twice.
+.pin_order {
+  margin-right: 0.45em;
+  color: var(--trip);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
 // Positioned by the placement pass in CountryDetail, which writes a transform.
@@ -431,6 +509,52 @@
   color: $secondary-text;
 }
 
+// Replaces the plain dates line for a country whose visits carry routes. Text
+// buttons rather than a segmented control: the panel is four lines of thin type
+// over a map, and a box around anything here would be the loudest thing on the
+// screen.
+.trips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 $gap-small;
+  margin-top: $gap-tiny;
+}
+
+.trip {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: $fs-xs;
+  font-weight: 200;
+  line-height: 1.6;
+  color: $tertiary-text;
+  cursor: pointer;
+  transition: color 0.25s ease;
+
+  &:hover {
+    color: $secondary-text;
+  }
+
+  &[aria-pressed='true'] {
+    color: var(--trip);
+    font-weight: 400;
+  }
+
+  // global.scss rings anything focused, mouse or keyboard. On a toggle you
+  // click often that leaves a white box parked around your last choice, and the
+  // colour and weight above already say which one is on. Dropped for the mouse,
+  // kept for the keyboard, where it is the only thing marking your place.
+  &:focus {
+    outline: none !important;
+  }
+
+  &:focus-visible {
+    outline: 1px solid $secondary-border-color !important;
+    outline-offset: 3px;
+  }
+}
+
 .panel_notes {
   margin-top: $gap-small;
   font-size: $fs-xs;
@@ -467,12 +591,19 @@
 @media (prefers-reduced-motion: reduce) {
   .overlay,
   .pins,
-  .panel {
+  .panel,
+  .route_head {
     animation: none;
     opacity: 1;
   }
 
   .stage {
     transition: none;
+  }
+
+  // The whole route, drawn at once.
+  .route_line {
+    animation: none;
+    stroke-dashoffset: 0;
   }
 }

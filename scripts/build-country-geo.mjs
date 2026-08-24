@@ -8,8 +8,10 @@
 // chunk, so the detail view fetches a country's file when you open it.
 //
 // It also checks the data: every pin must fall inside the country it is listed
-// under, and every region id must match a shape. A bad coordinate is otherwise
-// invisible until you notice a city sitting in the sea.
+// under, every region id must match a shape, and every name on a trip route
+// must match a place. A bad coordinate is otherwise invisible until you notice
+// a city sitting in the sea, and a misspelt route name until you notice a leg
+// missing from the itinerary.
 //
 // Overseas territories are left in. FILL_BOUNDS in travel.ts trims them at
 // render time, so the box stays defined in exactly one place.
@@ -113,6 +115,29 @@ for (const country of travelCountries) {
     }
   }
 
+  // Routes name places rather than repeating coordinates, so a typo would
+  // otherwise drop a leg out of the itinerary with nothing to show for it.
+  const names = new Set((country.places ?? []).map(place => place.name))
+  const routes = country.routes ?? []
+  if (routes.length && routes.length !== (country.visits ?? []).length) {
+    problems.push(
+      `${country.name}: ${routes.length} route(s) for ` +
+        `${(country.visits ?? []).length} visit(s). One route per visit, same order.`
+    )
+  }
+  for (const [i, route] of routes.entries()) {
+    for (const name of route) {
+      if (!names.has(name)) {
+        problems.push(`${country.name}: route ${i + 1} names '${name}', which is not a place.`)
+      }
+    }
+  }
+  for (const name of names) {
+    if (routes.length && !routes.some(route => route.includes(name))) {
+      problems.push(`${country.name}: '${name}' is on no route, so it draws greyed on every trip.`)
+    }
+  }
+
   const json = JSON.stringify({
     type: 'Feature',
     id: country.id,
@@ -207,4 +232,7 @@ if (problems.length) {
   for (const p of problems) console.error(`  - ${p}`)
   process.exit(1)
 }
-console.log('\nEvery pin resolves to its country and every region id has a shape.')
+console.log(
+  '\nEvery pin resolves to its country, every region id has a shape, and every ' +
+    'route name has a place.'
+)
