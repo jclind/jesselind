@@ -153,24 +153,21 @@ export const travelCountries: TravelCountryType[] = [
     id: '392',
     name: 'Japan',
     visits: ['May 2023', 'May–Jul 2025'],
-    // TODO(jesse): both orders are a guess. The first is the classic
-    // Tokyo/Kansai loop, the second is everything else. Rewrite them to what
-    // actually happened. The route on the map is drawn from these arrays alone,
-    // so nothing else needs touching.
     routes: [
-      ['Tokyo', 'Mount Fuji', 'Kyoto', 'Osaka', 'Tokyo'],
+      ['Tokyo', 'Sapporo', 'Hakodate', 'Tokyo', 'Yokohama', 'Kyoto', 'Osaka', 'Tokyo'],
       [
+        'Sapporo',
         'Tokyo',
-        'Okutama',
-        'Yokohama',
+        'Fukuoka',
+        'Nagasaki',
+        'Osaka',
+        'Kyoto',
         'Nagoya',
+        'Tokyo',
+        'Mount Fuji',
         'Nagano',
         'Mount Togakushi',
         'Nikko',
-        'Fukuoka',
-        'Nagasaki',
-        'Hakodate',
-        'Sapporo',
         'Tokyo',
       ],
     ],

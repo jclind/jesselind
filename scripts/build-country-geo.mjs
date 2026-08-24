@@ -87,6 +87,7 @@ mkdirSync(join(OUT, 'countries'), { recursive: true })
 
 const problems = []
 const offshore = []
+const orphans = []
 
 // ---- countries -------------------------------------------------------------
 const world = load('world-atlas', 'countries-50m.json')
@@ -134,7 +135,10 @@ for (const country of travelCountries) {
   }
   for (const name of names) {
     if (routes.length && !routes.some(route => route.includes(name))) {
-      problems.push(`${country.name}: '${name}' is on no route, so it draws greyed on every trip.`)
+      // Reported, not fatal. A place can honestly sit outside every listed
+      // trip, and it still draws — as the dim dot an off-trip city gets, on
+      // every trip rather than on all but one.
+      orphans.push(`${country.name}: '${name}' is on no route`)
     }
   }
 
@@ -225,6 +229,14 @@ if (offshore.length) {
       'the geometry, not the data:'
   )
   for (const o of offshore) console.log(`  - ${o}`)
+}
+
+if (orphans.length) {
+  console.log(
+    `\n${orphans.length} place(s) on no trip route, so they stay dim whichever ` +
+      'trip is picked. Add them to a route if that is not what you meant:'
+  )
+  for (const o of orphans) console.log(`  - ${o}`)
 }
 
 if (problems.length) {

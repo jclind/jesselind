@@ -1,5 +1,13 @@
 @use '../../../styles/vars' as *;
 
+// Every coastline on the detail view, whether it is a country's own outline or
+// the silhouette around a set of subdivisions. Deliberately not $primary-text:
+// city labels are white, and a white coast running through white glyphs merged
+// with them. No amount of halo fixes two things being the same colour. Lighter
+// than $secondary-border-color so the silhouette still leads the state borders
+// drawn in that colour inside it.
+$coast: #8a8a8a;
+
 .travel {
   position: relative;
   min-height: 100vh;
@@ -288,9 +296,10 @@
 // An outline rather than a fill. At this size a solid shape becomes a grey slab
 // that the panel text has to sit on top of, and the hairline reads better
 // against the rest of the site.
+//
 .detail_shape {
   fill: rgba(255, 255, 255, 0.045);
-  stroke: $primary-text;
+  stroke: $coast;
   stroke-width: 1;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
@@ -311,6 +320,9 @@
   stroke: none;
 }
 
+// A step below $coast, so the country still reads as one shape with divisions
+// inside it rather than as a mesh of equal lines. Any darker and a border
+// between two unvisited states disappears into the background.
 .region_line {
   fill: none;
   stroke: $secondary-border-color;
@@ -323,7 +335,7 @@
 // country without subdivisions gets from .detail_shape.
 .outline {
   fill: none;
-  stroke: $primary-text;
+  stroke: $coast;
   stroke-width: 1;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
