@@ -190,8 +190,11 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
   const [regions, setRegions] = useState<RegionLayer | null>(null)
   const [failed, setFailed] = useState(false)
   // Which trip the view is filtered to. null is 'all', the view a country had
-  // before its visits were split into routes, and the state it opens in.
-  const [trip, setTrip] = useState<number | null>(null)
+  // before its visits were split into routes. A country with a single route has
+  // nothing to toggle between, so that route is simply how it draws.
+  const [trip, setTrip] = useState<number | null>(
+    country.routes?.length === 1 ? 0 : null
+  )
   const stageRef = useRef<HTMLDivElement>(null)
   const shapeRef = useRef<SVGGElement>(null)
   const pinsRef = useRef<HTMLDivElement>(null)
@@ -465,7 +468,7 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
   // The itinerary in view, or null in 'all'. A country whose visits carry no
   // routes never gets a toggle, so it can never be anything but null.
   const route = trip === null ? null : (drawing?.routes[trip] ?? null)
-  const trips = country.routes?.length ? country.visits : undefined
+  const trips = (country.routes?.length ?? 0) > 1 ? country.visits : undefined
 
   return (
     <div

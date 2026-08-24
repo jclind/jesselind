@@ -167,6 +167,7 @@ export const travelCountries: TravelCountryType[] = [
         'Mount Fuji',
         'Nagano',
         'Mount Togakushi',
+        'Okutama',
         'Nikko',
         'Tokyo',
       ],
@@ -192,6 +193,9 @@ export const travelCountries: TravelCountryType[] = [
     id: '704',
     name: 'Vietnam',
     visits: ['Jun 2026'],
+    routes: [
+      ['Ho Chi Minh City', 'Ha Noi', 'Ninh Binh', 'Ha Noi', 'Ha Giang', 'Ha Noi'],
+    ],
     places: [
       { name: 'Ha Noi', lat: 21.0278, lng: 105.8342 },
       { name: 'Ho Chi Minh City', lat: 10.8231, lng: 106.6297 },
