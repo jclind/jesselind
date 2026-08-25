@@ -318,6 +318,13 @@ $coast: #8a8a8a;
 .region_fill {
   fill: $secondary-text;
   stroke: none;
+  transition: fill 0.2s ease;
+
+  // Brightens under the pointer, the same acknowledgement a country gets on the
+  // world map, so the tooltip has something to point at.
+  &:hover {
+    fill: $primary-text;
+  }
 }
 
 // A step below $coast, so the country still reads as one shape with divisions
@@ -329,6 +336,10 @@ $coast: #8a8a8a;
   stroke-width: 0.75;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
+  // Borders draw over the fills, and an unfilled path is still hit on its
+  // stroke. Left alone, running the cursor along a state's edge would land on
+  // the border instead of the state and blink the tooltip out.
+  pointer-events: none;
 }
 
 // The silhouette, which is what the eye reads first. Matches the outline a
@@ -339,6 +350,7 @@ $coast: #8a8a8a;
   stroke-width: 1;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
+  pointer-events: none;
 }
 
 // One colour per trip, hung on the overlay so the map and the panel below it,
@@ -557,6 +569,42 @@ $coast: #8a8a8a;
   // click often that leaves a white box parked around your last choice, and the
   // colour and weight above already say which one is on. Dropped for the mouse,
   // kept for the keyboard, where it is the only thing marking your place.
+  &:focus {
+    outline: none !important;
+  }
+
+  &:focus-visible {
+    outline: 1px solid $secondary-border-color !important;
+    outline-offset: 3px;
+  }
+}
+
+// The address bar is already correct at every moment, but nobody looks there on
+// a page that behaves like an app. Same thin type as the trip toggle above it,
+// for the same reason: a bordered button here would outshout the country name.
+.copy {
+  margin-top: $gap-regular;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: $fs-xs;
+  font-weight: 200;
+  line-height: 1.6;
+  color: $tertiary-text;
+  cursor: pointer;
+  transition: color 0.25s ease;
+
+  &:hover {
+    color: $secondary-text;
+  }
+
+  // The confirmation is the word itself changing, so it has to be readable for
+  // the second and a half it is up.
+  &:not([data-state='idle']) {
+    color: $secondary-text;
+  }
+
   &:focus {
     outline: none !important;
   }

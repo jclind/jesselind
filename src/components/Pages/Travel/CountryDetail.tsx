@@ -32,6 +32,17 @@ const PAD = 34
 /** Matches the flight duration in the stylesheet. */
 const FLIGHT_MS = 450
 
+/** Flip the tooltip to the cursor's left inside this margin of the right edge. */
+const TOOLTIP_EDGE = 220
+
+/** How long 'link copied' stays up before the button offers itself again. */
+const COPIED_MS = 1600
+
+/** How long to wait on the clipboard before calling it a failure. */
+const COPY_TIMEOUT_MS = 1200
+
+type RegionTip = { name: string; x: number; y: number; flip: boolean }
+
 type Rect = { left: number; top: number; right: number; bottom: number }
 
 /**
@@ -202,6 +213,10 @@ const CountryDetail = ({
   const [geometry, setGeometry] = useState<GeoJSON.Geometry | null>(null)
   const [regions, setRegions] = useState<RegionLayer | null>(null)
   const [failed, setFailed] = useState(false)
+  // The subdivision under the pointer, which only a country with regions can
+  // raise. Pointer-only, like the world map's tooltip.
+  const [regionTip, setRegionTip] = useState<RegionTip | null>(null)
+  const [copyState, setCopyState] = useState<'idle' | 'done' | 'failed'>('idle')
   const stageRef = useRef<HTMLDivElement>(null)
   const shapeRef = useRef<SVGGElement>(null)
   const pinsRef = useRef<HTMLDivElement>(null)
@@ -252,11 +267,12 @@ const CountryDetail = ({
           const d = path(f)
           // geoAlbersUsa projects nothing outside its own frame, which is how
           // Guam and Puerto Rico drop out rather than landing in the Pacific.
-          return d ? [{ key: String(f.id), d }] : []
+          const name = String(f.properties?.name ?? '')
+          return d ? [{ key: String(f.id), name, d }] : []
         })
       : (() => {
           const d = geometry && path(geometry)
-          return d ? [{ key: country.id, d }] : []
+          return d ? [{ key: country.id, name: country.name, d }] : []
         })()
 
     const borders = regions
@@ -483,6 +499,40 @@ const CountryDetail = ({
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  const copyLink = async () => {
+    try {
+      // The page keeps the address bar right as you open a country and pick a
+      // trip, so the link worth sharing is whatever is in it when you ask. No
+      // point rebuilding it here and giving the same URL two authors.
+      //
+      // Raced against a timer because writeText does not always settle: in a
+      // tab the window manager has not focused it can sit pending forever, and
+      // a button waiting on a promise that never resolves is a button that
+      // looks broken. Losing the race is reported as a failure, which is what
+      // it is from where the reader sits.
+      await Promise.race([
+        navigator.clipboard.writeText(window.location.href),
+        new Promise((_, reject) => setTimeout(reject, COPY_TIMEOUT_MS)),
+      ])
+      setCopyState('done')
+    } catch {
+      // Denied permission, or a page served over plain http, where the
+      // clipboard API does not exist at all. Say so rather than looking dead.
+      setCopyState('failed')
+    }
+  }
+
+  useEffect(() => {
+    if (copyState === 'idle') return
+    const timer = setTimeout(() => setCopyState('idle'), COPIED_MS)
+    return () => clearTimeout(timer)
+  }, [copyState])
+
+  // Picking another trip changes the link, so the confirmation stops being true.
+  useEffect(() => {
+    setCopyState('idle')
+  }, [trip])
+
   // The itinerary in view, or null in 'all'. A country whose visits carry no
   // routes never gets a toggle, so it can never be anything but null.
   const route = trip === null ? null : (drawing?.routes[trip] ?? null)
@@ -533,6 +583,23 @@ const CountryDetail = ({
                     drawing.borders ? styles.region_fill : styles.detail_shape
                   }
                   d={shape.d}
+                  // Only a subdivision names itself on hover. A country without
+                  // regions is one shape whose name is already the heading two
+                  // inches away, so a tooltip there would just repeat it.
+                  onMouseMove={
+                    drawing.borders
+                      ? e =>
+                          setRegionTip({
+                            name: shape.name,
+                            x: e.clientX,
+                            y: e.clientY,
+                            flip: e.clientX > window.innerWidth - TOOLTIP_EDGE,
+                          })
+                      : undefined
+                  }
+                  onMouseLeave={
+                    drawing.borders ? () => setRegionTip(null) : undefined
+                  }
                 />
               ))}
               {drawing.borders && (
@@ -630,7 +697,32 @@ const CountryDetail = ({
         {failed && (
           <p className={styles.panel_visits}>Map unavailable. Try reloading.</p>
         )}
+
+        <button
+          type='button'
+          className={styles.copy}
+          data-state={copyState}
+          onClick={copyLink}
+        >
+          {copyState === 'done'
+            ? 'link copied'
+            : copyState === 'failed'
+              ? "couldn't copy"
+              : 'copy link'}
+        </button>
       </div>
+
+      {/* Hidden from screen readers: it tracks the cursor, so there is no way
+          to reach it without a pointer in the first place. */}
+      {regionTip && (
+        <div
+          className={`${styles.tooltip} ${regionTip.flip ? styles.flip : ''}`}
+          style={{ left: regionTip.x, top: regionTip.y }}
+          aria-hidden='true'
+        >
+          {regionTip.name}
+        </div>
+      )}
     </div>
   )
 }
