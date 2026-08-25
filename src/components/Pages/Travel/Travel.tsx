@@ -94,12 +94,14 @@ const warm = (country: TravelCountryType) => {
 }
 
 /**
- * How long to hold on the world map before flying into a linked country. The
- * shape has to be on screen to fly out of, so the wait follows its place in the
- * fill-in stagger and then some of its own fade. The floor keeps the first few
- * countries from flashing past before you have seen the map at all.
+ * How long the world map holds before flying into a linked country. Fixed, not
+ * scaled to the country's place in the fill-in stagger: the map is rushed in on
+ * a link, so everything is on screen well before this, and a wait that grew
+ * with a country's position in an array was an implementation detail the reader
+ * could feel. Long enough to register the world, short enough to read as a
+ * transition rather than a delay.
  */
-const holdFor = (index: number) => Math.max(600, index * STAGGER * 1000 + 300)
+const LINK_HOLD_MS = 450
 
 const Travel = () => {
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -110,6 +112,11 @@ const Travel = () => {
   // has one owner.
   const [trip, setTrip] = useState<number | null>(null)
   const [origin, setOrigin] = useState<DOMRect | null>(null)
+  // Whether the world map skips its stagger and fills at once, which is what a
+  // link arrival wants. Set from an effect rather than during render, because
+  // the server has no address bar to read and a class that differed between the
+  // two renders would be a hydration mismatch.
+  const [rushed, setRushed] = useState(false)
   // Whether this component put the current entry on the history stack, which
   // decides whether closing can go back or has to rewrite the URL in place.
   const pushedRef = useRef(false)
@@ -202,10 +209,13 @@ const Travel = () => {
     const linked = fromSearch(window.location.search)
 
     if (linked.id) {
-      const index = travelCountries.findIndex(c => c.id === linked.id)
+      const country = travelCountries.find(c => c.id === linked.id)!
       // Starts now so the fetch runs under the hold instead of after it.
-      warm(travelCountries[index])
+      warm(country)
       setTrip(linked.trip)
+      // Fills the map at once rather than country by country, so the hold does
+      // not have to wait on a stagger it is about to fly past anyway.
+      setRushed(true)
 
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         // No flight to wait for, so the hold would be a delay that buys
@@ -214,8 +224,8 @@ const Travel = () => {
       } else {
         timer = window.setTimeout(() => {
           const shape = document.querySelector(`[data-country="${linked.id}"]`)
-          show(linked.id!, shape ? shape.getBoundingClientRect() : null)
-        }, holdFor(index))
+          show(country.id, shape ? shape.getBoundingClientRect() : null)
+        }, LINK_HOLD_MS)
       }
     } else if (new URLSearchParams(window.location.search).has('country')) {
       // Named a country that is not on the list. Drop the parameter so the
@@ -253,7 +263,9 @@ const Travel = () => {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.map_wrap}>
+        <div
+          className={`${styles.map_wrap} ${rushed ? styles.rushed : ''}`}
+        >
           <GeoMap
             topology={world}
             objectKey='countries'

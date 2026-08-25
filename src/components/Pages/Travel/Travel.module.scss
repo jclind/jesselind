@@ -42,6 +42,18 @@ $coast: #8a8a8a;
   container-type: inline-size;
 }
 
+// Arriving on a link, the world is context on the way to one country rather
+// than the thing being read, so it fills at once instead of country by country.
+// Country and row alike carry an inline animation-delay, and !important is what
+// it takes to beat one.
+.rushed {
+  .visited,
+  .row {
+    animation-delay: 0s !important;
+    animation-duration: 0.28s;
+  }
+}
+
 .map {
   display: block;
   width: 100%;
