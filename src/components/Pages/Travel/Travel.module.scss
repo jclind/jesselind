@@ -298,6 +298,13 @@ $coast: #8a8a8a;
   transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+// Geometry that arrived too late to fly. Set on the stage from the flight
+// effect, which is the only place that knows how long the fetch took.
+.late .detail_map {
+  opacity: 0;
+  animation: fade_in 0.35s ease forwards;
+}
+
 .detail_map {
   display: block;
   width: 100%;
@@ -664,7 +671,8 @@ $coast: #8a8a8a;
   .overlay,
   .pins,
   .panel,
-  .route_head {
+  .route_head,
+  .late .detail_map {
     animation: none;
     opacity: 1;
   }

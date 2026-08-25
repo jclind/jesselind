@@ -37,6 +37,7 @@
   "devDependencies": {
     "@types/d3-geo": "^3.1.1",
     "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
     "us-atlas": "^3.0.1"
   }
 }

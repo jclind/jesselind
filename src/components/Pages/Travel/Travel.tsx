@@ -120,6 +120,11 @@ const Travel = () => {
   // Whether this component put the current entry on the history stack, which
   // decides whether closing can go back or has to rewrite the URL in place.
   const pushedRef = useRef(false)
+  // The pending flight into a linked country. Held in a ref so that every way of
+  // opening a country cancels it. Left local to the effect, a click inside the
+  // hold would be overruled a moment later by the country the link named, and
+  // the index rows are clickable for the whole 450ms.
+  const flightRef = useRef<number | undefined>(undefined)
 
   // Only the map raises a tooltip. Hovering an index row highlights the country
   // but shows no label, since the row already reads as name and dates.
@@ -142,6 +147,7 @@ const Travel = () => {
   // Puts a country on screen without touching history, which is what arriving
   // on a link needs: the address is already the one being shown.
   const show = useCallback((id: string, rect: DOMRect | null) => {
+    clearTimeout(flightRef.current)
     setOrigin(rect)
     setSelectedId(id)
     setTip(null)
@@ -205,7 +211,6 @@ const Travel = () => {
   // quicker and would throw away the thing the page is for, which is seeing
   // where the country sits among the rest.
   useEffect(() => {
-    let timer: number | undefined
     const linked = fromSearch(window.location.search)
 
     if (linked.id) {
@@ -213,6 +218,14 @@ const Travel = () => {
       // Starts now so the fetch runs under the hold instead of after it.
       warm(country)
       setTrip(linked.trip)
+      // Rewrite the address to the canonical form for the view being shown. A
+      // trip number naming nothing has already fallen back to the country's
+      // default, and leaving `&trip=9` up there would keep offering a link to a
+      // view that does not exist, including to the copy button.
+      const canonical = urlFor(country, linked.trip)
+      if (canonical !== window.location.search) {
+        window.history.replaceState(window.history.state, '', canonical)
+      }
       // Fills the map at once rather than country by country, so the hold does
       // not have to wait on a stagger it is about to fly past anyway.
       setRushed(true)
@@ -222,7 +235,7 @@ const Travel = () => {
         // nothing.
         show(linked.id, null)
       } else {
-        timer = window.setTimeout(() => {
+        flightRef.current = window.setTimeout(() => {
           const shape = document.querySelector(`[data-country="${linked.id}"]`)
           show(country.id, shape ? shape.getBoundingClientRect() : null)
         }, LINK_HOLD_MS)
@@ -237,7 +250,7 @@ const Travel = () => {
     const onPop = () => {
       // Leaving before the hold is up cancels the flight, so a fast back button
       // is not overruled a moment later by a country opening itself.
-      clearTimeout(timer)
+      clearTimeout(flightRef.current)
       pushedRef.current = false
       const back = fromSearch(window.location.search)
       setOrigin(null)
@@ -246,7 +259,7 @@ const Travel = () => {
     }
     window.addEventListener('popstate', onPop)
     return () => {
-      clearTimeout(timer)
+      clearTimeout(flightRef.current)
       window.removeEventListener('popstate', onPop)
     }
   }, [show])

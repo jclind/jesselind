@@ -32,6 +32,16 @@ const PAD = 34
 /** Matches the flight duration in the stylesheet. */
 const FLIGHT_MS = 450
 
+/**
+ * How long after the overlay opens a country's geometry may still arrive and
+ * fly. Past this the panel and the country's name are already on screen, so a
+ * shape flying in from the world map answers a question the reader has stopped
+ * asking, and reads as a glitch rather than as one map becoming another. A cold
+ * cache on a phone is the case this covers: there is no hover to warm the file,
+ * so a tap on an index row starts the fetch from nothing.
+ */
+const FLIGHT_GRACE_MS = 450
+
 /** Flip the tooltip to the cursor's left inside this margin of the right edge. */
 const TOOLTIP_EDGE = 220
 
@@ -217,10 +227,12 @@ const CountryDetail = ({
   // raise. Pointer-only, like the world map's tooltip.
   const [regionTip, setRegionTip] = useState<RegionTip | null>(null)
   const [copyState, setCopyState] = useState<'idle' | 'done' | 'failed'>('idle')
+  const overlayRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const shapeRef = useRef<SVGGElement>(null)
   const pinsRef = useRef<HTMLDivElement>(null)
   const flownRef = useRef(false)
+  const openedAtRef = useRef(0)
 
   useEffect(() => {
     let cancelled = false
@@ -228,6 +240,7 @@ const CountryDetail = ({
     setRegions(null)
     setFailed(false)
     flownRef.current = false
+    openedAtRef.current = performance.now()
 
     // A country with subdivisions draws those instead of its own outline: the
     // states already trace the border, and the two sources are different
@@ -360,12 +373,22 @@ const CountryDetail = ({
   useLayoutEffect(() => {
     const stage = stageRef.current
     const shape = shapeRef.current
-    if (!stage || !shape || !origin || flownRef.current) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!stage || !shape || flownRef.current) return
 
     const target = shape.getBoundingClientRect()
     if (!target.width || !target.height) return
     flownRef.current = true
+
+    // Geometry that took longer than the grace window has missed the flight.
+    // Fade the shape in instead: appearing late is normal, appearing late and
+    // then travelling across the screen is not.
+    if (performance.now() - openedAtRef.current > FLIGHT_GRACE_MS) {
+      stage.classList.add(styles.late)
+      return
+    }
+
+    if (!origin) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const box = stage.getBoundingClientRect()
     const centreX = target.left + target.width / 2
@@ -491,15 +514,58 @@ const CountryDetail = ({
     return () => observer.disconnect()
   }, [drawing, trip])
 
+  // The overlay claims aria-modal, so it has to act like one. Without this, Tab
+  // from a country opened by deep link walks the nav and the index rows sitting
+  // behind a full-screen opaque panel, with no way to tell where focus went.
   useEffect(() => {
+    const overlay = overlayRef.current
+    if (!overlay) return
+    const opener = document.activeElement as HTMLElement | null
+
+    // Read at press time rather than held: the trip toggle and the map itself
+    // mount with the geometry, so the list is short one moment and longer the
+    // next.
+    const focusable = () =>
+      Array.from(overlay.querySelectorAll<HTMLElement>('button:not([disabled])'))
+
+    focusable()[0]?.focus({ preventScroll: true })
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+
+      const items = focusable()
+      if (!items.length) return
+      const first = items[0]
+      const last = items[items.length - 1]
+
+      if (!overlay.contains(document.activeElement)) {
+        // Focus fell out, which a click on the backdrop is enough to do.
+        e.preventDefault()
+        first.focus()
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
     }
+
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      // Hands focus back to the row or link that opened the country, so closing
+      // returns you to where you were rather than to the top of the document.
+      opener?.focus({ preventScroll: true })
+    }
   }, [onClose])
 
   const copyLink = async () => {
+    let timer: number | undefined
     try {
       // The page keeps the address bar right as you open a country and pick a
       // trip, so the link worth sharing is whatever is in it when you ask. No
@@ -512,13 +578,17 @@ const CountryDetail = ({
       // it is from where the reader sits.
       await Promise.race([
         navigator.clipboard.writeText(window.location.href),
-        new Promise((_, reject) => setTimeout(reject, COPY_TIMEOUT_MS)),
+        new Promise((_, reject) => {
+          timer = window.setTimeout(reject, COPY_TIMEOUT_MS)
+        }),
       ])
       setCopyState('done')
     } catch {
       // Denied permission, or a page served over plain http, where the
       // clipboard API does not exist at all. Say so rather than looking dead.
       setCopyState('failed')
+    } finally {
+      clearTimeout(timer)
     }
   }
 
@@ -540,6 +610,7 @@ const CountryDetail = ({
 
   return (
     <div
+      ref={overlayRef}
       className={styles.overlay}
       // Carries the selected trip's colour down to both the map and the panel,
       // which are siblings, as --trip.
@@ -672,7 +743,7 @@ const CountryDetail = ({
             </button>
             {trips.map((label, i) => (
               <button
-                key={label}
+                key={i}
                 type='button'
                 className={styles.trip}
                 data-trip={i}
