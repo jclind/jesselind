@@ -14,6 +14,7 @@ import {
   WORLD_CROP,
   travelCountries,
 } from '../../../assets/data/travel'
+import type { TravelCountryType } from '../../../assets/data/travel'
 import styles from './Travel.module.scss'
 
 const navLinks = [
@@ -36,16 +37,56 @@ type Tip = { id: string; x: number; y: number; flip: boolean }
 
 const slugFor = (country: { name: string }) => generateSlug(country.name)
 
-const countryFromSearch = (search: string) => {
-  const slug = new URLSearchParams(search).get('country')
-  if (!slug) return null
-  return travelCountries.find(c => slugFor(c) === slug)?.id ?? null
+/**
+ * The trip a country opens on, which is also the one its URL leaves unsaid. A
+ * country with a single route has nothing to toggle between, so that route is
+ * simply how it draws. Everything else opens on 'all'.
+ */
+const defaultTrip = (country: TravelCountryType) =>
+  country.routes?.length === 1 ? 0 : null
+
+/**
+ * Reads the address bar into the pair of things the overlay needs. Trips are
+ * 1-based in the URL, so the second one is `trip=2` rather than `trip=1`, and
+ * `trip=0` never appears looking like it means 'none'. Both parameters fall
+ * back rather than failing: they come off the address bar, where anyone can
+ * mistype one or link to a country that has since been renamed.
+ */
+const fromSearch = (search: string) => {
+  const params = new URLSearchParams(search)
+  const slug = params.get('country')
+  const country = slug
+    ? travelCountries.find(c => slugFor(c) === slug)
+    : undefined
+  if (!country) return { id: null, trip: null }
+
+  const asked = Number(params.get('trip'))
+  const exists =
+    Number.isInteger(asked) && asked >= 1 && asked <= (country.routes?.length ?? 0)
+  return { id: country.id, trip: exists ? asked - 1 : defaultTrip(country) }
+}
+
+/**
+ * The address for a country at a trip. The trip is left off when it is the one
+ * the country would open on anyway, which keeps Sweden at `?country=sweden` and
+ * makes Japan's 'all' view the plain link rather than a state you have to spell
+ * out to share.
+ */
+const urlFor = (country: TravelCountryType, trip: number | null) => {
+  const base = `?country=${slugFor(country)}`
+  return trip === null || trip === defaultTrip(country)
+    ? base
+    : `${base}&trip=${trip + 1}`
 }
 
 const Travel = () => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [tip, setTip] = useState<Tip | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  // Which trip the open country is filtered to, null being 'all'. Kept up here
+  // rather than inside the overlay because it belongs in the URL, and the URL
+  // has one owner.
+  const [trip, setTrip] = useState<number | null>(null)
   const [origin, setOrigin] = useState<DOMRect | null>(null)
   // Whether this component put the current entry on the history stack, which
   // decides whether closing can go back or has to rewrite the URL in place.
@@ -71,12 +112,34 @@ const Travel = () => {
   const open = useCallback((id: string, rect: DOMRect | null) => {
     const country = travelCountries.find(c => c.id === id)
     if (!country) return
+    const first = defaultTrip(country)
     setOrigin(rect)
     setSelectedId(id)
+    setTrip(first)
     setTip(null)
-    window.history.pushState({ country: id }, '', `?country=${slugFor(country)}`)
+    window.history.pushState({ country: id }, '', urlFor(country, first))
     pushedRef.current = true
   }, [])
+
+  /**
+   * Picking a trip rewrites the current history entry instead of pushing a new
+   * one. A trip is a filter on a country you are already looking at, and
+   * pushing would turn the back button into a trip-undo stack you have to click
+   * your way out of before you reach the map again.
+   */
+  const selectTrip = useCallback(
+    (next: number | null) => {
+      setTrip(next)
+      const country = travelCountries.find(c => c.id === selectedId)
+      if (!country) return
+      window.history.replaceState(
+        window.history.state,
+        '',
+        urlFor(country, next)
+      )
+    },
+    [selectedId]
+  )
 
   const close = useCallback(() => {
     if (pushedRef.current) {
@@ -97,19 +160,28 @@ const Travel = () => {
     open(id, shape ? shape.getBoundingClientRect() : null)
   }
 
-  // Deep links: /files/travel?country=japan opens straight into Japan, with no
-  // flight because there is no shape on screen to fly from yet.
+  // Deep links: /files/travel?country=japan&trip=2 opens straight into Japan's
+  // second itinerary, with no flight because there is no shape on screen to fly
+  // from yet.
   useEffect(() => {
-    const fromUrl = countryFromSearch(window.location.search)
-    if (fromUrl) {
+    const linked = fromSearch(window.location.search)
+    if (linked.id) {
       setOrigin(null)
-      setSelectedId(fromUrl)
+      setSelectedId(linked.id)
+      setTrip(linked.trip)
+    } else if (new URLSearchParams(window.location.search).has('country')) {
+      // Named a country that is not on the list. Drop the parameter so the
+      // address bar agrees with the world map that is actually on screen, and
+      // so reloading doesn't keep trying.
+      window.history.replaceState(null, '', window.location.pathname)
     }
 
     const onPop = () => {
       pushedRef.current = false
+      const back = fromSearch(window.location.search)
       setOrigin(null)
-      setSelectedId(countryFromSearch(window.location.search))
+      setSelectedId(back.id)
+      setTrip(back.trip)
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
@@ -191,6 +263,8 @@ const Travel = () => {
           key={selected.id}
           country={selected}
           origin={origin}
+          trip={trip}
+          onTripChange={selectTrip}
           onClose={close}
         />
       )}

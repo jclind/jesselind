@@ -182,19 +182,26 @@ export type CountryDetailProps = {
    * one. Null falls back to a plain fade.
    */
   origin: DOMRect | null
+  /**
+   * Which trip the view is filtered to. null is 'all', the view a country had
+   * before its visits were split into routes. Owned by the page rather than
+   * here, because it is part of the address and the address has one owner.
+   */
+  trip: number | null
+  onTripChange: (trip: number | null) => void
   onClose: () => void
 }
 
-const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
+const CountryDetail = ({
+  country,
+  origin,
+  trip,
+  onTripChange,
+  onClose,
+}: CountryDetailProps) => {
   const [geometry, setGeometry] = useState<GeoJSON.Geometry | null>(null)
   const [regions, setRegions] = useState<RegionLayer | null>(null)
   const [failed, setFailed] = useState(false)
-  // Which trip the view is filtered to. null is 'all', the view a country had
-  // before its visits were split into routes. A country with a single route has
-  // nothing to toggle between, so that route is simply how it draws.
-  const [trip, setTrip] = useState<number | null>(
-    country.routes?.length === 1 ? 0 : null
-  )
   const stageRef = useRef<HTMLDivElement>(null)
   const shapeRef = useRef<SVGGElement>(null)
   const pinsRef = useRef<HTMLDivElement>(null)
@@ -592,7 +599,7 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
               type='button'
               className={styles.trip}
               aria-pressed={trip === null}
-              onClick={() => setTrip(null)}
+              onClick={() => onTripChange(null)}
             >
               all
             </button>
@@ -603,7 +610,7 @@ const CountryDetail = ({ country, origin, onClose }: CountryDetailProps) => {
                 className={styles.trip}
                 data-trip={i}
                 aria-pressed={trip === i}
-                onClick={() => setTrip(trip === i ? null : i)}
+                onClick={() => onTripChange(trip === i ? null : i)}
               >
                 {label}
               </button>
