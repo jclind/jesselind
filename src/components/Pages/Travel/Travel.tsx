@@ -6,7 +6,7 @@ import NavHeader from '../../Common/NavHeader'
 import BackButton from '../../Common/BackButton'
 import GeoMap from './GeoMap'
 import CountryDetail from './CountryDetail'
-import { loadCountry } from './countryGeometry'
+import { loadCountry, loadRegions } from './countryGeometry'
 import { generateSlug } from '../../../util/pathFunctions'
 import {
   ANTARCTICA_ID,
@@ -79,6 +79,28 @@ const urlFor = (country: TravelCountryType, trip: number | null) => {
     : `${base}&trip=${trip + 1}`
 }
 
+/**
+ * Pulls the file the detail view will ask for, so the fetch overlaps whatever
+ * happens before it opens. Branches the same way the overlay does: a country
+ * with subdivisions draws those and never touches its own outline, so warming
+ * the country file for the US would fetch 101 KB nobody opens and leave the
+ * 302 KB of states still to come.
+ */
+const warm = (country: TravelCountryType) => {
+  const request = country.regions
+    ? loadRegions(country.regions.source)
+    : loadCountry(country.id)
+  request.catch(() => {})
+}
+
+/**
+ * How long to hold on the world map before flying into a linked country. The
+ * shape has to be on screen to fly out of, so the wait follows its place in the
+ * fill-in stagger and then some of its own fade. The floor keeps the first few
+ * countries from flashing past before you have seen the map at all.
+ */
+const holdFor = (index: number) => Math.max(600, index * STAGGER * 1000 + 300)
+
 const Travel = () => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [tip, setTip] = useState<Tip | null>(null)
@@ -102,24 +124,34 @@ const Travel = () => {
     }
     // Warms the 50m file on hover so a click has nothing to wait for. Fires for
     // index rows too, since they raise the same activation.
-    loadCountry(id).catch(() => {})
+    const country = travelCountries.find(c => c.id === id)
+    if (country) warm(country)
   }
 
   const handlePointerMove = (id: string, x: number, y: number) => {
     setTip({ id, x, y, flip: x > window.innerWidth - TOOLTIP_EDGE })
   }
 
-  const open = useCallback((id: string, rect: DOMRect | null) => {
-    const country = travelCountries.find(c => c.id === id)
-    if (!country) return
-    const first = defaultTrip(country)
+  // Puts a country on screen without touching history, which is what arriving
+  // on a link needs: the address is already the one being shown.
+  const show = useCallback((id: string, rect: DOMRect | null) => {
     setOrigin(rect)
     setSelectedId(id)
-    setTrip(first)
     setTip(null)
-    window.history.pushState({ country: id }, '', urlFor(country, first))
-    pushedRef.current = true
   }, [])
+
+  const open = useCallback(
+    (id: string, rect: DOMRect | null) => {
+      const country = travelCountries.find(c => c.id === id)
+      if (!country) return
+      const first = defaultTrip(country)
+      show(id, rect)
+      setTrip(first)
+      window.history.pushState({ country: id }, '', urlFor(country, first))
+      pushedRef.current = true
+    },
+    [show]
+  )
 
   /**
    * Picking a trip rewrites the current history entry instead of pushing a new
@@ -160,15 +192,31 @@ const Travel = () => {
     open(id, shape ? shape.getBoundingClientRect() : null)
   }
 
-  // Deep links: /files/travel?country=japan&trip=2 opens straight into Japan's
-  // second itinerary, with no flight because there is no shape on screen to fly
-  // from yet.
+  // Deep links: /files/travel?country=japan&trip=2 opens Japan's second
+  // itinerary. The world map draws first and then flies into the country, the
+  // same move a click makes. Landing straight in the detail view would be
+  // quicker and would throw away the thing the page is for, which is seeing
+  // where the country sits among the rest.
   useEffect(() => {
+    let timer: number | undefined
     const linked = fromSearch(window.location.search)
+
     if (linked.id) {
-      setOrigin(null)
-      setSelectedId(linked.id)
+      const index = travelCountries.findIndex(c => c.id === linked.id)
+      // Starts now so the fetch runs under the hold instead of after it.
+      warm(travelCountries[index])
       setTrip(linked.trip)
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // No flight to wait for, so the hold would be a delay that buys
+        // nothing.
+        show(linked.id, null)
+      } else {
+        timer = window.setTimeout(() => {
+          const shape = document.querySelector(`[data-country="${linked.id}"]`)
+          show(linked.id!, shape ? shape.getBoundingClientRect() : null)
+        }, holdFor(index))
+      }
     } else if (new URLSearchParams(window.location.search).has('country')) {
       // Named a country that is not on the list. Drop the parameter so the
       // address bar agrees with the world map that is actually on screen, and
@@ -177,6 +225,9 @@ const Travel = () => {
     }
 
     const onPop = () => {
+      // Leaving before the hold is up cancels the flight, so a fast back button
+      // is not overruled a moment later by a country opening itself.
+      clearTimeout(timer)
       pushedRef.current = false
       const back = fromSearch(window.location.search)
       setOrigin(null)
@@ -184,8 +235,11 @@ const Travel = () => {
       setTrip(back.trip)
     }
     window.addEventListener('popstate', onPop)
-    return () => window.removeEventListener('popstate', onPop)
-  }, [])
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('popstate', onPop)
+    }
+  }, [show])
 
   const tipCountry = tip && travelCountries.find(c => c.id === tip.id)
   const selected = selectedId
