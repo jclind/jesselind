@@ -2,6 +2,11 @@ import React from 'react'
 import styles from './WireframeGlobe.module.scss'
 
 /**
+ * Sized 36px against the kanji logo's 30px, which is not a mismatch. The wire
+ * only reaches 52 of the 64 viewBox units, so the drawn globe is 30.3px across,
+ * against ink of 31.5 x 27.5 in the logo. Matching the boxes instead left a
+ * circle noticeably smaller than the glyph beside it.
+ *
  * Meridians and parallels only — no landmasses. Made of the same lines and
  * curves as the rest of the hero, and costs no geo library on the homepage.
  *
@@ -22,8 +27,8 @@ const WireframeGlobe = () => (
   <svg
     className={styles.globe}
     viewBox='0 0 64 64'
-    width='32'
-    height='32'
+    width='36'
+    height='36'
     aria-hidden='true'
     focusable='false'
   >
