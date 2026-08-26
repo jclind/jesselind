@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`jesselind` — Jesse Lind's personal portfolio + notes site ("designer. developer. human."). A static Astro site with React islands, TypeScript, and Sass. Deployed from the `prod` branch (development happens on `main`).
+`jesselind` — Jesse Lind's personal portfolio + notes site ("designer. developer. human."). A static Astro site with React islands, TypeScript, and Sass. Deployed from the `release` branch (development happens on `development`).
 
 ## Commands
 
@@ -52,7 +52,7 @@ The overlay says `aria-modal`, so it behaves like one: focus moves to the close 
 
 **Hovering a US state names it.** The detail view raises the same tooltip the world map does, off the subdivision fills. It only covers *visited* states: the generated subdivision file holds no unvisited polygons at all, only the two border meshes, so there is nothing under the pointer to name. That matches the world map, where only filled countries answer a hover. The border and outline paths carry `pointer-events: none`. An unfilled path is still hit on its stroke, so without it, running the cursor along a state's edge would land on the border and blink the tooltip out.
 
-**The `media/` folder is auto-listed.** `public/media/` is a drop folder for shareable files. Anything placed there serves from the site root (`public/media/x.webp` → `/media/x.webp` — that's the shareable link) and is auto-listed at `/files/media` by `src/pages/files/media.astro`, which reads the directory with `fs` at build time — no manual list editing to add a file. `npm run media -- <file>` just copies files in. To publish, commit and deploy (main → prod). Keep this in-repo only while files stay small/infrequent; large or high-volume media should move to external storage (e.g. Cloudflare R2) and the index made data-driven.
+**The `media/` folder is auto-listed.** `public/media/` is a drop folder for shareable files. Anything placed there serves from the site root (`public/media/x.webp` → `/media/x.webp` — that's the shareable link) and is auto-listed at `/files/media` by `src/pages/files/media.astro`, which reads the directory with `fs` at build time — no manual list editing to add a file. `npm run media -- <file>` just copies files in. To publish, commit and deploy (development → release). Keep this in-repo only while files stay small/infrequent; large or high-volume media should move to external storage (e.g. Cloudflare R2) and the index made data-driven.
 
 **Layout & globals.** Every page wraps content in `src/layouts/Layout.astro`, which sets meta/OG tags, loads global SCSS, mounts the Lenis smooth-scroll island (`SmoothScroll`), and injects Google Analytics via Partytown. The GA ID is hardcoded in `Layout.astro`.
 
