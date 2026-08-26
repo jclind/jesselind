@@ -1,0 +1,12 @@
+---
+import TravelPage from '../../components/Pages/Travel';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/global.scss';
+---
+
+<Layout
+  title="travel/"
+  description="A map of the countries Jesse Lind has travelled to, with the years he was there."
+>
+  <TravelPage client:load />
+</Layout>

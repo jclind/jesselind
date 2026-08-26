@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import styles from './Hero.module.scss'
 import { ButtonLink } from '../../../Common/ButtonLink'
+import WireframeGlobe from './WireframeGlobe'
 import scssVars from '../../../../styles/_exports.module.scss'
 const Hero = () => {
   const handleClick = (e: any) => {
@@ -67,6 +68,14 @@ const Hero = () => {
         >
           p<br />
           r<br /> o<br /> j<br /> e<br /> c<br /> t<br /> s
+        </a>
+        <a
+          href='/files/travel'
+          className={styles.globe}
+          aria-label='travel map'
+          data-astro-prefetch='hover'
+        >
+          <WireframeGlobe />
         </a>
         <a
           href='/files/notes/mirai'

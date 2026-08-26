@@ -1,0 +1,801 @@
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import {
+  geoAlbersUsa,
+  geoArea,
+  geoBounds,
+  geoConicEqualArea,
+  geoContains,
+  geoPath,
+  type GeoPermissibleObjects,
+} from 'd3-geo'
+import {
+  FILL_BOUNDS,
+  type TravelCountryType,
+  type TravelPlaceType,
+} from '../../../assets/data/travel'
+import {
+  loadCountry,
+  loadRegions,
+  restrictToBox,
+  type RegionLayer,
+} from './countryGeometry'
+import styles from './Travel.module.scss'
+
+/**
+ * Nominal projected width. The frame is cropped to whatever the country turns
+ * out to occupy, so this only fixes the working precision and the padding's
+ * scale, not the shape of the view.
+ */
+const W = 1000
+const PAD = 34
+
+/** Matches the flight duration in the stylesheet. */
+const FLIGHT_MS = 450
+
+/**
+ * How long after the overlay opens a country's geometry may still arrive and
+ * fly. Past this the panel and the country's name are already on screen, so a
+ * shape flying in from the world map answers a question the reader has stopped
+ * asking, and reads as a glitch rather than as one map becoming another. A cold
+ * cache on a phone is the case this covers: there is no hover to warm the file,
+ * so a tap on an index row starts the fetch from nothing.
+ */
+const FLIGHT_GRACE_MS = 450
+
+/** Flip the tooltip to the cursor's left inside this margin of the right edge. */
+const TOOLTIP_EDGE = 220
+
+/** How long 'link copied' stays up before the button offers itself again. */
+const COPIED_MS = 1600
+
+/** How long to wait on the clipboard before calling it a failure. */
+const COPY_TIMEOUT_MS = 1200
+
+type RegionTip = { name: string; x: number; y: number; flip: boolean }
+
+type Rect = { left: number; top: number; right: number; bottom: number }
+
+/**
+ * Where a label may sit relative to its dot, best first. `ax`/`ay` are the
+ * fraction of the label pinned to the offset point, so ax:1 hangs it to the
+ * left of the dot and ax:0 to the right.
+ */
+const PLACEMENTS = [
+  { dx: 9, dy: 0, ax: 0, ay: 0.5 },
+  { dx: -9, dy: 0, ax: 1, ay: 0.5 },
+  { dx: 0, dy: -8, ax: 0.5, ay: 1 },
+  { dx: 0, dy: 8, ax: 0.5, ay: 0 },
+  { dx: 8, dy: -7, ax: 0, ay: 1 },
+  { dx: -8, dy: -7, ax: 1, ay: 1 },
+  { dx: 8, dy: 7, ax: 0, ay: 0 },
+  { dx: -8, dy: 7, ax: 1, ay: 0 },
+]
+
+/** Breathing room between two labels, in pixels. */
+const GAP = 4
+/** Radius around a dot that a label should not cover. */
+const DOT = 5
+
+/**
+ * How far a leg stops short of the city at each end, in projected units. The
+ * frame is always ~1068 units wide, so this is a fixed ~10px gap at full size:
+ * enough that the line reads as running between the dots rather than through
+ * them, and that the arrowhead lands clear of the next city's name.
+ */
+const TRIM = 9
+/** Arrowhead half-length, same units. */
+const HEAD = 7
+/** Arrowhead half-angle, radians. Narrow enough to read at a 1px stroke. */
+const SPREAD = 0.42
+/** Below this a leg is shorter than the two dots it runs between. */
+const MIN_LEG = 8
+
+type Point = [number, number]
+
+/**
+ * One leg as a shaft plus a chevron on its far end. The chevron is drawn rather
+ * than left to an SVG marker because the route uses non-scaling-stroke: a
+ * marker would keep its user-space size while the line held at 1px, so the two
+ * would come apart at anything other than full width.
+ */
+const leg = ([ax, ay]: Point, [bx, by]: Point) => {
+  const dx = bx - ax
+  const dy = by - ay
+  const length = Math.hypot(dx, dy)
+  if (length < MIN_LEG) return null
+
+  // A short leg shrinks its trim and its arrowhead rather than being dropped.
+  // Tokyo to Okutama is 50km, about 17 units at this scale, and at the full
+  // trim there is nothing left of it but a hole in the itinerary.
+  const scale = Math.min(1, length / (TRIM * 2 + HEAD))
+  const trim = TRIM * scale
+  const head = HEAD * scale
+
+  const ux = dx / length
+  const uy = dy / length
+  const from: Point = [ax + ux * trim, ay + uy * trim]
+  const to: Point = [bx - ux * trim, by - uy * trim]
+
+  const angle = Math.atan2(uy, ux)
+  const wing = (turn: number): Point => [
+    to[0] - head * Math.cos(angle + turn),
+    to[1] - head * Math.sin(angle + turn),
+  ]
+  const [lx, ly] = wing(SPREAD)
+  const [rx, ry] = wing(-SPREAD)
+
+  return {
+    shaft: `M${from[0]},${from[1]}L${to[0]},${to[1]}`,
+    head: `M${lx},${ly}L${to[0]},${to[1]}L${rx},${ry}`,
+  }
+}
+
+const overlap = (a: Rect, b: Rect) => {
+  const w = Math.min(a.right, b.right + GAP) - Math.max(a.left, b.left - GAP)
+  const h = Math.min(a.bottom, b.bottom + GAP) - Math.max(a.top, b.top - GAP)
+  return w > 0 && h > 0 ? w * h : 0
+}
+
+const covers = (r: Rect, x: number, y: number) =>
+  x > r.left - DOT && x < r.right + DOT && y > r.top - DOT && y < r.bottom + DOT
+
+/** ISO numeric for the United States. */
+const US = '840'
+
+/** An island smaller than this share of the biggest one is an outlier. */
+const OUTLIER = 0.02
+
+/**
+ * Drops distant specks so the frame belongs to the part of the country you'd
+ * recognise. Japan's Ryukyu and Ogasawara chains reach 1,500km southwest, which
+ * leaves the four main islands using about a third of the screen.
+ *
+ * An island is kept if it is a serious size *or* if a pin sits on it, so
+ * Gotland survives on Visby's account while Okinawa, which Jesse has not been
+ * to, does not.
+ */
+const trimOutliers = (
+  geometry: GeoJSON.Geometry,
+  places: TravelPlaceType[]
+): GeoJSON.Geometry => {
+  if (geometry.type !== 'MultiPolygon') return geometry
+
+  const areas = geometry.coordinates.map(coordinates =>
+    geoArea({ type: 'Polygon', coordinates })
+  )
+  const largest = Math.max(...areas)
+
+  const kept = geometry.coordinates.filter((coordinates, i) => {
+    if (areas[i] >= largest * OUTLIER) return true
+    const polygon: GeoJSON.Polygon = { type: 'Polygon', coordinates }
+    return places.some(place => geoContains(polygon, [place.lng, place.lat]))
+  })
+
+  return kept.length ? { type: 'MultiPolygon', coordinates: kept } : geometry
+}
+
+/**
+ * A conic fitted to the country's own latitude band, which is what an atlas
+ * does for a single country. Mercator would work but stretches anything far
+ * from the equator: it makes Canada half again as tall as it should be and
+ * turns Sweden into a ribbon.
+ *
+ * The US is the exception. Its geometry spans the antimeridian because of
+ * Alaska, which leaves the derived bounds meaningless, so it gets the
+ * projection built for exactly this problem.
+ */
+const projectionFor = (id: string, source: GeoPermissibleObjects) => {
+  if (id === US) return geoAlbersUsa()
+
+  const [[minLon, minLat], [maxLon, maxLat]] = geoBounds(source)
+  const span = maxLat - minLat
+  return geoConicEqualArea()
+    .parallels([minLat + span / 6, maxLat - span / 6])
+    .rotate([-(minLon + maxLon) / 2, 0])
+    .center([0, (minLat + maxLat) / 2])
+}
+
+export type CountryDetailProps = {
+  country: TravelCountryType
+  /**
+   * Where the country sits on the world map at the moment it was clicked. The
+   * panel grows out of that rect, so the small shape appears to become the big
+   * one. Null falls back to a plain fade.
+   */
+  origin: DOMRect | null
+  /**
+   * Which trip the view is filtered to. null is 'all', the view a country had
+   * before its visits were split into routes. Owned by the page rather than
+   * here, because it is part of the address and the address has one owner.
+   */
+  trip: number | null
+  onTripChange: (trip: number | null) => void
+  onClose: () => void
+}
+
+const CountryDetail = ({
+  country,
+  origin,
+  trip,
+  onTripChange,
+  onClose,
+}: CountryDetailProps) => {
+  const [geometry, setGeometry] = useState<GeoJSON.Geometry | null>(null)
+  const [regions, setRegions] = useState<RegionLayer | null>(null)
+  const [failed, setFailed] = useState(false)
+  // The subdivision under the pointer, which only a country with regions can
+  // raise. Pointer-only, like the world map's tooltip.
+  const [regionTip, setRegionTip] = useState<RegionTip | null>(null)
+  const [copyState, setCopyState] = useState<'idle' | 'done' | 'failed'>('idle')
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const stageRef = useRef<HTMLDivElement>(null)
+  const shapeRef = useRef<SVGGElement>(null)
+  const pinsRef = useRef<HTMLDivElement>(null)
+  const flownRef = useRef(false)
+  const openedAtRef = useRef(0)
+
+  useEffect(() => {
+    let cancelled = false
+    setGeometry(null)
+    setRegions(null)
+    setFailed(false)
+    flownRef.current = false
+    openedAtRef.current = performance.now()
+
+    // A country with subdivisions draws those instead of its own outline: the
+    // states already trace the border, and the two sources are different
+    // resolutions, so drawing both would double the coastline slightly offset.
+    const source = country.regions
+    const request = source
+      ? loadRegions(source.source).then(loaded => {
+          if (!cancelled) setRegions(loaded)
+        })
+      : loadCountry(country.id).then(loaded => {
+          if (!cancelled) {
+            const trimmed = restrictToBox(loaded.geometry, FILL_BOUNDS[country.id])
+            setGeometry(trimOutliers(trimmed, country.places ?? []))
+          }
+        })
+
+    request.catch(() => {
+      if (!cancelled) setFailed(true)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [country.id, country.regions, country.places])
+
+  const drawing = useMemo(() => {
+    // The frame comes from the outline, not the fills: half the states are
+    // unvisited, so fitting to the filled ones would crop Texas off the map.
+    const source: GeoPermissibleObjects | null = regions?.exterior ?? geometry
+    if (!source) return null
+
+    const projection = projectionFor(country.id, source).fitWidth(W, source)
+    const path = geoPath(projection)
+
+    const shapes = regions
+      ? regions.features.flatMap(f => {
+          const d = path(f)
+          // geoAlbersUsa projects nothing outside its own frame, which is how
+          // Guam and Puerto Rico drop out rather than landing in the Pacific.
+          const name = String(f.properties?.name ?? '')
+          return d ? [{ key: String(f.id), name, d }] : []
+        })
+      : (() => {
+          const d = geometry && path(geometry)
+          return d ? [{ key: country.id, name: country.name, d }] : []
+        })()
+
+    const borders = regions
+      ? {
+          interior: path(regions.interior) ?? '',
+          exterior: path(regions.exterior) ?? '',
+        }
+      : null
+    if (!shapes.length && !borders) return null
+
+    // Crop the frame to what was drawn rather than fitting the country into a
+    // fixed rectangle, so a tall country is not left as a narrow strip down the
+    // middle of a wide one's frame.
+    const [[x0, y0], [x1, y1]] = path.bounds(source)
+    const box = {
+      x: x0 - PAD,
+      y: y0 - PAD,
+      w: x1 - x0 + PAD * 2,
+      h: y1 - y0 + PAD * 2,
+    }
+
+    const projected = new Map<string, Point>()
+    const pins = (country.places ?? []).flatMap(place => {
+      const point = projection([place.lng, place.lat])
+      if (!point) return []
+      projected.set(place.name, [point[0], point[1]])
+      // Percentages of the frame rather than user units, so the labels are
+      // typeset in CSS alongside the rest of the page instead of scaling with
+      // the drawing.
+      return [
+        {
+          name: place.name,
+          left: `${((point[0] - box.x) / box.w) * 100}%`,
+          top: `${((point[1] - box.y) / box.h) * 100}%`,
+        },
+      ]
+    })
+
+    // Every trip's route is worked out up front, not when one is picked. The
+    // geometry depends only on the projection, so switching trips comes down to
+    // swapping two path strings and a class.
+    const routes = (country.routes ?? []).map(route => {
+      const stops = route.flatMap(name => {
+        const point = projected.get(name)
+        return point ? [{ name, point }] : []
+      })
+
+      const shafts: string[] = []
+      const heads: string[] = []
+      // A leg retracing one already drawn contributes only time. Its shaft
+      // lands exactly on the earlier one, and the draw animation walks the
+      // whole path, so Stockholm out to Visby and back would spend half its run
+      // redrawing a line already on screen. The arrowhead still goes on, and
+      // that is what makes the leg two-headed and says you came back the way
+      // you went.
+      const traced = new Set<string>()
+      for (let i = 1; i < stops.length; i++) {
+        const drawn = leg(stops[i - 1].point, stops[i].point)
+        if (!drawn) continue
+        const pair = [stops[i - 1].name, stops[i].name].sort().join('\u0000')
+        if (!traced.has(pair)) {
+          traced.add(pair)
+          shafts.push(drawn.shaft)
+        }
+        heads.push(drawn.head)
+      }
+
+      // Where each place falls in the itinerary, counting from 1. A place can
+      // hold more than one number: leaving Tokyo and coming home through it is
+      // one dot with two positions on the timeline.
+      const order = new Map<string, number[]>()
+      stops.forEach((stop, i) => {
+        order.set(stop.name, [...(order.get(stop.name) ?? []), i + 1])
+      })
+
+      return { shafts: shafts.join(''), heads: heads.join(''), order }
+    })
+
+    return { shapes, borders, pins, routes, box, aspect: box.w / box.h }
+  }, [geometry, regions, country.id, country.places, country.routes])
+
+  // The flight: put the stage where the world map's country is, then let it
+  // transition back to its natural place. Measured from the drawn path, not the
+  // stage, so the shape lands on the small one rather than near it.
+  useLayoutEffect(() => {
+    const stage = stageRef.current
+    const shape = shapeRef.current
+    if (!stage || !shape || flownRef.current) return
+
+    const target = shape.getBoundingClientRect()
+    if (!target.width || !target.height) return
+    flownRef.current = true
+
+    // Geometry that took longer than the grace window has missed the flight.
+    // Fade the shape in instead: appearing late is normal, appearing late and
+    // then travelling across the screen is not.
+    if (performance.now() - openedAtRef.current > FLIGHT_GRACE_MS) {
+      stage.classList.add(styles.late)
+      return
+    }
+
+    if (!origin) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const box = stage.getBoundingClientRect()
+    const centreX = target.left + target.width / 2
+    const centreY = target.top + target.height / 2
+    const scale = origin.width / target.width
+
+    stage.style.transformOrigin = `${centreX - box.left}px ${centreY - box.top}px`
+    stage.style.transition = 'none'
+    stage.style.transform = `translate(${
+      origin.left + origin.width / 2 - centreX
+    }px, ${origin.top + origin.height / 2 - centreY}px) scale(${scale})`
+
+    // Force the browser to take the start state as a frame of its own,
+    // otherwise both writes collapse into one and nothing animates.
+    void stage.offsetWidth
+
+    stage.style.transition = ''
+    stage.style.transform = ''
+  }, [drawing, origin])
+
+  // Labels are placed rather than pinned to one side. Cities cluster (Toronto
+  // and Niagara Falls are 60km apart, a few pixels here), so each label takes
+  // the free-est of eight positions around its dot, in the order they were
+  // authored. Greedy and one pass, which is plenty for a dozen pins.
+  useLayoutEffect(() => {
+    const container = pinsRef.current
+    if (!container) return
+
+    const place = () => {
+      const frame = container.getBoundingClientRect()
+      if (!frame.width) return
+
+      // Placement can run mid-flight, while the stage is still scaled down to
+      // the size of the country on the world map. Everything measured off the
+      // screen is scaled by that, so divide it out and work in the layout
+      // coordinates the transforms are written in. Otherwise the pass sees
+      // fourteen labels inside a few pixels and hides most of them.
+      const scale = frame.width / container.offsetWidth || 1
+      const width = container.offsetWidth
+      const height = container.offsetHeight
+
+      const pins = Array.from(
+        container.querySelectorAll<HTMLElement>('[data-pin]')
+      )
+      const dots = pins.map(pin => {
+        const r = pin.getBoundingClientRect()
+        return { x: (r.left - frame.left) / scale, y: (r.top - frame.top) / scale }
+      })
+
+      const placed: Rect[] = []
+      pins.forEach((pin, i) => {
+        const label = pin.querySelector<HTMLElement>('[data-pin-label]')
+        if (!label) return
+
+        // Not on the selected trip. Its dot stays as context and CSS hides the
+        // name, but it is still given a position, so hovering the dot puts the
+        // name somewhere sensible. It reserves nothing, which is what lets the
+        // trip's own labels spread into the space the other half gave up.
+        const off = pin.hasAttribute('data-off')
+
+        label.style.transform = ''
+        const measured = label.getBoundingClientRect()
+        const labelW = measured.width / scale
+        const labelH = measured.height / scale
+        const { x, y } = dots[i]
+
+        let bestCost = Infinity
+        let bestCollision = Infinity
+        let best = PLACEMENTS[0]
+        PLACEMENTS.forEach((candidate, rank) => {
+          const left = x + candidate.dx - candidate.ax * labelW
+          const top = y + candidate.dy - candidate.ay * labelH
+          const rect = { left, top, right: left + labelW, bottom: top + labelH }
+
+          let collision = 0
+          for (const other of placed) collision += overlap(rect, other)
+          dots.forEach((dot, j) => {
+            if (j !== i && covers(rect, dot.x, dot.y)) collision += 400
+          })
+
+          let cost = collision
+          // Running off the frame is worse than any amount of overlap.
+          if (left < 0 || top < 0 || rect.right > width || rect.bottom > height) {
+            cost += 1e4
+          }
+          // Breaks ties toward the earlier, more conventional positions.
+          cost += rank
+
+          if (cost < bestCost) {
+            bestCost = cost
+            bestCollision = collision
+            best = candidate
+          }
+        })
+
+        // The label already sits on its dot, so the transform is the offset from
+        // it. Collisions are tested in frame coordinates, which is why the two
+        // are worked out separately.
+        const dx = best.dx - best.ax * labelW
+        const dy = best.dy - best.ay * labelH
+        label.style.transform = `translate(${dx}px, ${dy}px)`
+
+        // Eight cities inside greater Toronto need more label width than the
+        // region has pixels, at any frame size, so somewhere the algorithm has
+        // to give up rather than stack names on top of each other. A crowded
+        // label hides and its dot keeps it: hovering brings it back. Earlier
+        // entries in places[] win, so the order there is the priority order.
+        const crowded = !off && bestCollision > labelW * labelH * 0.08
+        label.toggleAttribute('data-crowded', crowded)
+        // A hidden label occupies nothing, so the next one may use the space.
+        if (crowded || off) return
+
+        const left = x + dx
+        const top = y + dy
+        placed.push({ left, top, right: left + labelW, bottom: top + labelH })
+      })
+    }
+
+    place()
+    // The frame is sized off the viewport, so every pin moves on resize.
+    const observer = new ResizeObserver(place)
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [drawing, trip])
+
+  // The overlay claims aria-modal, so it has to act like one. Without this, Tab
+  // from a country opened by deep link walks the nav and the index rows sitting
+  // behind a full-screen opaque panel, with no way to tell where focus went.
+  useEffect(() => {
+    const overlay = overlayRef.current
+    if (!overlay) return
+    const opener = document.activeElement as HTMLElement | null
+
+    // Read at press time rather than held: the trip toggle and the map itself
+    // mount with the geometry, so the list is short one moment and longer the
+    // next.
+    const focusable = () =>
+      Array.from(overlay.querySelectorAll<HTMLElement>('button:not([disabled])'))
+
+    focusable()[0]?.focus({ preventScroll: true })
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+
+      const items = focusable()
+      if (!items.length) return
+      const first = items[0]
+      const last = items[items.length - 1]
+
+      if (!overlay.contains(document.activeElement)) {
+        // Focus fell out, which a click on the backdrop is enough to do.
+        e.preventDefault()
+        first.focus()
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      // Hands focus back to the row or link that opened the country, so closing
+      // returns you to where you were rather than to the top of the document.
+      opener?.focus({ preventScroll: true })
+    }
+  }, [onClose])
+
+  const copyLink = async () => {
+    let timer: number | undefined
+    try {
+      // The page keeps the address bar right as you open a country and pick a
+      // trip, so the link worth sharing is whatever is in it when you ask. No
+      // point rebuilding it here and giving the same URL two authors.
+      //
+      // Raced against a timer because writeText does not always settle: in a
+      // tab the window manager has not focused it can sit pending forever, and
+      // a button waiting on a promise that never resolves is a button that
+      // looks broken. Losing the race is reported as a failure, which is what
+      // it is from where the reader sits.
+      await Promise.race([
+        navigator.clipboard.writeText(window.location.href),
+        new Promise((_, reject) => {
+          timer = window.setTimeout(reject, COPY_TIMEOUT_MS)
+        }),
+      ])
+      setCopyState('done')
+    } catch {
+      // Denied permission, or a page served over plain http, where the
+      // clipboard API does not exist at all. Say so rather than looking dead.
+      setCopyState('failed')
+    } finally {
+      clearTimeout(timer)
+    }
+  }
+
+  useEffect(() => {
+    if (copyState === 'idle') return
+    const timer = setTimeout(() => setCopyState('idle'), COPIED_MS)
+    return () => clearTimeout(timer)
+  }, [copyState])
+
+  // Picking another trip changes the link, so the confirmation stops being true.
+  useEffect(() => {
+    setCopyState('idle')
+  }, [trip])
+
+  // The itinerary in view, or null in 'all'. A country whose visits carry no
+  // routes never gets a toggle, so it can never be anything but null.
+  const route = trip === null ? null : (drawing?.routes[trip] ?? null)
+  const trips = (country.routes?.length ?? 0) > 1 ? country.visits : undefined
+
+  return (
+    <div
+      ref={overlayRef}
+      className={styles.overlay}
+      // Carries the selected trip's colour down to both the map and the panel,
+      // which are siblings, as --trip.
+      data-trip={trip ?? undefined}
+      role='dialog'
+      aria-modal='true'
+      aria-label={country.name}
+    >
+      <button
+        type='button'
+        className={styles.close}
+        onClick={onClose}
+        aria-label={`Close ${country.name}`}
+      >
+        close
+      </button>
+
+      <div
+        className={styles.stage}
+        ref={stageRef}
+        style={drawing ? ({ '--ar': drawing.aspect } as React.CSSProperties) : undefined}
+      >
+        <svg
+          className={styles.detail_map}
+          viewBox={
+            drawing
+              ? `${drawing.box.x} ${drawing.box.y} ${drawing.box.w} ${drawing.box.h}`
+              : undefined
+          }
+          role='img'
+          aria-label={`Map of ${country.name}`}
+        >
+          {drawing && (
+            <g ref={shapeRef}>
+              {/* Fills first and unstroked, then the borders over the top, so
+                  every edge on the map is drawn by exactly one path. */}
+              {drawing.shapes.map(shape => (
+                <path
+                  key={shape.key}
+                  className={
+                    drawing.borders ? styles.region_fill : styles.detail_shape
+                  }
+                  d={shape.d}
+                  // Only a subdivision names itself on hover. A country without
+                  // regions is one shape whose name is already the heading two
+                  // inches away, so a tooltip there would just repeat it.
+                  onMouseMove={
+                    drawing.borders
+                      ? e =>
+                          setRegionTip({
+                            name: shape.name,
+                            x: e.clientX,
+                            y: e.clientY,
+                            flip: e.clientX > window.innerWidth - TOOLTIP_EDGE,
+                          })
+                      : undefined
+                  }
+                  onMouseLeave={
+                    drawing.borders ? () => setRegionTip(null) : undefined
+                  }
+                />
+              ))}
+              {drawing.borders && (
+                <>
+                  <path className={styles.region_line} d={drawing.borders.interior} />
+                  <path className={styles.outline} d={drawing.borders.exterior} />
+                </>
+              )}
+            </g>
+          )}
+
+          {/* Keyed on the trip so picking another one remounts the layer and
+              the route draws itself again rather than cutting between two. */}
+          {route && (
+            <g key={trip}>
+              {/* pathLength normalises the whole polyline to 1, so one dash the
+                  length of the route walks it end to end without anyone having
+                  to measure it. */}
+              <path
+                className={styles.route_line}
+                d={route.shafts}
+                pathLength={1}
+              />
+              <path className={styles.route_head} d={route.heads} />
+            </g>
+          )}
+        </svg>
+
+        {drawing && drawing.pins.length > 0 && (
+          <div
+            className={styles.pins}
+            ref={pinsRef}
+            style={{ animationDelay: `${FLIGHT_MS}ms` }}
+          >
+            {drawing.pins.map(pin => {
+              const order = route?.order.get(pin.name)
+              return (
+                <span
+                  key={pin.name}
+                  data-pin=''
+                  data-off={route && !order ? '' : undefined}
+                  className={styles.pin}
+                  style={{ left: pin.left, top: pin.top }}
+                >
+                  <span className={styles.pin_dot} />
+                  <span data-pin-label='' className={styles.pin_label}>
+                    {order && (
+                      <span className={styles.pin_order}>{order.join(',')}</span>
+                    )}
+                    {pin.name}
+                  </span>
+                </span>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className={styles.panel} style={{ animationDelay: `${FLIGHT_MS * 0.6}ms` }}>
+        <h2 className={styles.panel_name}>{country.name}</h2>
+        {trips ? (
+          <div className={styles.trips} role='group' aria-label='Trips'>
+            <button
+              type='button'
+              className={styles.trip}
+              aria-pressed={trip === null}
+              onClick={() => onTripChange(null)}
+            >
+              all
+            </button>
+            {trips.map((label, i) => (
+              <button
+                key={i}
+                type='button'
+                className={styles.trip}
+                data-trip={i}
+                aria-pressed={trip === i}
+                onClick={() => onTripChange(trip === i ? null : i)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        ) : (
+          country.visits && (
+            <p className={styles.panel_visits}>{country.visits.join(' · ')}</p>
+          )
+        )}
+        {country.notes && (
+          <div
+            className={styles.panel_notes}
+            dangerouslySetInnerHTML={{ __html: country.notes }}
+          />
+        )}
+        {failed && (
+          <p className={styles.panel_visits}>Map unavailable. Try reloading.</p>
+        )}
+
+        <button
+          type='button'
+          className={styles.copy}
+          data-state={copyState}
+          onClick={copyLink}
+        >
+          {copyState === 'done'
+            ? 'link copied'
+            : copyState === 'failed'
+              ? "couldn't copy"
+              : 'copy link'}
+        </button>
+      </div>
+
+      {/* Hidden from screen readers: it tracks the cursor, so there is no way
+          to reach it without a pointer in the first place. */}
+      {regionTip && (
+        <div
+          className={`${styles.tooltip} ${regionTip.flip ? styles.flip : ''}`}
+          style={{ left: regionTip.x, top: regionTip.y }}
+          aria-hidden='true'
+        >
+          {regionTip.name}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default CountryDetail
