@@ -11,7 +11,8 @@ export function getStaticPaths() {
   // Fetch your notes from Firebase
   const notes: NoteType[] = fetchNotesFromFirebase(); // Your Firebase fetch function
 
-  const paths = notes.map((note) => ({
+  // Notes with a `component` have their own static page in this folder
+  const paths = notes.filter((note) => !note.component).map((note) => ({
     params: { 
       slug: generateSlug(note.title)
     },
