@@ -19,7 +19,7 @@ node_ok=$(node -p 'const [a, b] = process.versions.node.split(".").map(Number); 
 echo "building..."
 log=$(npm run build 2>&1) || { echo "$log" | tail -20; fail "build"; exit 1; }
 pass "build: $(echo "$log" | grep -o '[0-9]* page(s) built')"
-echo "$log" | grep -q '\[WARN\]' && fail "build warnings: $(echo "$log" | grep -c '\[WARN\]')" || pass "no build warnings"
+echo "$log" | grep -qE '\[WARN\]|DEPRECATION WARNING' && fail "build warnings: $(echo "$log" | grep -cE '\[WARN\]|DEPRECATION WARNING')" || pass "no build warnings"
 
 # --ignore-lock runs a private server in the foreground. Without it, astro 7
 # reuses (and `preview stop` would kill) any background preview already running.
@@ -29,7 +29,7 @@ trap 'kill "$server" 2>/dev/null' EXIT
 for _ in $(seq 20); do curl -s -o /dev/null "$BASE/" && break; sleep 0.5; done
 
 for path in / /contact/ /projects/tridle/ /files/notes/ /files/notes/hello-world/ \
-  /files/notes/nurture/ /files/notes/building-a-computer/ /files/media/ \
+  /files/notes/nurture/ /files/notes/building-a-computer/ /files/media/ /files/travel/ \
   /sitemap-index.xml /sitemap-0.xml /game/files.json /robots.txt; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE$path")
   [ "$code" = 200 ] && pass "$path" || fail "$path -> $code"
