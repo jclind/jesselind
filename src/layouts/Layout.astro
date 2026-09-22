@@ -1,5 +1,4 @@
 ---
-import Navbar from '../components/Layout/Navbar';
 import SmoothScroll from '../components/Util/SmoothScroll';
 import '@fontsource-variable/montserrat';
 import '../components/Util/SmoothScroll'
@@ -22,7 +21,7 @@ const GOOGLE_ANALYTICS_ID = 'G-G33532W32B'
 	<head>
 		<!-- Google tag (gtag.js) -->
 		<script type="text/partytown" async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}></script>
-		<script type="text/partytown">
+		<script type="text/partytown" define:vars={{ GOOGLE_ANALYTICS_ID }}>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
