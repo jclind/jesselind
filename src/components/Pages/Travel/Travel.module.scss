@@ -1,3 +1,4 @@
+@use 'sass:list';
 @use '../../../styles/vars' as *;
 
 // Every coastline on the detail view, whether it is a country's own outline or
@@ -380,10 +381,10 @@ $coast: #8a8a8a;
   --trip: #{$primary-text};
 }
 
-@for $i from 1 through length($trip-colors) {
+@for $i from 1 through list.length($trip-colors) {
   .overlay[data-trip='#{$i - 1}'],
   .trip[data-trip='#{$i - 1}'] {
-    --trip: #{nth($trip-colors, $i)};
+    --trip: #{list.nth($trip-colors, $i)};
   }
 }
 
