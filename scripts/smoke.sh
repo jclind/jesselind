@@ -21,8 +21,11 @@ log=$(npm run build 2>&1) || { echo "$log" | tail -20; fail "build"; exit 1; }
 pass "build: $(echo "$log" | grep -o '[0-9]* page(s) built')"
 echo "$log" | grep -q '\[WARN\]' && fail "build warnings: $(echo "$log" | grep -c '\[WARN\]')" || pass "no build warnings"
 
-npx astro preview --port "$PORT" >/dev/null 2>&1
-trap 'npx astro preview stop >/dev/null 2>&1' EXIT
+# --ignore-lock runs a private server in the foreground. Without it, astro 7
+# reuses (and `preview stop` would kill) any background preview already running.
+npx astro preview --port "$PORT" --ignore-lock >/dev/null 2>&1 &
+server=$!
+trap 'kill "$server" 2>/dev/null' EXIT
 for _ in $(seq 20); do curl -s -o /dev/null "$BASE/" && break; sleep 0.5; done
 
 for path in / /contact/ /projects/tridle/ /files/notes/ /files/notes/hello-world/ \
