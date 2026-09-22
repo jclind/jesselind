@@ -58,7 +58,7 @@ The overlay says `aria-modal`, so it behaves like one: focus moves to the close 
 
 ## Components & styling
 
-- Components live under `src/components/` grouped by role: `Common/` (reusable UI), `Layout/` (Navbar), `Pages/` (per-page), `Util/` (animation + scroll hooks). Most folders use the `Component.tsx` + `index.tsx` re-export pattern.
+- Components live under `src/components/` grouped by role: `Common/` (reusable UI), `Pages/` (per-page), `Util/` (animation + scroll hooks). Most folders use the `Component.tsx` + `index.tsx` re-export pattern.
 - Styling is Sass: `src/styles/global.scss` plus per-component `*.module.scss` (CSS modules). Shared SCSS values are in `_vars.scss`; values shared into TS/JS come through `_exports.module.scss` (`:export`).
 - React components are Astro islands — they need a client directive (`client:load`) to be interactive.
 
