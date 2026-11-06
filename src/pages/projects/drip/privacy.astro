@@ -1,0 +1,133 @@
+---
+// drip's privacy policy, the URL its Chrome Web Store listing points to.
+// The source text is store/PRIVACY.md in the drip repo. Change both together.
+import Layout from '../../../layouts/Layout.astro';
+import NavHeader from '../../../components/Common/NavHeader';
+import { NAV_LINKS_DEFAULT } from '../../../util/NAV_VARS';
+import '../../../styles/global.scss';
+
+const lastUpdated = 'November 6, 2026';
+const navLinks = [...NAV_LINKS_DEFAULT, { name: 'drip-privacy-policy.txt', src: '#' }];
+---
+
+<Layout title="drip privacy policy">
+  <div class="notes-style-page">
+    <div class="notes-content">
+      <NavHeader links={navLinks} />
+      <div class="note-title">drip privacy policy</div>
+      <p class="note-last-updated">Last updated: [{lastUpdated}]</p>
+
+      <div class="note-text">
+        <p>
+          drip is a Chrome extension for YouTube. It processes browsing activity and YouTube page content locally in
+          your browser. It sends none of that information to drip's developer or anyone else. There is no drip server,
+          no account, no analytics, and no tracking. The YouTube requests and reports you can choose to send are
+          described below.
+        </p>
+
+        <p>What it stores in your browser's extension storage (<code>chrome.storage.local</code>), all on your computer:</p>
+        <ul>
+          <li>Your settings and token balances.</li>
+          <li>
+            The videos you've revealed (their ids, so the same video doesn't come up twice) and your stash (id, title,
+            channel, length, views and age as the feed showed them, how far you got, and when you stashed it).
+          </li>
+          <li>Your allowed and blocked channels: each one's name, handle or channel id, and the address of its picture.</li>
+          <li>
+            A log of the last 90 days: minutes watched, tokens spent, videos saved, watched, or passed, and the reasons
+            you typed for "I need this one", with each video's title.
+          </li>
+        </ul>
+
+        <p>Temporary storage, also on your computer:</p>
+        <ul>
+          <li>
+            Extension session storage (<code>chrome.storage.session</code>) keeps the clock used to avoid charging twice
+            when videos play in several tabs: the last charged timestamp, recent tick keys, and the seconds charged for
+            each. It clears when Chrome restarts or the extension reloads.
+          </li>
+          <li>
+            YouTube tab session storage (<code>sessionStorage</code> on www.youtube.com) briefly keeps the number of
+            unspent drops and a Dry hours end timestamp when you choose Done for now. drip reads and removes them on its
+            home page to show the counter animation. They can remain until the tab closes if you do not return there.
+          </li>
+        </ul>
+
+        <p>
+          What it reads: the YouTube pages you open, to replace the home page, run the watch clock, and read video
+          titles and channels. It runs on www.youtube.com. On m.youtube.com and youtube-nocookie.com it only sends you
+          to the matching www.youtube.com page.
+        </p>
+
+        <p>
+          What YouTube sees: drip talks only to YouTube, the site you're already on, and Google's image servers that
+          YouTube uses.
+        </p>
+        <ul>
+          <li>It loads video thumbnails from YouTube's image server, which tells YouTube the ids of the videos drip shows you.</li>
+          <li>
+            To reveal a video, drip may open a YouTube page in a hidden frame, signed in as you, to read the videos on
+            it: your home page once you've revealed everything on screen, or your Subscriptions page if you set reveals
+            to come from Subscriptions. To YouTube, that's the same as you opening the page.
+          </li>
+          <li>
+            When you add a channel to the allow or block list by its handle, drip loads that channel's public page from
+            youtube.com, without your cookies, to read its name and picture. Settings then shows the picture from
+            YouTube's image servers (yt3.googleusercontent.com or yt3.ggpht.com), without sending which page asked for
+            it.
+          </li>
+        </ul>
+
+        <p>
+          If drip shows that it's broken, its banner can put a report together: the drip version, the kind of break,
+          the exact page selector that matched nothing, the page path (without query parameters), the full user-agent
+          string Chrome makes available (including browser and operating system or platform information), and the date
+          and time in UTC. Copy details puts that on your clipboard. Send report opens an email to apps@jesselind.com in
+          your own mail app with that text filled in, and nothing is sent until you send that email yourself. Settings'
+          "Missing a setting?" link opens an email the same way.
+        </p>
+
+        <p>
+          Settings' Export saves a file of your settings, stash, log, and channel lists wherever you choose to save it.
+          Import reads a file you pick. Neither goes anywhere else.
+        </p>
+
+        <p>
+          Removing drip from Chrome deletes its extension storage. Temporary YouTube tab session storage can remain
+          until the tab closes. A file you exported stays where you saved it.
+        </p>
+
+        <p>
+          drip's use of this information complies with the
+          <a href="https://developer.chrome.com/docs/webstore/program-policies/user-data-faq" target="_blank" rel="noopener noreferrer">Chrome Web Store User Data Policy</a>,
+          including the Limited Use requirements. drip doesn't sell it, transfer it, or use it for anything except
+          reducing distractions and providing the optional YouTube limits described here.
+        </p>
+
+        <p>
+          This page is on jesselind.com, which has its own <a href="/files/legal/privacy-policy">privacy policy</a>
+          for visits to the website. That policy doesn't apply to the drip extension.
+        </p>
+
+        <p>Questions: <a href="mailto:apps@jesselind.com">apps@jesselind.com</a>.</p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style lang="scss">
+  @use '../../../styles/vars' as *;
+
+  // Lists match .note-text p, which global.scss styles but doesn't extend to lists.
+  .note-text ul {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-medium;
+    padding-left: 1.25em;
+  }
+  .note-text li {
+    font-size: $fs-small;
+    font-weight: 200;
+    line-height: 1.75;
+  }
+</style>
