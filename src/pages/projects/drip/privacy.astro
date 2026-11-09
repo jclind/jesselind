@@ -6,7 +6,7 @@ import NavHeader from '../../../components/Common/NavHeader';
 import { NAV_LINKS_DEFAULT } from '../../../util/NAV_VARS';
 import '../../../styles/global.scss';
 
-const lastUpdated = 'November 6, 2026';
+const lastUpdated = 'November 9, 2026';
 const navLinks = [...NAV_LINKS_DEFAULT, { name: 'drip-privacy-policy.txt', src: '#' }];
 ---
 
@@ -15,7 +15,7 @@ const navLinks = [...NAV_LINKS_DEFAULT, { name: 'drip-privacy-policy.txt', src: 
     <div class="notes-content">
       <NavHeader links={navLinks} />
       <div class="note-title">drip privacy policy</div>
-      <p class="note-last-updated">Last updated: [{lastUpdated}]</p>
+      <p class="note-last-updated">Last updated: {lastUpdated}</p>
 
       <div class="note-text">
         <section class="summary">
@@ -49,6 +49,10 @@ const navLinks = [...NAV_LINKS_DEFAULT, { name: 'drip-privacy-policy.txt', src: 
         <p>What it stores in your browser's extension storage (<code>chrome.storage.local</code>), all on your computer:</p>
         <ul>
           <li>Your settings and token balances.</li>
+          <li>
+            The ids of videos you unlocked today with "I need this one", and of today's videos from allowed channels
+            with that channel's ids. Both clear at the day's reset.
+          </li>
           <li>
             The videos you've revealed (their ids, so the same video doesn't come up twice) and your stash (id, title,
             channel, length, views and age as the feed showed them, how far you got, and when you stashed it).
