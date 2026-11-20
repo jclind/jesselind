@@ -51,6 +51,20 @@ export const projects: ProjectType[] = [
   },
   {
     id: 2,
+    title: 'tally',
+    tagline: 'Like Mint, but it runs on your own computer.',
+    description: [
+      `I discovered Intuit's Mint app in 2023, and it had everything I needed from a budgeting app. I could easily see my net worth, track my monthly spending, and set budgets and goals. Of course, after seeing how useful this service was to me and so many others, Intuit decided that too much fun and convenience was being had by its Mint users. So in November of that same year, Intuit announced that Mint would be shut down within the next few months.`,
+      `I was unimpressed by the corporate slop replacement, Credit Karma, with all of the nice features ripped away and loan advertisements forced in their place. Ever since Mint's retirement I've been searching for a budgeting app with anything close to the same features, but everything I found came with an egregious monthly subscription (yay capitalism!!!).`,
+      `That was until I found <a href="https://plaid.com/">Plaid</a>'s free plan, which lets you connect up to 10 banks for free, with no time limit. That instantly jump-started my development of tally, an app I don't have to pay a subscription for, that doesn't send my information to Intuit, and that runs on my own computer. With the beauty of open source, I'd like to share tally with anyone who misses Mint's features but is sick of the corporate greed that comes with most apps these days. If you'd like to try it, check out the <a href="https://github.com/jclind/tally">GitHub repo</a> or <a href="https://tally.jesselind.com/">tally.jesselind.com</a> to see the features and how to install it yourself.`,
+    ],
+    images: genProjectImgs('tally'),
+    link: 'https://tally.jesselind.com/',
+    slug: 'tally',
+    github: 'https://github.com/jclind/tally',
+  },
+  {
+    id: 3,
     title: 'pumptrack',
     tagline: 'Simple yet functional workout tracking.',
     description: [
@@ -62,7 +76,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/pump-track',
   },
   {
-    id: 3,
+    id: 4,
     title: 'DoorDash Driver Recap',
     tagline: 'A recap of your dashing year.',
     description: [
@@ -74,7 +88,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/doordash-recap',
   },
   {
-    id: 4,
+    id: 5,
     title: 'BitWorkout',
     tagline: 'Gamify your workouts and collect treasure.',
     description: [
@@ -87,7 +101,7 @@ export const projects: ProjectType[] = [
   },
 
   {
-    id: 5,
+    id: 6,
     title: 'Tridle',
     tagline: 'Three letter Wordle clone.',
     description: [
