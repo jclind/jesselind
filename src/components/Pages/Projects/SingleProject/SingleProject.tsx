@@ -39,9 +39,15 @@ const SingleProject = ({ project }: { project: ProjectType }) => {
             <a href={project.link} target='_blank' rel='noopener noreferrer'>
               website
             </a>
-            <a href={project.github} target='_blank' rel='noopener noreferrer'>
-              github
-            </a>
+            {project.github && (
+              <a
+                href={project.github}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                github
+              </a>
+            )}
           </div>
           <div className={styles.navigation_links}>
             <a href='/#projects' className='notes-back-btn'>

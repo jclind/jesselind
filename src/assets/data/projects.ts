@@ -6,7 +6,7 @@ export type ProjectType = {
   images: string[]
   link: string
   slug: string
-  github: string
+  github?: string
 }
 
 const projectImgPath = '/images/projects/'
@@ -26,15 +26,22 @@ const genProjectImgs = (
 export const projects: ProjectType[] = [
   {
     id: 0,
-    title: 'Jesse Lind Photography',
-    tagline: 'My personal photography portfolio.',
+    title: 'drip',
+    tagline: 'YouTube without the feed.',
+    // Stand-in text from the Chrome Web Store listing, until Jesse writes his own.
     description: [
-      "My personal photography portfolio website. I've always been fascinated with photography and capturing moments, and over the years, I've taken some pictures that I think are worthy of sharing.",
+      `drip takes YouTube's home feed away. The Subscriptions, Explore, and Shorts feeds go with it.`,
+      `In their place you get a search box, or one recommended video at a time. End screens and the recommendations beside videos are gone too, and autoplay is off.`,
+      `Pick how much YouTube you want when you install:`,
+      `Quiet: a search box where the home feed was. No recommendations, no limits.`,
+      `Curated: reveal as many recommendations as you want, one at a time. Save the ones worth watching to Stash for later. No watch-time limit.`,
+      `Full drip: Curated with daily limits. By default that's 10 cards and 4 drops a day. A card reveals one video. A drop buys 15 minutes. When the minutes run out, the video pauses.`,
+      `You can switch modes or change the numbers later. Looser limits take effect the next day, so a late-night "just one more" can't raise them.`,
+      `drip has no server, no account, and no tracking. Everything stays in your browser.`,
     ],
-    images: genProjectImgs('jesselind-photography'),
-    link: 'https://jesselindphoto.vercel.app/',
-    slug: 'jesselind-photography',
-    github: 'https://github.com/jclind/jesselind-photo',
+    images: genProjectImgs('drip'),
+    link: 'https://chromewebstore.google.com/detail/drip-youtube-without-the/kfmmpkmfaoppoibioohgkfgfljfahdfj',
+    slug: 'drip',
   },
   {
     id: 1,
@@ -65,6 +72,18 @@ export const projects: ProjectType[] = [
   },
   {
     id: 3,
+    title: 'Jesse Lind Photography',
+    tagline: 'My personal photography portfolio.',
+    description: [
+      "My personal photography portfolio website. I've always been fascinated with photography and capturing moments, and over the years, I've taken some pictures that I think are worthy of sharing.",
+    ],
+    images: genProjectImgs('jesselind-photography'),
+    link: 'https://jesselindphoto.vercel.app/',
+    slug: 'jesselind-photography',
+    github: 'https://github.com/jclind/jesselind-photo',
+  },
+  {
+    id: 4,
     title: 'pumptrack',
     tagline: 'Simple yet functional workout tracking.',
     description: [
@@ -76,7 +95,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/pump-track',
   },
   {
-    id: 4,
+    id: 5,
     title: 'DoorDash Driver Recap',
     tagline: 'A recap of your dashing year.',
     description: [
@@ -88,7 +107,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/doordash-recap',
   },
   {
-    id: 5,
+    id: 6,
     title: 'BitWorkout',
     tagline: 'Gamify your workouts and collect treasure.',
     description: [
@@ -99,9 +118,8 @@ export const projects: ProjectType[] = [
     slug: 'bitworkout',
     github: 'https://github.com/jclind/bit-workout',
   },
-
   {
-    id: 6,
+    id: 7,
     title: 'Tridle',
     tagline: 'Three letter Wordle clone.',
     description: [
