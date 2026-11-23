@@ -42,6 +42,7 @@ export const projects: ProjectType[] = [
     images: genProjectImgs('drip'),
     link: 'https://chromewebstore.google.com/detail/drip-youtube-without-the/kfmmpkmfaoppoibioohgkfgfljfahdfj',
     slug: 'drip',
+    github: 'https://github.com/jclind/drip',
   },
   {
     id: 1,
