@@ -6,7 +6,7 @@ export type ProjectType = {
   images: string[]
   link: string
   slug: string
-  github: string
+  github?: string
 }
 
 const projectImgPath = '/images/projects/'
@@ -26,15 +26,20 @@ const genProjectImgs = (
 export const projects: ProjectType[] = [
   {
     id: 0,
-    title: 'Jesse Lind Photography',
-    tagline: 'My personal photography portfolio.',
+    title: 'drip',
+    tagline: 'YouTube without the feed.',
     description: [
-      "My personal photography portfolio website. I've always been fascinated with photography and capturing moments, and over the years, I've taken some pictures that I think are worthy of sharing.",
+      `YouTube is an app I can't live without. I think it might be one of the most important knowledge bases of our generation. So many times I've found a tutorial that taught me a new concept, or a tip that changed my whole workflow and saved me hours. YouTube also introduced me to my internet dads, Rhett and Link, who were a staple of my brother's and my childhood. For all of that, I'm forever grateful to it.`,
+      `Unfortunately, YouTube has had a stronger and stronger hold on my free time lately. It slowly shifted from a helpful tool to a mindless distraction that was actively hurting my productivity. A couple of times it got to the point where I deleted the YouTube app entirely. The hard part is that YouTube never got any less valuable as a tool, so I would inevitably find myself back on the home page looking for something helpful, only to come to my senses an hour later having learned nothing and forgotten my goal. So I finally decided to make drip.`,
+      `The main goal of drip is to just remove the feed. At the fundamental level it takes the algorithm off the home page and the sidebar recommendations off video pages, so you have to look up the next video you watch on purpose. I've found that this simple tactic can be surprisingly effective. No feed and no autoplay is a large part of the battle against the increasingly addictive algorithms that corporations are funneling billions of R&D dollars into.`,
+      `I may have gotten a little carried away adding gamified features on top of that, but it's all very customizable. There are "cards", which you spend to show videos from your feed one at a time, so you aren't totally cut off if you use YouTube for entertainment, but you can still limit yourself. There's also a time limit, where you buy watch time with the drops you're allotted each day.`,
+      `It's easier to understand by seeing it, so check out <a href="https://www.youtube.com/watch?v=BBa0fckdFig">this video I made</a>, which shows how the "full experience" works. Hopefully drip can help you regain a little bit of your time and agency in this crazy, brainrot-filled world we live in now.`,
+      `Also, scrolling Shorts is totally turned off because, well, whoever you are, you don't need to be watching all that!`,
     ],
-    images: genProjectImgs('jesselind-photography'),
-    link: 'https://jesselindphoto.vercel.app/',
-    slug: 'jesselind-photography',
-    github: 'https://github.com/jclind/jesselind-photo',
+    images: genProjectImgs('drip'),
+    link: 'https://chromewebstore.google.com/detail/drip-youtube-without-the/kfmmpkmfaoppoibioohgkfgfljfahdfj',
+    slug: 'drip',
+    github: 'https://github.com/jclind/drip',
   },
   {
     id: 1,
@@ -65,6 +70,18 @@ export const projects: ProjectType[] = [
   },
   {
     id: 3,
+    title: 'Jesse Lind Photography',
+    tagline: 'My personal photography portfolio.',
+    description: [
+      "My personal photography portfolio website. I've always been fascinated with photography and capturing moments, and over the years, I've taken some pictures that I think are worthy of sharing.",
+    ],
+    images: genProjectImgs('jesselind-photography'),
+    link: 'https://jesselindphoto.vercel.app/',
+    slug: 'jesselind-photography',
+    github: 'https://github.com/jclind/jesselind-photo',
+  },
+  {
+    id: 4,
     title: 'pumptrack',
     tagline: 'Simple yet functional workout tracking.',
     description: [
@@ -76,7 +93,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/pump-track',
   },
   {
-    id: 4,
+    id: 5,
     title: 'DoorDash Driver Recap',
     tagline: 'A recap of your dashing year.',
     description: [
@@ -88,7 +105,7 @@ export const projects: ProjectType[] = [
     github: 'https://github.com/jclind/doordash-recap',
   },
   {
-    id: 5,
+    id: 6,
     title: 'BitWorkout',
     tagline: 'Gamify your workouts and collect treasure.',
     description: [
@@ -99,9 +116,8 @@ export const projects: ProjectType[] = [
     slug: 'bitworkout',
     github: 'https://github.com/jclind/bit-workout',
   },
-
   {
-    id: 6,
+    id: 7,
     title: 'Tridle',
     tagline: 'Three letter Wordle clone.',
     description: [
