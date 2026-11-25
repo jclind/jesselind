@@ -48,4 +48,4 @@ export const christmasItems: ChristmasItem[] = [
 ]
 
 // Smaller ideas with no link, listed under the cards.
-export const christmasSmallIdeas: string[] = ['Lip balm']
+export const christmasSmallIdeas: string[] = ['Lip balm', 'A fun kind of tea']
