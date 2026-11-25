@@ -3,7 +3,7 @@
 // astro.config.mjs skips this path, and Layout's noindex keeps it out of
 // search. Items come from src/assets/data/christmas.ts.
 import Layout from '../layouts/Layout.astro';
-import { christmasItems, CHRISTMAS_YEAR } from '../assets/data/christmas';
+import { christmasItems, christmasSmallIdeas, CHRISTMAS_YEAR } from '../assets/data/christmas';
 import '../styles/global.scss';
 ---
 
@@ -24,6 +24,14 @@ import '../styles/global.scss';
         </li>
       ))}
     </ul>
+    {christmasSmallIdeas.length > 0 && (
+      <section class="xmas-small">
+        <h2 class="xmas-subtitle">Smaller ideas</h2>
+        <ul>
+          {christmasSmallIdeas.map((idea) => <li>{idea}</li>)}
+        </ul>
+      </section>
+    )}
   </main>
 </Layout>
 
@@ -99,6 +107,28 @@ import '../styles/global.scss';
   .xmas-note {
     font-size: $fs-xs;
     color: $secondary-text;
+  }
+  .xmas-small {
+    margin-top: $gap-xl;
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: $gap-tiny;
+    }
+    li {
+      font-size: $fs-regular;
+      color: $primary-text;
+      &::marker {
+        color: $secondary-text;
+      }
+    }
+  }
+  .xmas-subtitle {
+    font-size: $fs-medium;
+    font-weight: 500;
+    margin-bottom: $gap-regular;
   }
   .xmas-meta {
     font-size: $fs-xs;
