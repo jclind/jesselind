@@ -37,4 +37,15 @@ export const christmasItems: ChristmasItem[] = [
     url: 'https://www.amazon.com/dp/B0GXKSMTQ2',
     image: 'https://m.media-amazon.com/images/I/71VHyMiPitL._AC_SL500_.jpg',
   },
+  {
+    name: 'Dickies Dri-Tech mid-crew socks',
+    store: 'Amazon',
+    price: '$11.19',
+    url: 'https://www.amazon.com/dp/B08YLY7VLS?th=1&psc=1',
+    image: 'https://m.media-amazon.com/images/I/91rL9E0749L._AC_SL500_.jpg',
+    note: 'White, 6 pairs, size Large',
+  },
 ]
+
+// Smaller ideas with no link, listed under the cards.
+export const christmasSmallIdeas: string[] = ['Lip balm']
