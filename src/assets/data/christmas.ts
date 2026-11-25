@@ -23,12 +23,11 @@ export const christmasItems: ChristmasItem[] = [
     note: 'The white one',
   },
   {
-    name: 'NÄVLINGE wall spotlight',
-    store: 'IKEA',
-    price: '$29.99',
-    url: 'https://www.ikea.com/us/en/p/naevlinge-led-wall-clamp-spotlight-black-30408328/',
-    image:
-      'https://www.ikea.com/us/en/images/products/naevlinge-led-wall-clamp-spotlight-black__0709833_pe727112_s5.jpg',
+    name: 'LEPOWER gooseneck reading lamp',
+    store: 'Amazon',
+    price: '$19.93',
+    url: 'https://www.amazon.com/dp/B07WGS7JMR',
+    image: 'https://m.media-amazon.com/images/I/510rAqWSMJL._AC_SL500_.jpg',
     note: 'Black',
   },
   {
