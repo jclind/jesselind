@@ -1,12 +1,12 @@
 ---
 // drip's privacy policy, the URL its Chrome Web Store listing points to.
-// The source text is store/PRIVACY.md in the drip repo. Change both together.
+// This page is the one that counts. store/PRIVACY.md in the drip repo is a copy of its text. Change both together.
 import Layout from '../../../layouts/Layout.astro';
 import NavHeader from '../../../components/Common/NavHeader';
 import { NAV_LINKS_DEFAULT } from '../../../util/NAV_VARS';
 import '../../../styles/global.scss';
 
-const lastUpdated = 'November 9, 2026';
+const lastUpdated = 'November 25, 2026';
 const navLinks = [...NAV_LINKS_DEFAULT, { name: 'drip-privacy-policy.txt', src: '#' }];
 ---
 
@@ -54,10 +54,15 @@ const navLinks = [...NAV_LINKS_DEFAULT, { name: 'drip-privacy-policy.txt', src: 
             with that channel's ids. Both clear at the day's reset.
           </li>
           <li>
-            The videos you've revealed (their ids, so the same video doesn't come up twice) and your stash (id, title,
-            channel, length, views and age as the feed showed them, how far you got, and when you stashed it).
+            The videos you've revealed (their ids, so the same video doesn't come up twice). The card showing on drip's
+            home page and each video in your stash: id, title, channel, the channel's handle or id when the page showed
+            one, length, views and age as the feed showed them, how far you got, and when you stashed it.
           </li>
           <li>Your allowed and blocked channels: each one's name, handle or channel id, and the address of its picture.</li>
+          <li>
+            The watch clock's last 8 tick keys, each a random id with the seconds counted under it, so a tab doesn't
+            count the same seconds twice.
+          </li>
           <li>
             A log of the last 90 days: minutes watched, tokens spent, videos saved, watched, or passed, and the reasons
             you typed for "I need this one", with each video's title.
