@@ -20,11 +20,12 @@ function sitemap() {
     name: 'simple-sitemap',
     hooks: {
       'astro:build:done': async ({ dir, pages, logger }) => {
-        const statusPages = new Set(['404', '500'])
+        // Status pages, plus unlisted pages that are served but kept out of the sitemap.
+        const skip = new Set(['404', '500', 'christmas'])
         const site = WEBSITE_URL.replace(/\/$/, '')
         const urls = pages
           .map((p) => p.pathname.replace(/^\/+|\/+$/g, ''))
-          .filter((p) => !statusPages.has(p))
+          .filter((p) => !skip.has(p))
           .map((p) => (p ? `${site}/${p}/` : `${site}/`))
         const escape = (s) =>
           s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
