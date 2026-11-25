@@ -38,3 +38,16 @@ export const christmasItems: ChristmasItem[] = [
     image: 'https://m.media-amazon.com/images/I/71VHyMiPitL._AC_SL500_.jpg',
   },
 ]
+
+// Smaller ideas with no link, listed under the cards.
+export const christmasSmallIdeas: string[] = [
+  "Lip balm, Burt's Bees",
+  'Gum or mints',
+  'A new deck of playing cards for my collection',
+  'A small LEGO Botanicals set',
+  'Anything Studio Ghibli',
+  'Japanese instant ramen',
+  'Barebells protein bars',
+  'Black socks',
+  'Candles',
+]
