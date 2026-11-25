@@ -8,8 +8,9 @@ import { LEGAL_NAME, WEBSITE_DESCRIPTION } from '../assets/data/legalInfo';
 interface Props {
 	title?: string;
 	description?: string;
+	noindex?: boolean;
 }
-const { title = LEGAL_NAME, description = WEBSITE_DESCRIPTION } = Astro.props;
+const { title = LEGAL_NAME, description = WEBSITE_DESCRIPTION, noindex = false } = Astro.props;
 const siteName = LEGAL_NAME
 const GOOGLE_ANALYTICS_ID = 'G-G33532W32B'
 ---
@@ -34,6 +35,7 @@ const GOOGLE_ANALYTICS_ID = 'G-G33532W32B'
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
 
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content={Astro.url.href} />
